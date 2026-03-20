@@ -5,7 +5,7 @@ export interface Group {
   name: string
   created_by?: string
   created_at?: string
-  members?: User[]
+  members: GroupMember[]
 }
 
 export interface GroupMember {

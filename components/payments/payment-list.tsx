@@ -1,10 +1,11 @@
 'use client'
 
-import { Payment } from '@/types/payment'
-import { formatCurrency, formatDate } from '@/utils/format'
-import { Button } from '@/components/ui/button'
-import { api } from '@/lib/api/client'
 import { useState } from 'react'
+import { Payment } from '@/types/payment'
+import { formatDate } from '@/utils/format'
+import { api } from '@/lib/api/client'
+import { GlassCard } from '@/components/ui/glass-card'
+import { useAlert } from '@/components/providers/alert-provider'
 
 interface PaymentListProps {
   payments: Payment[]
@@ -13,6 +14,7 @@ interface PaymentListProps {
 }
 
 export function PaymentList({ payments, latestSettlementAt, onDelete }: PaymentListProps) {
+  const { alert, confirm } = useAlert()
   const [deletingId, setDeletingId] = useState<string | null>(null)
 
   const isLocked = (createdAt: string | undefined) => {
@@ -23,16 +25,33 @@ export function PaymentList({ payments, latestSettlementAt, onDelete }: PaymentL
   const handleDelete = async (paymentId: string) => {
     const payment = payments.find(p => p.id === paymentId)
     if (payment && isLocked(payment.created_at)) {
-      alert('この支払いはすでに精算が済んでいる履歴に含まれているため、削除できません。\n修正したい場合は、先に「精算」タブから対象の精算（↩︎）を取り消してください。')
+      await alert({
+        title: '削除できません',
+        message: 'この支払いはすでに精算が済んでいる履歴に含まれているため、削除できません。\n修正したい場合は、先に「精算」タブから対象の精算（↩︎）を取り消してください。',
+        type: 'warn'
+      })
       return
     }
-    if (!confirm('この支払いを削除しますか？')) return
+
+    const isConfirmed = await confirm({
+      title: '支払いの削除',
+      message: 'この支払いを削除しますか？',
+      type: 'danger',
+      confirmText: '削除',
+      cancelText: 'キャンセル'
+    })
+
+    if (!isConfirmed) return
     setDeletingId(paymentId)
     try {
       await api.deletePayment(paymentId)
       onDelete?.()
     } catch (e) {
-      alert('削除に失敗しました')
+      await alert({
+        title: 'エラー',
+        message: '削除に失敗しました',
+        type: 'error'
+      })
     } finally {
       setDeletingId(null)
     }
@@ -40,29 +59,29 @@ export function PaymentList({ payments, latestSettlementAt, onDelete }: PaymentL
 
   if (payments.length === 0) {
     return (
-      <div className="text-center py-10 text-gray-500">
-        <svg className="w-12 h-12 mx-auto mb-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <GlassCard className="py-12 flex flex-col items-center justify-center text-gray-500 border-dashed">
+        <svg className="w-12 h-12 mb-3 opacity-20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
         </svg>
-        <p className="text-sm">まだ支払いがありません</p>
-      </div>
+        <p className="text-sm font-medium">まだ支払いがありません</p>
+      </GlassCard>
     )
   }
 
   return (
     <div className="flex flex-col gap-3">
       {payments.map(payment => (
-        <div
+        <GlassCard
           key={payment.id}
-          className="bg-white/5 border border-white/10 rounded-2xl p-4 animate-fade-in"
+          className="p-4"
         >
           <div className="flex items-start justify-between gap-3">
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1 flex-wrap">
-                <span className="text-sm font-bold text-white px-2 py-0.5 bg-white/5 rounded-md border border-white/10">
+                <span className="text-sm font-bold text-white px-2 py-0.5 bg-white/5 rounded-md border border-glass-border">
                   {payment.payer?.name}
                 </span>
-                <span className="text-[10px] text-gray-500 font-medium">が支払い</span>
+                <span className="text-[10px] text-gray-500 font-medium tracking-tight">が支払い</span>
               </div>
               <p className="text-xl font-black text-white leading-none mt-1">
                 {payment.amount.toLocaleString()}<span className="text-xs ml-1 text-gray-400 font-normal">円</span>
@@ -71,18 +90,18 @@ export function PaymentList({ payments, latestSettlementAt, onDelete }: PaymentL
               {/* 参加メンバー内訳 */}
               <div className="flex flex-wrap gap-1.5 mt-3">
                 {payment.participants?.map(p => (
-                  <span
+                  <div
                     key={p.user_id}
-                    className="flex items-center gap-1 text-[10px] px-2 py-1 bg-white/[0.03] border border-white/5 rounded-lg text-gray-400"
+                    className="flex items-center gap-1 text-[10px] px-2 py-1 bg-white/[0.03] border border-glass-border rounded-lg text-gray-400"
                   >
                     <span className="font-bold text-gray-300">{p.user?.name}</span>
                     <span className="opacity-40">¥{p.share_amount.toLocaleString()}</span>
-                  </span>
+                  </div>
                 ))}
               </div>
 
               {payment.memo && (
-                <p className="text-xs text-gray-400 mt-2 bg-white/5 px-2 py-1 rounded-lg border border-white/5 inline-block">
+                <p className="text-xs text-gray-400 mt-2 bg-white/5 px-2 py-1 rounded-lg border border-glass-border inline-block">
                   {payment.memo}
                 </p>
               )}
@@ -97,7 +116,7 @@ export function PaymentList({ payments, latestSettlementAt, onDelete }: PaymentL
               className={`transition-all p-2 rounded-xl flex-shrink-0 ${
                 isLocked(payment.created_at)
                   ? 'text-gray-800 cursor-not-allowed opacity-20' 
-                  : 'text-gray-400 hover:text-red-400 hover:bg-red-500/10 active:scale-95'
+                  : 'text-gray-500 hover:text-red-400 hover:bg-red-500/10 active:scale-95'
               }`}
               title={
                 isLocked(payment.created_at)
@@ -110,7 +129,7 @@ export function PaymentList({ payments, latestSettlementAt, onDelete }: PaymentL
               </svg>
             </button>
           </div>
-        </div>
+        </GlassCard>
       ))}
     </div>
   )

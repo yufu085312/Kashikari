@@ -1,5 +1,8 @@
+import { Inter } from 'next/font/google'
 import type { Metadata } from 'next'
 import '@/styles/globals.css'
+
+const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: '割り勘・貸し借り管理アプリ Kashikari',
@@ -10,9 +13,9 @@ export const metadata: Metadata = {
     description: 'もう精算で揉めない。シンプルな割り勘アプリ',
     type: 'website',
   },
-  themeColor: '#0a0f1e',
-  viewport: 'width=device-width, initial-scale=1, maximum-scale=1',
 }
+
+import { AlertProvider } from '@/components/providers/alert-provider'
 
 export default function RootLayout({
   children,
@@ -21,14 +24,16 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ja">
-      <body>
+      <body className={`${inter.className} bg-background text-white min-h-screen selection:bg-emerald-500/30`}>
         {/* 背景グラデーション */}
         <div className="fixed inset-0 bg-[#0a0f1e] -z-10" />
         <div className="fixed inset-0 bg-gradient-to-br from-emerald-950/30 via-transparent to-teal-950/20 -z-10" />
 
-        <main className="min-h-dvh">
-          {children}
-        </main>
+        <AlertProvider>
+          <main className="max-w-lg mx-auto p-6">
+            {children}
+          </main>
+        </AlertProvider>
       </body>
     </html>
   )

@@ -10,6 +10,11 @@ module.exports = {
         sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
       },
       colors: {
+        background: '#0a0f1e',
+        surface: 'rgba(255, 255, 255, 0.05)',
+        'surface-hover': 'rgba(255, 255, 255, 0.08)',
+        'glass-border': 'rgba(255, 255, 255, 0.1)',
+        'glass-border-hover': 'rgba(255, 255, 255, 0.2)',
         brand: {
           50: '#f0fdf4',
           100: '#dcfce7',

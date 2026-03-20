@@ -1,3 +1,5 @@
+import { User } from './user'
+
 export interface Balance {
   fromUserId: string
   toUserId: string
@@ -12,7 +14,9 @@ export interface Settlement {
   from_user_id: string
   to_user_id: string
   amount: number
-  created_at?: string
+  created_at: string
+  from_user?: User
+  to_user?: User
 }
 
 export interface CreateSettlementInput {

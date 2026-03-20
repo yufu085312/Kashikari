@@ -19,10 +19,10 @@ export function Button({
   const base = 'inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95'
 
   const variants = {
-    primary: 'bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white shadow-lg shadow-emerald-500/25 focus:ring-emerald-500',
-    secondary: 'bg-white/10 hover:bg-white/20 text-white border border-white/20 focus:ring-white/50',
-    danger: 'bg-gradient-to-r from-red-500 to-rose-500 hover:from-red-400 hover:to-rose-400 text-white shadow-lg shadow-red-500/25 focus:ring-red-500',
-    ghost: 'text-gray-400 hover:text-white hover:bg-white/10 focus:ring-white/30',
+    primary: 'bg-gradient-to-r from-brand-500 to-emerald-600 hover:from-brand-400 hover:to-emerald-500 text-white shadow-lg shadow-brand-500/25 focus:ring-brand-500',
+    secondary: 'bg-white/5 hover:bg-white/10 text-white border border-glass-border hover:border-glass-border-hover focus:ring-white/30',
+    danger: 'bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-400 hover:to-rose-500 text-white shadow-lg shadow-red-500/25 focus:ring-red-500',
+    ghost: 'text-gray-400 hover:text-white hover:bg-white/5 focus:ring-glass-border',
   }
 
   const sizes = {
