@@ -1,3 +1,4 @@
+export const runtime = 'edge';
 import { NextRequest, NextResponse } from 'next/server'
 import { getSettlementsByGroupId } from '@/lib/repositories/settlementRepository'
 import { createClient } from '@/utils/supabase/server'

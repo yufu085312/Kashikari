@@ -15,6 +15,8 @@ export const metadata: Metadata = {
   },
 }
 
+export const runtime = 'edge';
+
 import { AlertProvider } from '@/components/providers/alert-provider'
 
 export default function RootLayout({
@@ -24,6 +26,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ja">
+      <head>
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+      </head>
       <body className={`${inter.className} bg-background text-white min-h-screen selection:bg-emerald-500/30`}>
         {/* 背景グラデーション */}
         <div className="fixed inset-0 bg-[#0a0f1e] -z-10" />

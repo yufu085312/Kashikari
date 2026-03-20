@@ -1,3 +1,4 @@
+export const runtime = 'edge';
 import { NextRequest, NextResponse } from 'next/server'
 import { createGroup } from '@/lib/usecases/createGroup'
 import { getGroupsByUserId } from '@/lib/repositories/groupRepository'

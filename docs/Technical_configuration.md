@@ -187,8 +187,6 @@
 ## ■ Web / API
 
 * Cloudflare Pages
-  or
-* Vercel
 
 ---
 

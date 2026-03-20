@@ -1,3 +1,4 @@
+export const runtime = 'edge';
 import { NextRequest, NextResponse } from 'next/server'
 import { createPayment } from '@/lib/usecases/createPayment'
 import { createClient } from '@/utils/supabase/server'

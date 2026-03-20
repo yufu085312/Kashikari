@@ -1,3 +1,4 @@
+export const runtime = 'edge';
 import { createClient } from '@/utils/supabase/server'
 import { getGroupById } from '@/lib/repositories/groupRepository'
 import { getBalances } from '@/lib/usecases/getBalances'

@@ -1,3 +1,4 @@
+export const runtime = 'edge';
 import { createClient } from '@/utils/supabase/server'
 import { getGroupById, addMemberToGroup } from '@/lib/repositories/groupRepository'
 import { redirect } from 'next/navigation'
