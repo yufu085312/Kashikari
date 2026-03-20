@@ -39,12 +39,47 @@ export function HomePageClient({ initialGroups, userName, searchId }: HomePageCl
       <section className="relative flex flex-col sm:flex-row sm:items-start justify-between gap-6">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-2">
-            <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-500/20 flex-shrink-0">
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-.778.099-1.533.284-2.253" />
+            <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center shadow-lg shadow-black/10 flex-shrink-0 border border-white/10 overflow-hidden">
+              <svg className="w-full h-full" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <linearGradient id="header-bg" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stopColor="#4ade80" />
+                    <stop offset="100%" stopColor="#16a34a" />
+                  </linearGradient>
+                  <linearGradient id="header-wallet" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stopColor="#60a5fa" />
+                    <stop offset="100%" stopColor="#2563eb" />
+                  </linearGradient>
+                  <filter id="header-shadow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feDropShadow dx="0" dy="20" stdDeviation="30" floodOpacity="0.18" />
+                  </filter>
+                </defs>
+                <rect x="0" y="0" width="1024" height="1024" rx="220" fill="url(#header-bg)" />
+                <g filter="url(#header-shadow)">
+                  <rect x="180" y="380" width="664" height="360" rx="80" fill="url(#header-wallet)" />
+                </g>
+                <rect x="600" y="420" width="240" height="260" rx="60" fill="#1d4ed8" />
+                <circle cx="720" cy="550" r="18" fill="#fde047" />
+                <text x="360" y="600" fontSize="220" fill="white" fontWeight="700" fontFamily="Arial, sans-serif">
+                  ¥
+                </text>
+                <path d="M380 250 L640 250 M640 250 L600 210 M640 250 L600 290"
+                  stroke="white"
+                  strokeWidth="18"
+                  fill="none"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  opacity="0.9" />
+                <circle cx="780" cy="260" r="70" fill="white" opacity="0.95" />
+                <path d="M740 260 L770 290 L820 230"
+                  stroke="#22c55e"
+                  strokeWidth="20"
+                  fill="none"
+                  strokeLinecap="round"
+                  strokeLinejoin="round" />
               </svg>
             </div>
-            <h1 className="text-2xl font-black text-white tracking-tight">Kashikari</h1>
+            <h1 className="text-lg sm:text-2xl font-black text-white tracking-tight">割り勘・貸し借り管理アプリ</h1>
           </div>
           <div className="space-y-0.5">
             <p className="text-sm text-gray-500 font-medium">こんにちは、<span className="text-emerald-400">{userName}</span></p>
