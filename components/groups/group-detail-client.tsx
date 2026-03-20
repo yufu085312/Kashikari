@@ -249,7 +249,7 @@ export function GroupDetailClient({
       </div>
 
       {/* 固定アクションボタン */}
-      <div className="fixed bottom-8 left-1/2 -translate-x-1/2 w-full max-w-lg px-6 z-40">
+      <div className="fixed bottom-8 left-1/2 -translate-x-1/2 w-full max-w-screen-xl px-6 z-40">
         <Button 
           onClick={() => setShowPaymentModal(true)}
           size="lg"

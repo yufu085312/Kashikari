@@ -30,7 +30,7 @@ export default function RootLayout({
         <div className="fixed inset-0 bg-gradient-to-br from-emerald-950/30 via-transparent to-teal-950/20 -z-10" />
 
         <AlertProvider>
-          <main className="max-w-lg mx-auto p-6">
+          <main className="w-full max-w-screen-xl mx-auto p-4 md:p-8 lg:p-10 transition-all duration-300">
             {children}
           </main>
         </AlertProvider>

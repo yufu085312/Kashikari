@@ -14,7 +14,7 @@ export default async function HomePage() {
   const searchId = user.user_metadata?.search_id || ''
 
   return (
-    <div className="min-h-dvh max-w-lg mx-auto px-4 py-6">
+    <div>
       <HomePageClient initialGroups={groups} userName={userName} searchId={searchId} />
     </div>
   )

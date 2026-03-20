@@ -28,7 +28,7 @@ export default async function GroupDetailPage(props: { params: Promise<{ groupId
     ])
 
     return (
-      <div className="min-h-dvh max-w-lg mx-auto px-4 py-6 pb-24">
+      <div>
         <GroupDetailClient 
           groupId={groupId}
           userId={user.id}
