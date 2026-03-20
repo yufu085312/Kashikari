@@ -16,6 +16,7 @@ export function GroupForm({ onSuccess }: GroupFormProps) {
   const [memberSearchIds, setMemberSearchIds] = useState<string[]>([''])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [nameError, setNameError] = useState<string | null>(null)
 
   const addSearchId = () => setMemberSearchIds(prev => [...prev, ''])
   const removeSearchId = (i: number) => setMemberSearchIds(prev => prev.filter((_, idx) => idx !== i))
@@ -24,7 +25,12 @@ export function GroupForm({ onSuccess }: GroupFormProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!groupName.trim()) return
+    setNameError(null)
+    
+    if (!groupName.trim()) {
+      setNameError('グループ名を入力してください')
+      return
+    }
 
     setLoading(true)
     setError(null)
@@ -34,19 +40,23 @@ export function GroupForm({ onSuccess }: GroupFormProps) {
       const group = await api.createGroup({ name: groupName, memberSearchIds: validSearchIds })
       onSuccess ? onSuccess(group.id) : router.push(`/groups/${group.id}`)
     } catch (e) {
-      setError(String(e))
+      setError(e instanceof Error ? e.message : String(e))
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-5" noValidate>
       <Input
         label="グループ名"
         placeholder="例：沖縄旅行、渋谷飲み会"
         value={groupName}
-        onChange={e => setGroupName(e.target.value)}
+        onChange={e => {
+          setGroupName(e.target.value)
+          if (e.target.value.trim()) setNameError(null)
+        }}
+        error={nameError || undefined}
         required
       />
 

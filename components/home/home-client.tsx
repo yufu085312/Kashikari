@@ -36,11 +36,11 @@ export function HomePageClient({ initialGroups, userName, searchId }: HomePageCl
   }
 
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="space-y-6 sm:space-y-8 animate-fade-in pb-24 sm:pb-0">
       {/* ユーザープロフィール */}
-      <section className="relative flex flex-col sm:flex-row sm:items-start justify-between gap-6">
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-2">
+      <section className="relative flex flex-col sm:flex-row sm:items-start justify-between sm:gap-6">
+        <div className="flex-1 min-w-0 pr-10 sm:pr-0">
+          <div className="flex items-center gap-3">
             <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center shadow-lg shadow-black/10 flex-shrink-0 border border-white/10 overflow-hidden">
               <svg className="w-full h-full" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <defs>
@@ -83,8 +83,7 @@ export function HomePageClient({ initialGroups, userName, searchId }: HomePageCl
             </div>
             <h1 className="text-lg sm:text-2xl font-black text-white tracking-tight">割り勘・貸し借り管理アプリ</h1>
           </div>
-          <div className="space-y-0.5">
-            <p className="text-sm text-gray-500 font-medium">こんにちは、<span className="text-emerald-400">{userName}</span></p>
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-2 mt-6 sm:mt-8">
             <button 
               onClick={handleCopyId}
               className="group flex items-center justify-center min-w-[120px] gap-1.5 text-[10px] text-gray-600 hover:text-emerald-400 transition-colors bg-white/5 px-2 py-0.5 rounded-full border border-white/5 active:scale-95"
@@ -106,6 +105,7 @@ export function HomePageClient({ initialGroups, userName, searchId }: HomePageCl
                 </>
               )}
             </button>
+            <p className="text-sm text-gray-500 font-medium">こんにちは、<span className="text-emerald-400">{userName}</span></p>
           </div>
         </div>
         
@@ -113,7 +113,7 @@ export function HomePageClient({ initialGroups, userName, searchId }: HomePageCl
           <Button 
             onClick={() => setShowGroupForm(true)}
             size="sm"
-            className="rounded-2xl w-full sm:w-auto"
+            className="hidden sm:flex rounded-2xl w-full sm:w-auto"
           >
             <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
@@ -208,6 +208,22 @@ export function HomePageClient({ initialGroups, userName, searchId }: HomePageCl
           )}
         </div>
       </section>
+
+      {/* 画面下部固定アクションボタン（SP専用） */}
+      <div className="sm:hidden fixed bottom-8 left-1/2 -translate-x-1/2 w-full px-6 z-40">
+        <div className="animate-slide-up">
+          <Button 
+            onClick={() => setShowGroupForm(true)}
+            size="lg"
+            className="w-full rounded-2xl shadow-2xl shadow-emerald-500/30 overflow-hidden py-4 text-base font-bold bg-gradient-to-r from-emerald-500 to-emerald-400 hover:from-emerald-400 hover:to-emerald-300 border border-white/20 active:scale-95 transition-all text-white"
+          >
+            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
+            </svg>
+            新しいグループ
+          </Button>
+        </div>
+      </div>
 
       <Modal
         isOpen={showGroupForm}

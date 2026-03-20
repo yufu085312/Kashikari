@@ -36,11 +36,11 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
 
       {/* Modal */}
       <div
-        className="relative w-full max-w-md bg-background border border-glass-border rounded-3xl shadow-2xl animate-slide-up overflow-hidden"
+        className="relative w-full max-w-md bg-background border border-glass-border rounded-3xl shadow-2xl animate-slide-up overflow-hidden flex flex-col max-h-[90vh]"
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-5 border-b border-glass-border bg-white/5">
+        <div className="shrink-0 flex items-center justify-between px-6 py-5 border-b border-glass-border bg-white/5">
           <h2 className="text-xl font-black text-white tracking-tight">{title}</h2>
           <button
             onClick={onClose}
@@ -53,7 +53,7 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
         </div>
 
         {/* Content */}
-        <div className="px-6 py-6">
+        <div className="overflow-y-auto px-6 py-6 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
           {children}
         </div>
       </div>

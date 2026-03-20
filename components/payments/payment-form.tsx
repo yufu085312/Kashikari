@@ -23,6 +23,7 @@ export function PaymentForm({ groupId, members, currentUserId, onSuccess }: Paym
   const [manualAmounts, setManualAmounts] = useState<Record<string, string>>({})
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [amountError, setAmountError] = useState<string | null>(null)
 
   // 均等割り自動計算
   const autoSplitAmounts = calcEvenSplit(Number(amount) || 0, selectedIds)
@@ -50,7 +51,17 @@ export function PaymentForm({ groupId, members, currentUserId, onSuccess }: Paym
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!amount || selectedIds.length === 0) return
+    setAmountError(null)
+
+    if (!amount) {
+      setAmountError('金額を入力してください')
+      return
+    }
+    if (Number(amount) <= 0) {
+      setAmountError('1以上の金額を入力してください')
+      return
+    }
+    if (selectedIds.length === 0) return
 
     if (isManual && !isTotalMatching) {
       setError(`合計金額が一致しません（現在: ¥${manualTotal.toLocaleString()}）`)
@@ -87,7 +98,7 @@ export function PaymentForm({ groupId, members, currentUserId, onSuccess }: Paym
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-6" noValidate>
       {/* 金額 */}
       <div className="flex flex-col gap-1.5 animate-slide-up">
         <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">金額</label>
@@ -98,12 +109,18 @@ export function PaymentForm({ groupId, members, currentUserId, onSuccess }: Paym
             inputMode="numeric"
             placeholder="0"
             value={amount}
-            onChange={e => setAmount(e.target.value)}
+            onChange={e => {
+              setAmount(e.target.value)
+              if (Number(e.target.value) > 0) setAmountError(null)
+            }}
             required
             min={1}
-            className="w-full bg-white/5 border-2 border-white/5 rounded-2xl pl-10 pr-4 py-4 text-white text-3xl font-black placeholder-gray-800 focus:outline-none focus:border-emerald-500/50 focus:bg-emerald-500/5 transition-all shadow-inner"
+            className={`w-full bg-white/5 border-2 rounded-2xl pl-10 pr-4 py-4 text-white text-3xl font-black placeholder-gray-800 focus:outline-none transition-all shadow-inner ${amountError ? 'border-red-500/50 focus:border-red-500/50 focus:bg-red-500/5' : 'border-white/5 focus:border-emerald-500/50 focus:bg-emerald-500/5'}`}
           />
         </div>
+        {amountError && (
+          <p className="text-red-500 text-xs font-bold px-1 animate-fade-in">{amountError}</p>
+        )}
       </div>
 
       {/* 支払者 */}
@@ -221,7 +238,7 @@ export function PaymentForm({ groupId, members, currentUserId, onSuccess }: Paym
 
       {/* メモ */}
       <div className="flex flex-col gap-1.5 animate-slide-up" style={{ animationDelay: '0.3s' }}>
-        <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">メモ</label>
+        <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">メモ（任意）</label>
         <input
           placeholder="例：焼肉ランチ"
           value={memo}
