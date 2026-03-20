@@ -34,12 +34,13 @@ export async function updateSession(request: NextRequest) {
 
   const pathname = request.nextUrl.pathname
   const isAuthRoute = pathname.startsWith('/login') || pathname.startsWith('/signup')
+  const isPublicRoute = pathname.startsWith('/privacy') || pathname.startsWith('/terms')
   
   // APIへのリクエストはミドルウェアではなく、各Route Handlerでセッションを検証するためスキップ
   const isApiRoute = pathname.startsWith('/api')
 
   // 未ログインユーザーの保護パスへのアクセスを /login にリダイレクト
-  if (!user && !isAuthRoute && !isApiRoute) {
+  if (!user && !isAuthRoute && !isPublicRoute && !isApiRoute) {
     const url = request.nextUrl.clone()
     url.pathname = '/login'
     url.searchParams.set('next', pathname) // 元のパスを保持

@@ -98,6 +98,10 @@ export default async function SignupPage({
           >
             すでにアカウントをお持ちの方はこちら
           </Link>
+          <div className="flex items-center gap-4 text-xs text-gray-500 mt-2">
+            <Link href="/terms" className="hover:text-gray-300 transition-colors">利用規約</Link>
+            <Link href="/privacy" className="hover:text-gray-300 transition-colors">プライバシーポリシー</Link>
+          </div>
         </div>
       </div>
     </div>
