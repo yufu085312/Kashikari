@@ -46,6 +46,7 @@ export function GroupDetailClient({
   const [settlements, setSettlements] = useState<Settlement[]>(initialSettlements)
   const [showPaymentModal, setShowPaymentModal] = useState(false)
   const [showInviteModal, setShowInviteModal] = useState(false)
+  const [showMembersModal, setShowMembersModal] = useState(false)
   const [searchIdInput, setSearchIdInput] = useState('')
   const [isAddingMember, setIsAddingMember] = useState(false)
   const [addMemberError, setAddMemberError] = useState<string | null>(null)
@@ -177,13 +178,17 @@ export function GroupDetailClient({
           </div>
         </div>
 
-      {/* メンバーリスト表示 */}
-      <div className="flex items-center gap-1.5 overflow-x-auto whitespace-nowrap px-1 pb-2 scrollbar-hide">
-        {initialMembers.map(m => (
-          <span key={m.id} className="text-[10px] font-bold text-gray-500 bg-white/5 py-1 px-2 rounded-lg border border-glass-border">
-            {m.name}
-          </span>
-        ))}
+      {/* メンバーリスト呼び出しボタン */}
+      <div className="px-2 pb-1 animate-slide-up">
+        <button 
+          onClick={() => setShowMembersModal(true)}
+          className="inline-flex items-center text-xs font-bold text-gray-400 bg-white/5 py-1.5 px-3 rounded-full border border-glass-border hover:text-white hover:bg-white/10 transition-all group shadow-sm"
+        >
+          <svg className="w-4 h-4 mr-1.5 text-brand-400 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+          </svg>
+          メンバー {initialMembers.length}名
+        </button>
       </div>
       </section>
 
@@ -315,6 +320,44 @@ export function GroupDetailClient({
             </div>
             <p className="text-[10px] text-gray-500">このリンクを開いた人は誰でもグループに参加できます。</p>
           </div>
+        </div>
+      </Modal>
+
+      {/* メンバー一覧モーダル */}
+      <Modal 
+        isOpen={showMembersModal} 
+        onClose={() => setShowMembersModal(false)}
+        title="メンバー一覧"
+      >
+        <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+          {initialMembers.map(m => (
+            <div key={m.id} className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors">
+              <div className="flex items-center gap-3 overflow-hidden">
+                <div className="shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-brand-400/20 to-brand-600/20 flex items-center justify-center border border-brand-500/20 shadow-inner">
+                  <span className="text-brand-400 font-black text-lg">
+                    {m.name.charAt(0).toUpperCase()}
+                  </span>
+                </div>
+                <div className="min-w-0">
+                  <p className="text-sm font-bold text-white truncate">{m.name}</p>
+                </div>
+              </div>
+              {m.id === initialCreatedBy && (
+                <span className="shrink-0 ml-2 text-[10px] font-bold text-brand-400 bg-brand-500/10 px-2.5 py-1 rounded-full border border-brand-500/20">
+                  作成者
+                </span>
+              )}
+            </div>
+          ))}
+        </div>
+        <div className="mt-6">
+          <Button 
+            variant="secondary" 
+            className="w-full rounded-xl"
+            onClick={() => setShowMembersModal(false)}
+          >
+            閉じる
+          </Button>
         </div>
       </Modal>
 
