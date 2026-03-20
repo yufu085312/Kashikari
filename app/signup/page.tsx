@@ -1,15 +1,60 @@
+'use client'
+
+import { use, useState, useTransition } from 'react'
 import Link from 'next/link'
 import { signup } from '../login/actions'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
-export default async function SignupPage({
+export default function SignupPage({
   searchParams,
 }: {
   searchParams: Promise<{ error?: string; next?: string }>
 }) {
-  const params = await searchParams
-  const error = params.error
+  const params = use(searchParams)
+  const serverError = params.error
+
+  const [errors, setErrors] = useState<{name?: string, search_id?: string, email?: string, password?: string}>({})
+  const [isPending, startTransition] = useTransition()
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    const formData = new FormData(e.currentTarget)
+    const name = formData.get('name') as string
+    const search_id = formData.get('search_id') as string
+    const email = formData.get('email') as string
+    const password = formData.get('password') as string
+
+    const newErrors: {name?: string, search_id?: string, email?: string, password?: string} = {}
+    
+    // 必須チェック
+    if (!name) newErrors.name = '表示名を入力してください'
+    if (!search_id) newErrors.search_id = '検索IDを入力してください'
+    
+    if (!email) {
+      newErrors.email = 'メールアドレスを入力してください'
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      newErrors.email = '正しいメールアドレスの形式で入力してください'
+    }
+    
+    if (!password) newErrors.password = 'パスワードを入力してください'
+
+    // フォーマット・文字数チェック
+    if (name && name.length > 20) newErrors.name = '表示名は20文字以内で入力してください'
+    if (search_id && search_id.length > 20) newErrors.search_id = '検索IDは20文字以内で入力してください'
+    if (search_id && !/^[a-zA-Z0-9_]+$/.test(search_id)) newErrors.search_id = '検索IDは半角英数字と_のみ使用できます'
+    if (password && password.length < 6) newErrors.password = 'パスワードは6文字以上で入力してください'
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors)
+      return
+    }
+
+    setErrors({})
+    startTransition(() => {
+      signup(formData)
+    })
+  }
 
   return (
     <div className="flex flex-col items-center justify-center py-4 sm:py-6">
@@ -48,7 +93,7 @@ export default async function SignupPage({
       <div className="w-full max-w-sm p-6 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl animate-slide-up">
         <h2 className="text-lg font-bold text-white mb-6 text-center">新規アカウント作成</h2>
         
-        <form action={signup} className="space-y-6" noValidate>
+        <form onSubmit={handleSubmit} className="space-y-6" noValidate>
           {params.next && <input type="hidden" name="next" value={params.next} />}
           <Input 
             name="name" 
@@ -58,6 +103,7 @@ export default async function SignupPage({
             autoComplete="name"
             required 
             maxLength={20}
+            error={errors.name}
           />
           <Input 
             name="search_id" 
@@ -67,6 +113,7 @@ export default async function SignupPage({
             autoComplete="username"
             required 
             maxLength={20}
+            error={errors.search_id}
           />
           <Input 
             name="email" 
@@ -75,6 +122,7 @@ export default async function SignupPage({
             placeholder="you@example.com" 
             autoComplete="email"
             required 
+            error={errors.email}
           />
           <Input 
             name="password" 
@@ -84,14 +132,15 @@ export default async function SignupPage({
             autoComplete="new-password"
             required 
             minLength={6}
+            error={errors.password}
           />
           
-          {error && (
-            <p className="text-red-400 text-sm">{error}</p>
+          {serverError && (
+            <p className="text-red-400 text-sm mt-2">{serverError}</p>
           )}
 
-          <Button type="submit" className="w-full" size="lg">
-            登録して始める
+          <Button type="submit" className="w-full" size="lg" disabled={isPending}>
+            {isPending ? '登録処理中...' : '登録して始める'}
           </Button>
         </form>
 
