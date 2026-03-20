@@ -55,6 +55,7 @@ export default async function SignupPage({
             type="text" 
             label="表示名 (最大20文字)" 
             placeholder="田中 太郎" 
+            autoComplete="name"
             required 
             maxLength={20}
           />
@@ -63,6 +64,7 @@ export default async function SignupPage({
             type="text" 
             label="検索ID (半角英数字/最大20文字)" 
             placeholder="tanaka_123" 
+            autoComplete="username"
             required 
             maxLength={20}
           />
@@ -71,6 +73,7 @@ export default async function SignupPage({
             type="email" 
             label="メールアドレス" 
             placeholder="you@example.com" 
+            autoComplete="email"
             required 
           />
           <Input 
@@ -78,6 +81,7 @@ export default async function SignupPage({
             type="password" 
             label="パスワード (6文字以上)" 
             placeholder="••••••••" 
+            autoComplete="new-password"
             required 
             minLength={6}
           />

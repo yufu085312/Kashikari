@@ -55,6 +55,7 @@ export default async function LoginPage({
             type="email" 
             label="メールアドレス" 
             placeholder="you@example.com" 
+            autoComplete="email"
             required 
           />
           <Input 
@@ -62,6 +63,7 @@ export default async function LoginPage({
             type="password" 
             label="パスワード" 
             placeholder="••••••••" 
+            autoComplete="current-password"
             required 
           />
           
