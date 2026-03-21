@@ -82,6 +82,20 @@ export async function addMemberToGroup(
   if (error) throw new Error(error.message);
 }
 
+export async function removeMemberFromGroup(
+  groupId: string,
+  userId: string,
+): Promise<void> {
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("group_members")
+    .delete()
+    .eq("group_id", groupId)
+    .eq("user_id", userId);
+
+  if (error) throw new Error(error.message);
+}
+
 export async function deleteGroup(groupId: string): Promise<void> {
   const supabase = await createClient();
   const { error, count } = await supabase
