@@ -77,98 +77,11 @@ export default function SignupPage({
     <div className="flex flex-col items-center justify-center py-4 sm:py-6">
       <div className="flex flex-col items-center mb-4 text-center animate-fade-in">
         <div className="w-16 h-16 bg-white/5 rounded-[2rem] flex items-center justify-center shadow-2xl border border-white/10 overflow-hidden mb-3 shadow-emerald-500/10">
-          <svg
-            className="w-full h-full p-2.5"
-            viewBox="0 0 1024 1024"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <defs>
-              <linearGradient id="signup-logo-bg" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stopColor="#4ade80" />
-                <stop offset="100%" stopColor="#16a34a" />
-              </linearGradient>
-              <linearGradient
-                id="signup-logo-wallet"
-                x1="0"
-                y1="0"
-                x2="1"
-                y2="1"
-              >
-                <stop offset="0%" stopColor="#60a5fa" />
-                <stop offset="100%" stopColor="#2563eb" />
-              </linearGradient>
-              <filter
-                id="signup-logo-shadow"
-                x="-20%"
-                y="-20%"
-                width="140%"
-                height="140%"
-              >
-                <feDropShadow
-                  dx="0"
-                  dy="20"
-                  stdDeviation="30"
-                  floodOpacity="0.18"
-                />
-              </filter>
-            </defs>
-            <rect
-              x="0"
-              y="0"
-              width="1024"
-              height="1024"
-              rx="220"
-              fill="url(#signup-logo-bg)"
-            />
-            <g filter="url(#signup-logo-shadow)">
-              <rect
-                x="180"
-                y="380"
-                width="664"
-                height="360"
-                rx="80"
-                fill="url(#signup-logo-wallet)"
-              />
-            </g>
-            <rect
-              x="600"
-              y="420"
-              width="240"
-              height="260"
-              rx="60"
-              fill="#1d4ed8"
-            />
-            <circle cx="720" cy="550" r="18" fill="#fde047" />
-            <text
-              x="360"
-              y="600"
-              fontSize="220"
-              fill="white"
-              fontWeight="700"
-              fontFamily="Arial, sans-serif"
-            >
-              ¥
-            </text>
-            <path
-              d="M380 250 L640 250 M640 250 L600 210 M640 250 L600 290"
-              stroke="white"
-              strokeWidth="18"
-              fill="none"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              opacity="0.9"
-            />
-            <circle cx="780" cy="260" r="70" fill="white" opacity="0.95" />
-            <path
-              d="M740 260 L770 290 L820 230"
-              stroke="#22c55e"
-              strokeWidth="20"
-              fill="none"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
+          <img
+            src="/icon.png"
+            alt={METADATA.SHORT_NAME}
+            className="w-full h-full object-cover p-2.5"
+          />
         </div>
         <h1 className="text-3xl font-black text-white tracking-tighter mb-1">
           {METADATA.SHORT_NAME}
