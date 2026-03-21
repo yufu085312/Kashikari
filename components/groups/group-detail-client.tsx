@@ -53,6 +53,9 @@ export function GroupDetailClient({
   const [showMembersModal, setShowMembersModal] = useState(false);
   const [searchIdInput, setSearchIdInput] = useState("");
   const [isAddingMember, setIsAddingMember] = useState(false);
+  const [isRemovingMemberId, setIsRemovingMemberId] = useState<string | null>(
+    null,
+  );
   const [addMemberError, setAddMemberError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
 
@@ -81,6 +84,61 @@ export function GroupDetailClient({
       setAddMemberError(MESSAGES.ERROR.USER_NOT_FOUND);
     } finally {
       setIsAddingMember(false);
+    }
+  };
+
+  const handleRemoveMember = async (member: User) => {
+    // 自分自身が作成者の場合、自分を削除することはできない
+    if (member.id === initialCreatedBy) return;
+
+    // 残高チェック
+    const hasBalance = balances.some(
+      (b) => b.fromUserId === member.id || b.toUserId === member.id,
+    );
+    if (hasBalance) {
+      await alert({
+        title: member.id === userId ? "退会できません" : "削除できません",
+        message:
+          member.id === userId
+            ? MESSAGES.ERROR.MEMBER_LEAVE_SETTLEMENT_PENDING
+            : MESSAGES.ERROR.MEMBER_REMOVE_SETTLEMENT_PENDING,
+        type: "warn",
+      });
+      return;
+    }
+
+    const isConfirmed = await confirm({
+      title:
+        member.id === userId ? MESSAGES.UI.LEAVE_GROUP : MESSAGES.UI.REMOVE,
+      message:
+        member.id === userId
+          ? MESSAGES.UI.CONFIRM_LEAVE_GROUP
+          : MESSAGES.UI.CONFIRM_REMOVE_MEMBER,
+      type: "danger",
+      confirmText:
+        member.id === userId ? MESSAGES.UI.LEAVE : MESSAGES.UI.REMOVE,
+      cancelText: MESSAGES.UI.BACK,
+    });
+
+    if (!isConfirmed) return;
+
+    setIsRemovingMemberId(member.id);
+    try {
+      await api.removeMember(groupId, member.id);
+      // 自分を削除した（退会した）場合はホームへ
+      if (member.id === userId) {
+        router.push(ROUTES.HOME);
+      } else {
+        window.location.reload();
+      }
+    } catch (e) {
+      await alert({
+        title: "エラー",
+        message: MESSAGES.ERROR.MEMBER_REMOVE_FAILED,
+        type: "error",
+      });
+    } finally {
+      setIsRemovingMemberId(null);
     }
   };
 
@@ -408,6 +466,44 @@ export function GroupDetailClient({
                 <span className="shrink-0 ml-2 text-[10px] font-bold text-brand-400 bg-brand-500/10 px-2.5 py-1 rounded-full border border-brand-500/20">
                   作成者
                 </span>
+              )}
+
+              {/* 削除ボタン表示条件:
+                  1. 自分が作成者で、対象が自分以外
+                  2. 対象が自分自身で、自分が作成者ではない（退会）
+              */}
+              {((userId === initialCreatedBy && m.id !== initialCreatedBy) ||
+                (m.id === userId && userId !== initialCreatedBy)) && (
+                <button
+                  onClick={() => handleRemoveMember(m)}
+                  disabled={isRemovingMemberId !== null}
+                  className="ml-2 p-1.5 text-gray-500 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-all active:scale-95"
+                  title={
+                    m.id === userId ? MESSAGES.UI.LEAVE : MESSAGES.UI.REMOVE
+                  }
+                >
+                  {isRemovingMemberId === m.id ? (
+                    <div className="w-4 h-4 border-2 border-red-500/30 border-t-red-500 rounded-full animate-spin" />
+                  ) : m.id === userId ? (
+                    <span className="text-[10px] font-bold px-1.5">
+                      {MESSAGES.UI.LEAVE}
+                    </span>
+                  ) : (
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                      />
+                    </svg>
+                  )}
+                </button>
               )}
             </div>
           ))}

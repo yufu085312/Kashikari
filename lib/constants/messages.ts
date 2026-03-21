@@ -59,6 +59,11 @@ export const MESSAGES = {
     PASSWORD_UPDATE_FAILED: "パスワードの更新に失敗しました。",
     PASSWORD_MISMATCH: "新しいパスワードと確認用パスワードが一致しません。",
     RESET_EMAIL_SEND_FAILED: "リセットメールの送信に失敗しました。",
+    MEMBER_REMOVE_FAILED: "メンバーの削除に失敗しました。",
+    MEMBER_REMOVE_SETTLEMENT_PENDING:
+      "精算が完了していない貸し借りがあるため、このメンバーを削除できません。",
+    MEMBER_LEAVE_SETTLEMENT_PENDING:
+      "精算が完了していない貸し借りがあるため、退会できません。",
   },
   UI: {
     APP_TAGLINE: "割り勘・貸し借り管理アプリ",
@@ -160,5 +165,10 @@ export const MESSAGES = {
     RESET_PASSWORD_TITLE: "パスワードの再設定",
     RESET_PASSWORD_DESCRIPTION: "新しいパスワードを入力してください。",
     BACK_TO_LOGIN: "ログイン画面へ戻る",
+    CONFIRM_REMOVE_MEMBER: "このメンバーをグループから削除しますか？",
+    REMOVE: "削除",
+    LEAVE_GROUP: "グループを退会",
+    CONFIRM_LEAVE_GROUP: "このグループを退会しますか？",
+    LEAVE: "退会",
   },
 } as const;

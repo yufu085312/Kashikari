@@ -41,6 +41,10 @@ export const api = {
       method: "POST",
       body: JSON.stringify({ searchId }),
     }),
+  removeMember: (groupId: string, userId: string) =>
+    request<void>(`/groups/${groupId}/members/${userId}`, {
+      method: "DELETE",
+    }),
   deleteGroup: (groupId: string) =>
     request<void>(`/groups/${groupId}`, { method: "DELETE" }),
 
