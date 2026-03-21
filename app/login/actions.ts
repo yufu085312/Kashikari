@@ -155,7 +155,7 @@ export async function verifySignupOtp(formData: FormData) {
   }
 
   revalidatePath('/', 'layout')
-  redirect('/signup/complete')
+  redirect(`/signup/complete?next=${encodeURIComponent(next)}`)
 }
 
 export async function logout() {

@@ -1,9 +1,13 @@
 'use client'
 
-import React from 'react'
+import React, { use } from 'react'
 import { Button } from '@/components/ui/button'
 
-export default function SignupCompletePage() {
+export default function SignupCompletePage({ searchParams }: { searchParams: Promise<{ next?: string }> }) {
+  const params = use(searchParams)
+  const next = params.next || '/'
+  const isInvite = next.includes('/invite')
+
   return (
     <div className="flex flex-col items-center justify-center py-12 sm:py-20 animate-fade-in text-white">
       <div className="w-full max-w-md p-10 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl text-center shadow-emerald-500/10">
@@ -13,22 +17,23 @@ export default function SignupCompletePage() {
           </svg>
         </div>
         
-        <h1 className="text-3xl font-black text-white tracking-tight mb-4">新規登録が完了しました！</h1>
+        <h1 className="text-3xl font-black text-white tracking-tight mb-4">登録が完了しました！</h1>
         
         <p className="text-gray-400 font-medium mb-10 leading-relaxed">
-          メールアドレスの確認が完了しました。<br />
-          <span className="text-brand-300 font-bold">先ほど開いていたログイン画面</span>に戻って、ログインを続けてください。
+          認証に成功しました。そのままアプリをご利用いただけます。
+          {isInvite && (
+            <span className="text-emerald-400 font-bold block mt-3">
+              招待されたグループへ移動して参加を完了しましょう。
+            </span>
+          )}
         </p>
 
-        <div className="space-y-4 pt-4 border-t border-white/10">
-          <p className="text-sm text-gray-500">
-            すでにタブを閉じてしまった場合は、下のボタンからログイン画面へ移動できます。
-          </p>
+        <div className="pt-4 border-t border-white/10">
           <Button 
-            className="w-full h-12 text-md font-bold"
-            onClick={() => window.location.href = '/login'}
+            className="w-full h-14 text-lg font-bold shadow-lg shadow-emerald-500/10 bg-emerald-500 hover:bg-emerald-400 text-white border-none"
+            onClick={() => window.location.href = next}
           >
-            ログイン画面へ移動
+            {isInvite ? 'グループ招待ページへ' : 'ホームへ移動'}
           </Button>
         </div>
       </div>
