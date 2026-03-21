@@ -4,10 +4,10 @@ import { getGroupById, addMemberToGroup } from '@/lib/repositories/groupReposito
 import { redirect } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { revalidatePath } from 'next/cache'
-
 // Next.js の redirect() はエラーを投げることで動作するため、
 // try-catch で誤ってキャッチしないように判定関数を用意します。
 const isRedirectError = (error: any) => error?.digest?.startsWith('NEXT_REDIRECT')
+import { joinGroupAction } from './actions'
 
 export default async function InvitePage(props: { 
   params: Promise<{ groupId: string }>,
@@ -15,15 +15,16 @@ export default async function InvitePage(props: {
 }) {
   const { groupId } = await props.params
   const { error: serverError } = await props.searchParams
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  
-  if (!user) {
-    const nextPath = `/groups/${groupId}/invite`
-    redirect(`/login?next=${encodeURIComponent(nextPath)}`)
-  }
 
   try {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    
+    if (!user) {
+      const nextPath = `/groups/${groupId}/invite`
+      redirect(`/login?next=${encodeURIComponent(nextPath)}`)
+    }
+
     const group = await getGroupById(groupId)
     const isMember = group.members.some(m => m.id === user.id)
 
@@ -32,23 +33,7 @@ export default async function InvitePage(props: {
       redirect(`/groups/${groupId}`)
     }
 
-    async function joinGroup() {
-      'use server'
-      try {
-        const supabaseSrv = await createClient()
-        const { data: { user: authUser } } = await supabaseSrv.auth.getUser()
-        if (!authUser) throw new Error('認証されていません')
-        
-        await addMemberToGroup(groupId, authUser.id)
-        revalidatePath(`/groups/${groupId}`)
-        redirect(`/groups/${groupId}`)
-      } catch (error) {
-        if (isRedirectError(error)) throw error
-        console.error('Failed to join group:', error)
-        const message = error instanceof Error ? error.message : '参加に失敗しました'
-        redirect(`/groups/${groupId}/invite?error=${encodeURIComponent(message)}`)
-      }
-    }
+    const joinGroup = joinGroupAction.bind(null, groupId)
 
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
@@ -76,6 +61,7 @@ export default async function InvitePage(props: {
   } catch (error) {
     if (isRedirectError(error)) throw error
     console.error('Invite page error:', error)
+    // 致命的なエラー時はトップに戻す（RLS起因などの可能性があるため）
     redirect('/')
   }
 }
