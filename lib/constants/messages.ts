@@ -55,6 +55,7 @@ export const MESSAGES = {
     RESEND_ERROR_PREFIX: "再送信エラー: ",
     FETCH_FAILED: "データの取得中に問題が発生しました。",
     RETRY_LATER: "しばらく時間を置いてから再度お試しください。",
+    PROFILE_UPDATE_FAILED: "プロフィールの更新に失敗しました。",
   },
   UI: {
     APP_TAGLINE: "割り勘・貸し借り管理アプリ",
@@ -142,5 +143,9 @@ export const MESSAGES = {
       "招待されたグループへ移動して参加を完了しましょう。",
     GO_TO_INVITE_PAGE: "グループ招待ページへ",
     GO_TO_HOME: "ホームへ移動",
+    PROFILE_EDIT_TITLE: "プロフィール編集",
+    PROFILE_UPDATE_SUCCESS: "プロフィールを更新しました",
+    SAVE: "保存する",
+    SAVING: "保存中...",
   },
 } as const;

@@ -1,0 +1,86 @@
+import { test, expect } from '@playwright/test';
+import { MESSAGES } from '../lib/constants';
+
+test.describe('Profile Management', () => {
+  test.beforeEach(async ({ page }) => {
+    // ログイン済みの状態で開始 (storageState が playwright.config.ts で設定されている想定)
+    await page.goto('/');
+  });
+
+  test('プロフィール編集モーダルが開くこと', async ({ page }) => {
+    // 設定ボタンをクリック (歯車アイコン)
+    await page.click('button[title="' + MESSAGES.UI.SETTINGS_LABEL + '"]');
+    // プロフィール編集をクリック
+    await page.click('text=' + MESSAGES.UI.PROFILE_EDIT_TITLE);
+
+    // モーダルのタイトルを確認
+    const modalTitle = page.getByRole('heading', { name: MESSAGES.UI.PROFILE_EDIT_TITLE });
+    await expect(modalTitle).toBeVisible();
+
+    // 入力フィールドが表示されているか
+    await expect(page.getByLabel(MESSAGES.UI.NAME_LABEL)).toBeVisible();
+    await expect(page.getByLabel(MESSAGES.UI.SEARCH_ID_LABEL)).toBeVisible();
+  });
+
+  test('表示名を変更できること', async ({ page }) => {
+    const newName = '新テスト名_' + Date.now();
+
+    await page.click('button[title="' + MESSAGES.UI.SETTINGS_LABEL + '"]');
+    await page.click('text=' + MESSAGES.UI.PROFILE_EDIT_TITLE);
+
+    // 表示名を変更
+    const nameInput = page.locator('input').first();
+    await nameInput.fill(newName);
+    
+    // 保存ボタンをクリック
+    await page.click('button:has-text("' + MESSAGES.UI.SAVE + '")');
+
+    // 成功メッセージの確認
+    await expect(page.getByText(MESSAGES.UI.PROFILE_UPDATE_SUCCESS)).toBeVisible();
+    
+    // モーダルが閉じるのを待つ (setTimeout で 1.5s 設定されているため)
+    await page.waitForSelector('text=' + MESSAGES.UI.PROFILE_EDIT_TITLE, { state: 'hidden', timeout: 5000 });
+
+    // TOPページの挨拶が更新されているか
+    await expect(page.getByText('こんにちは、')).toContainText(newName);
+  });
+
+  test('検索IDを変更できること', async ({ page }) => {
+    const newSearchId = 'new_id_' + Date.now();
+
+    await page.click('button[title="' + MESSAGES.UI.SETTINGS_LABEL + '"]');
+    await page.click('text=' + MESSAGES.UI.PROFILE_EDIT_TITLE);
+
+    // 検索IDを変更
+    const idInput = page.locator('input').nth(1);
+    await idInput.fill(newSearchId);
+    
+    await page.click('button:has-text("' + MESSAGES.UI.SAVE + '")');
+
+    await expect(page.getByText(MESSAGES.UI.PROFILE_UPDATE_SUCCESS)).toBeVisible();
+    await page.waitForSelector('text=' + MESSAGES.UI.PROFILE_EDIT_TITLE, { state: 'hidden', timeout: 5000 });
+
+    // TOPページのID表示が更新されているか
+    await expect(page.getByText(MESSAGES.UI.ID_LABEL + ':')).toContainText(newSearchId);
+  });
+
+  test('バリデーションエラーが表示されること', async ({ page }) => {
+    await page.click('button[title="' + MESSAGES.UI.SETTINGS_LABEL + '"]');
+    await page.click('text=' + MESSAGES.UI.PROFILE_EDIT_TITLE);
+
+    // 表示名を空にする
+    const nameInput = page.locator('input').first();
+    await nameInput.fill('');
+    
+    await page.click('button:has-text("' + MESSAGES.UI.SAVE + '")');
+
+    // エラーメッセージの確認
+    await expect(page.getByText(MESSAGES.ERROR.NAME_REQUIRED)).toBeVisible();
+    
+    // 不正な検索ID
+    const idInput = page.locator('input').nth(1);
+    await idInput.fill('不正なID！');
+    await page.click('button:has-text("' + MESSAGES.UI.SAVE + '")');
+    await expect(page.getByText(MESSAGES.ERROR.SEARCH_ID_INVALID)).toBeVisible();
+  });
+});

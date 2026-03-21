@@ -14,8 +14,11 @@ export function Input({
   icon,
   className = "",
   type,
+  id,
   ...props
 }: InputProps) {
+  const generatedId = React.useId();
+  const inputId = id || generatedId;
   const [showPassword, setShowPassword] = useState(false);
   const isPassword = type === "password";
   const inputType = isPassword ? (showPassword ? "text" : "password") : type;
@@ -23,7 +26,9 @@ export function Input({
   return (
     <div className="flex flex-col gap-1.5 w-full">
       {label && (
-        <label className="text-sm font-medium text-gray-300">{label}</label>
+        <label htmlFor={inputId} className="text-sm font-medium text-gray-300">
+          {label}
+        </label>
       )}
       <div className="relative">
         {icon && (
@@ -32,6 +37,7 @@ export function Input({
           </div>
         )}
         <input
+          id={inputId}
           type={inputType}
           className={`
             w-full bg-white/5 border border-white/10 rounded-xl
