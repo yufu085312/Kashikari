@@ -8,8 +8,8 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     /*
-     * _next/static, _next/image, favicon.ico など静的ファイルを除外したすべてのリクエスト
+     * _next/static, _next/image, favicon.ico, sitemap.xml, robots.txt, manifest.json など静的ファイルを除外したすべてのリクエスト
      */
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/((?!_next/static|_next/image|favicon.ico|sitemap\\.xml|robots\\.txt|manifest\\.json|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 }
