@@ -85,56 +85,44 @@ CREATE TRIGGER on_auth_user_created
   FOR EACH ROW EXECUTE PROCEDURE public.handle_new_user();
 
 -- ==========================================
--- 7. RLS (Row Level Security) の設定
+-- 7. RLS (Row Level Security) の設定 (根本対策版)
 -- ==========================================
 
--- 無限再帰を避けるためのチェック関数
-CREATE OR REPLACE FUNCTION public.is_group_member(p_group_id uuid)
-RETURNS boolean AS $$
-BEGIN
-  RETURN EXISTS (
-    SELECT 1 FROM public.group_members
-    WHERE group_id = p_group_id AND user_id = auth.uid()
-  );
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+-- 一旦すべてのポリシーと関数をきれいに削除
+DROP POLICY IF EXISTS "Users are viewable by authenticated users" ON public.users;
+DROP POLICY IF EXISTS "Groups viewable by members" ON public.groups;
+DROP POLICY IF EXISTS "Authenticated users can create groups" ON public.groups;
+DROP POLICY IF EXISTS "Members viewable by fellow members" ON public.group_members;
+DROP POLICY IF EXISTS "Authenticated users can join groups" ON public.group_members;
+DROP POLICY IF EXISTS "Payments viewable by members" ON public.payments;
+DROP POLICY IF EXISTS "Members can create payments" ON public.payments;
+DROP POLICY IF EXISTS "Settlements viewable by members" ON public.settlements;
+DROP POLICY IF EXISTS "Members can create settlements" ON public.settlements;
+DROP FUNCTION IF EXISTS public.is_group_member;
 
--- すべてのテーブルで RLS を有効化
-ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.groups ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.group_members ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.payments ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.payment_participants ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.settlements ENABLE ROW LEVEL SECURITY;
+-- 再帰を使わずに「自分がメンバーであるグループID」を返す関数（SECURITY DEFINER で RLS をバイパス）
+CREATE OR REPLACE FUNCTION public.get_my_groups()
+RETURNS setof uuid AS $$
+  SELECT group_id FROM public.group_members WHERE user_id = auth.uid();
+$$ LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public;
 
--- users: 認証済みユーザーのみ閲覧可能
-CREATE POLICY "Users are viewable by authenticated users" ON public.users
-  FOR SELECT USING (auth.uid() IS NOT NULL);
+-- 1. users: 認証済みユーザーなら誰でも見れる（検索用）
+CREATE POLICY "Users are viewable by all" ON public.users FOR SELECT USING (auth.uid() IS NOT NULL);
 
--- groups: 自分がメンバーであるグループのみ閲覧可能
-CREATE POLICY "Groups viewable by members" ON public.groups
-  FOR SELECT USING (public.is_group_member(id));
+-- 2. groups: 自分が所属しているグループのみ
+CREATE POLICY "Groups viewable by members" ON public.groups FOR SELECT USING (id IN (SELECT public.get_my_groups()));
+CREATE POLICY "Groups insert by all" ON public.groups FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
 
-CREATE POLICY "Authenticated users can create groups" ON public.groups
-  FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
+-- 3. group_members: 自分が所属しているグループのメンバーのみ
+CREATE POLICY "Members viewable by fellow members" ON public.group_members FOR SELECT USING (group_id IN (SELECT public.get_my_groups()));
+CREATE POLICY "Members insert by all" ON public.group_members FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
 
--- group_members: 自分が所属しているグループのメンバー情報のみ閲覧可能
-CREATE POLICY "Members viewable by fellow members" ON public.group_members
-  FOR SELECT USING (public.is_group_member(group_id));
+-- 4. payments: 同様
+CREATE POLICY "Payments viewable by members" ON public.payments FOR SELECT USING (group_id IN (SELECT public.get_my_groups()));
+CREATE POLICY "Payments insert by members" ON public.payments FOR INSERT WITH CHECK (group_id IN (SELECT public.get_my_groups()));
 
-CREATE POLICY "Authenticated users can join groups" ON public.group_members
-  FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
+-- 5. settlements: 同様
+CREATE POLICY "Settlements viewable by members" ON public.settlements FOR SELECT USING (group_id IN (SELECT public.get_my_groups()));
+CREATE POLICY "Settlements insert by members" ON public.settlements FOR INSERT WITH CHECK (group_id IN (SELECT public.get_my_groups()));
 
--- payments / settlements: 同様にメンバーチェック関数を使用
-CREATE POLICY "Payments viewable by members" ON public.payments
-  FOR SELECT USING (public.is_group_member(group_id));
-
-CREATE POLICY "Members can create payments" ON public.payments
-  FOR INSERT WITH CHECK (public.is_group_member(group_id));
-
-CREATE POLICY "Settlements viewable by members" ON public.settlements
-  FOR SELECT USING (public.is_group_member(group_id));
-
-CREATE POLICY "Members can create settlements" ON public.settlements
-  FOR INSERT WITH CHECK (public.is_group_member(group_id));
 
