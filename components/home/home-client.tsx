@@ -192,16 +192,14 @@ export function HomePageClient({ initialGroups, userName, searchId }: HomePageCl
             groups.map((group) => (
               <Link key={group.id} href={`/groups/${group.id}`}>
                 <GlassCard hoverable className="p-4 flex items-center justify-between group h-full">
-                  <div className="flex items-center gap-4">
-                    <div>
-                      <h3 className="text-lg font-bold text-white group-hover:text-emerald-400 transition-colors leading-tight">
-                        {group.name}
-                      </h3>
+                  <div className="flex-1 min-w-0 pr-2">
+                    <h3 className="text-lg font-bold text-white group-hover:text-emerald-400 transition-colors leading-tight break-words">
+                      {group.name}
+                    </h3>
                       <p className="text-[10px] text-gray-600 font-medium mt-1">
                         {group.members?.length || 0}人のメンバー
                       </p>
                     </div>
-                  </div>
                   <div className="w-8 h-8 rounded-full bg-white/5 border border-white/5 flex items-center justify-center text-gray-700 group-hover:text-emerald-400 group-hover:border-emerald-500/30 group-hover:bg-emerald-500/10 transition-all">
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />

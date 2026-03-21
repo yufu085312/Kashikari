@@ -139,8 +139,8 @@ export function GroupDetailClient({
     <div className="animate-fade-in space-y-6 pb-24">
       {/* ページヘッダー */}
       <section className="space-y-4">
-        <div className="flex items-start justify-between">
-          <div className="min-w-0">
+        <div className="flex items-start justify-between gap-4">
+          <div className="min-w-0 flex-1">
             <Link 
               href="/" 
               className="inline-flex items-center text-[10px] font-bold text-gray-500 hover:text-white transition-colors mb-4 group"
@@ -151,15 +151,15 @@ export function GroupDetailClient({
               戻る
             </Link>
             <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-black text-white truncate tracking-tight">{initialGroupName}</h1>
+              <h1 className="text-xl sm:text-2xl font-black text-white break-all tracking-tight leading-tight">{initialGroupName}</h1>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-shrink-0">
             <Button 
               variant="danger" 
               size="sm" 
               onClick={handleDeleteGroup}
-              className="rounded-2xl p-2.5 bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 active:scale-95 transition-all"
+              className="rounded-2xl p-2.5 bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 active:scale-95 transition-all flex-shrink-0"
               loading={isDeleting}
               title="グループを削除"
             >
@@ -171,7 +171,7 @@ export function GroupDetailClient({
               variant="secondary" 
               size="sm" 
               onClick={() => setShowInviteModal(true)}
-              className="rounded-2xl"
+              className="rounded-2xl flex-shrink-0 whitespace-nowrap"
             >
               メンバー招待
             </Button>
