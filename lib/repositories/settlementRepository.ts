@@ -1,12 +1,14 @@
-import { createClient } from '@/utils/supabase/server'
-import { Settlement, CreateSettlementInput } from '@/types/balance'
+import { createClient } from "@/utils/supabase/server";
+import { Settlement, CreateSettlementInput } from "@/types/balance";
 
-export async function insertSettlement(input: CreateSettlementInput): Promise<Settlement> {
-  const supabase = await createClient()
-  const { groupId, fromUserId, toUserId, amount } = input
+export async function insertSettlement(
+  input: CreateSettlementInput,
+): Promise<Settlement> {
+  const supabase = await createClient();
+  const { groupId, fromUserId, toUserId, amount } = input;
 
   const { data, error } = await supabase
-    .from('settlements')
+    .from("settlements")
     .insert({
       group_id: groupId,
       from_user_id: fromUserId,
@@ -14,34 +16,38 @@ export async function insertSettlement(input: CreateSettlementInput): Promise<Se
       amount,
     })
     .select()
-    .single()
+    .single();
 
-  if (error) throw new Error(error.message)
-  return data
+  if (error) throw new Error(error.message);
+  return data;
 }
 
-export async function getSettlementsByGroupId(groupId: string): Promise<Settlement[]> {
-  const supabase = await createClient()
+export async function getSettlementsByGroupId(
+  groupId: string,
+): Promise<Settlement[]> {
+  const supabase = await createClient();
   const { data, error } = await supabase
-    .from('settlements')
-    .select(`
+    .from("settlements")
+    .select(
+      `
       *,
       from_user:users!from_user_id(*),
       to_user:users!to_user_id(*)
-    `)
-    .eq('group_id', groupId)
-    .order('created_at', { ascending: false })
+    `,
+    )
+    .eq("group_id", groupId)
+    .order("created_at", { ascending: false });
 
-  if (error) throw new Error(error.message)
-  return data || []
+  if (error) throw new Error(error.message);
+  return data || [];
 }
 
 export async function deleteSettlement(settlementId: string): Promise<void> {
-  const supabase = await createClient()
+  const supabase = await createClient();
   const { error } = await supabase
-    .from('settlements')
+    .from("settlements")
     .delete()
-    .eq('id', settlementId)
+    .eq("id", settlementId);
 
-  if (error) throw new Error(error.message)
+  if (error) throw new Error(error.message);
 }

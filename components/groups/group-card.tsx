@@ -1,10 +1,10 @@
-'use client'
+"use client";
 
-import Link from 'next/link'
-import { Group } from '@/types/group'
+import Link from "next/link";
+import { Group } from "@/types/group";
 
 interface GroupCardProps {
-  group: Group
+  group: Group;
 }
 
 export function GroupCard({ group }: GroupCardProps) {
@@ -22,7 +22,9 @@ export function GroupCard({ group }: GroupCardProps) {
 
           {/* Info */}
           <div className="flex-1 min-w-0">
-            <h3 className="font-bold text-white text-lg truncate">{group.name}</h3>
+            <h3 className="font-bold text-white text-lg truncate">
+              {group.name}
+            </h3>
             {group.members && (
               <p className="text-sm text-gray-400 mt-0.5">
                 {group.members.length}人のメンバー
@@ -31,11 +33,21 @@ export function GroupCard({ group }: GroupCardProps) {
           </div>
 
           {/* Arrow */}
-          <svg className="w-5 h-5 text-gray-500 group-hover:text-emerald-400 transition-colors flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          <svg
+            className="w-5 h-5 text-gray-500 group-hover:text-emerald-400 transition-colors flex-shrink-0"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M9 5l7 7-7 7"
+            />
           </svg>
         </div>
       </div>
     </Link>
-  )
+  );
 }

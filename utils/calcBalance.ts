@@ -1,10 +1,10 @@
-import { Payment } from '@/types/payment'
-import { Settlement, Balance } from '@/types/balance'
-import { User } from '@/types/user'
+import { Payment } from "@/types/payment";
+import { Settlement, Balance } from "@/types/balance";
+import { User } from "@/types/user";
 
 /**
  * 残高計算ロジック（コア）
- * 
+ *
  * 手順:
  * 1. 各支払いから payment_participants の share_amount ぶんだけ、
  *    参加者 → 支払者 への「借り」を計算
@@ -14,53 +14,57 @@ import { User } from '@/types/user'
 export function calcBalance(
   payments: Payment[],
   settlements: Settlement[],
-  users: User[]
+  users: User[],
 ): Balance[] {
   // userId → net amount（正 = 受け取り権, 負 = 支払い義務）
-  const netMap: Record<string, number> = {}
+  const netMap: Record<string, number> = {};
 
-  users.forEach(u => { netMap[u.id] = 0 })
+  users.forEach((u) => {
+    netMap[u.id] = 0;
+  });
 
   // 支払いから計算
   for (const payment of payments) {
-    const { payer_id, participants } = payment
-    if (!participants) continue
+    const { payer_id, participants } = payment;
+    if (!participants) continue;
 
     for (const p of participants) {
-      if (p.user_id === payer_id) continue // 支払者自身はスキップ
-      netMap[payer_id] = (netMap[payer_id] || 0) + p.share_amount
-      netMap[p.user_id] = (netMap[p.user_id] || 0) - p.share_amount
+      if (p.user_id === payer_id) continue; // 支払者自身はスキップ
+      netMap[payer_id] = (netMap[payer_id] || 0) + p.share_amount;
+      netMap[p.user_id] = (netMap[p.user_id] || 0) - p.share_amount;
     }
   }
 
   // 精算で相殺
   for (const s of settlements) {
-    netMap[s.from_user_id] = (netMap[s.from_user_id] || 0) + s.amount
-    netMap[s.to_user_id] = (netMap[s.to_user_id] || 0) - s.amount
+    netMap[s.from_user_id] = (netMap[s.from_user_id] || 0) + s.amount;
+    netMap[s.to_user_id] = (netMap[s.to_user_id] || 0) - s.amount;
   }
 
   // ユーザー名マップ
-  const nameMap: Record<string, string> = {}
-  users.forEach(u => { nameMap[u.id] = u.name })
+  const nameMap: Record<string, string> = {};
+  users.forEach((u) => {
+    nameMap[u.id] = u.name;
+  });
 
   // 最小送金で「誰→誰：いくら」を生成
-  const creditors: { id: string; amount: number }[] = []
-  const debtors: { id: string; amount: number }[] = []
+  const creditors: { id: string; amount: number }[] = [];
+  const debtors: { id: string; amount: number }[] = [];
 
   for (const [userId, amount] of Object.entries(netMap)) {
-    if (amount > 0) creditors.push({ id: userId, amount })
-    if (amount < 0) debtors.push({ id: userId, amount: -amount })
+    if (amount > 0) creditors.push({ id: userId, amount });
+    if (amount < 0) debtors.push({ id: userId, amount: -amount });
   }
 
-  const balances: Balance[] = []
+  const balances: Balance[] = [];
 
-  let ci = 0
-  let di = 0
+  let ci = 0;
+  let di = 0;
 
   while (ci < creditors.length && di < debtors.length) {
-    const creditor = creditors[ci]
-    const debtor = debtors[di]
-    const transfer = Math.min(creditor.amount, debtor.amount)
+    const creditor = creditors[ci];
+    const debtor = debtors[di];
+    const transfer = Math.min(creditor.amount, debtor.amount);
 
     if (transfer > 0) {
       balances.push({
@@ -69,15 +73,15 @@ export function calcBalance(
         amount: transfer,
         fromUserName: nameMap[debtor.id],
         toUserName: nameMap[creditor.id],
-      })
+      });
     }
 
-    creditor.amount -= transfer
-    debtor.amount -= transfer
+    creditor.amount -= transfer;
+    debtor.amount -= transfer;
 
-    if (creditor.amount === 0) ci++
-    if (debtor.amount === 0) di++
+    if (creditor.amount === 0) ci++;
+    if (debtor.amount === 0) di++;
   }
 
-  return balances.filter(b => b.amount > 0)
+  return balances.filter((b) => b.amount > 0);
 }
