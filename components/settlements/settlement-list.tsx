@@ -19,7 +19,7 @@ export function SettlementList({ settlements, onDelete }: SettlementListProps) {
   const handleDelete = async (id: string) => {
     const isConfirmed = await confirm({
       title: '精算の取り消し',
-      message: 'この精算記録を取り消して、残高を未精算の状態に戻しますか？',
+      message: 'この精算記録を取り消して、貸し借りを未精算の状態に戻しますか？',
       type: 'warn',
       confirmText: '取り消す',
       cancelText: '戻る'
@@ -85,7 +85,7 @@ export function SettlementList({ settlements, onDelete }: SettlementListProps) {
               onClick={() => handleDelete(s.id)}
               disabled={deletingId === s.id}
               className="transition-all p-2 rounded-xl flex-shrink-0 text-gray-500 hover:text-blue-400 hover:bg-blue-500/10 active:scale-95"
-              title="精算を取り消して残高に戻す"
+              title="精算を取り消して貸し借りに戻す"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
