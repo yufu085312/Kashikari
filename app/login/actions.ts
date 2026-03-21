@@ -164,7 +164,7 @@ export async function resendSignupOtp(formData: FormData) {
   })
 
   if (error) {
-    redirect(`/signup/verify?email=${encodeURIComponent(email)}&next=${encodeURIComponent(next)}&error=${encodeURIComponent('コードの再送信に失敗しました。しばらくしてから再度お試しください。')}`)
+    redirect(`/signup/verify?email=${encodeURIComponent(email)}&next=${encodeURIComponent(next)}&error=${encodeURIComponent(`再送信エラー: ${error.message}`)}`)
   }
 
   redirect(`/signup/verify?email=${encodeURIComponent(email)}&next=${encodeURIComponent(next)}&message=${encodeURIComponent('確認コードを再送信しました。メールをご確認ください。')}`)
