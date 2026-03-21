@@ -45,7 +45,10 @@ export async function updateSession(request: NextRequest) {
     pathname === "/terms" ||
     pathname === "/signup/complete" ||
     pathname === "/signup/verify" ||
-    pathname.startsWith("/auth/confirm");
+    pathname === "/login/forgot-password" ||
+    pathname === "/login/reset-password" ||
+    pathname.startsWith("/auth/confirm") ||
+    pathname.startsWith("/auth/callback");
 
   // APIへのリクエストはミドルウェアではなく、各Route Handlerでセッションを検証するためスキップ
   const isApiRoute = pathname.startsWith("/api");
