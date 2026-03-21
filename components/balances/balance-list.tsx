@@ -22,7 +22,7 @@ export function BalanceList({ balances, groupId, onSettle }: BalanceListProps) {
     const key = `${balance.fromUserId}-${balance.toUserId}`;
     const isConfirmed = await confirm({
       title: "精算の実行",
-      message: `${balance.fromUserName} から ${balance.toUserName} へ ${balance.amount.toLocaleString()}円の支払いを記録し、残高を解消しますか？`,
+      message: `${balance.fromUserName} から ${balance.toUserName} へ ${balance.amount.toLocaleString()}円の支払いを記録し、貸し借りを解消しますか？`,
       type: "info",
       confirmText: "精算する",
       cancelText: "戻る",
