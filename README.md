@@ -62,18 +62,35 @@
    ```
    ※ `docker compose down` と `npx supabase stop` を実行します。
 
-## 🧹 コードの品質管理 (Lint & Format)
+## 🧹 コードの品質管理 (Lint / Format / Test)
 
 開発中コードの品質を維持するため、Dockerコンテナ内で以下のコマンドを実行できます。
 
-**リントチェック (ESLint)**:
+### 一括チェック（推奨）
+Lint・フォーマット確認・テストをまとめて実行します:
 ```bash
-docker compose exec app npm run lint
+docker compose exec app npm run check:all
 ```
-※ 静的解析を行い、エラーや警告を表示します。
 
-**フォーマット実行 (Prettier)**:
+### 個別コマンド
+
+| コマンド | 内容 |
+|---|---|
+| `npm run lint` | ESLint による静的解析（エラー報告のみ） |
+| `npm run format:check` | Prettier によるフォーマット確認（ファイル変更なし） |
+| `npm run format:write` | Prettier によるフォーマット自動修正 |
+| `npm test` | Vitest によるユニット・統合テスト実行 |
+
 ```bash
-docker compose exec app npx prettier --write "app/**/*.{ts,tsx}" "components/**/*.{ts,tsx}" "lib/**/*.{ts,tsx}" "utils/**/*.{ts,tsx}"
+# リントチェック
+docker compose exec app npm run lint
+
+# フォーマット確認（差分があればエラー終了）
+docker compose exec app npm run format:check
+
+# フォーマット自動修正
+docker compose exec app npm run format:write
+
+# テスト実行
+docker compose exec app npm test
 ```
-※ 対象ディレクトリの TypeScript / React ファイルを自動フォーマット（コード整形）します。
