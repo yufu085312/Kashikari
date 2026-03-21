@@ -113,6 +113,12 @@ export async function signup(formData: FormData) {
     redirect(`/signup?error=${encodeURIComponent(errorMessage)}${next !== '/' ? `&next=${encodeURIComponent(next)}` : ''}`)
   }
 
+  // ④ 確実にログイン状態にするため、明示的にサインインを実行
+  await supabase.auth.signInWithPassword({
+    email,
+    password,
+  })
+
   revalidatePath('/', 'layout')
   redirect(next)
 }
