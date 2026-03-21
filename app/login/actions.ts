@@ -129,12 +129,33 @@ export async function signup(formData: FormData) {
 
   // ④ メール確認が必要な場合（セッションがない場合）の処理
   if (!data.session) {
-    redirect(`/login?message=${encodeURIComponent('確認メールを送信しました。メール内のリンクをクリックして登録を完了してください。')}${next !== '/' ? `&next=${encodeURIComponent(next)}` : ''}`)
+    // 6桁のコード入力画面へ遷移
+    redirect(`/signup/verify?email=${encodeURIComponent(email)}&next=${encodeURIComponent(next)}`)
   }
 
   // ⑤ 開発環境などでメール確認が不要な場合、自動でログイン状態を維持
   revalidatePath('/', 'layout')
   redirect(next)
+}
+
+export async function verifySignupOtp(formData: FormData) {
+  const supabase = await createClient()
+  const email = formData.get('email') as string
+  const token = formData.get('token') as string
+  const next = (formData.get('next') as string) || '/'
+
+  const { error } = await supabase.auth.verifyOtp({
+    email,
+    token,
+    type: 'signup',
+  })
+
+  if (error) {
+    redirect(`/signup/verify?email=${encodeURIComponent(email)}&next=${encodeURIComponent(next)}&error=${encodeURIComponent('確認コードが正しくないか、期限が切れています。')}`)
+  }
+
+  revalidatePath('/', 'layout')
+  redirect('/signup/complete')
 }
 
 export async function logout() {
