@@ -98,6 +98,15 @@ export default function LoginPage({
             error={errors.password}
           />
 
+          <div className="flex justify-end -mt-3">
+            <Link
+              href={ROUTES.FORGOT_PASSWORD}
+              className="text-xs text-gray-400 hover:text-emerald-400 transition-colors"
+            >
+              {MESSAGES.UI.FORGOT_PASSWORD_PROMPT}
+            </Link>
+          </div>
+
           {serverMessage && (
             <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl px-4 py-3 text-sm text-emerald-400 mb-6 animate-fade-in">
               {serverMessage}

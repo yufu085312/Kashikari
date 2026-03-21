@@ -58,6 +58,7 @@ export const MESSAGES = {
     PROFILE_UPDATE_FAILED: "プロフィールの更新に失敗しました。",
     PASSWORD_UPDATE_FAILED: "パスワードの更新に失敗しました。",
     PASSWORD_MISMATCH: "新しいパスワードと確認用パスワードが一致しません。",
+    RESET_EMAIL_SEND_FAILED: "リセットメールの送信に失敗しました。",
   },
   UI: {
     APP_TAGLINE: "割り勘・貸し借り管理アプリ",
@@ -153,5 +154,11 @@ export const MESSAGES = {
     NEW_PASSWORD_LABEL: "新しいパスワード",
     CONFIRM_PASSWORD_LABEL: "パスワード（確認）",
     CHANGE_PASSWORD_TITLE: "パスワード変更",
+    FORGOT_PASSWORD_PROMPT: "パスワードを忘れた際はこちら",
+    SEND_RESET_EMAIL: "リセットメールを送信",
+    RESET_EMAIL_SENT: "パスワード再設定用のメールを送信しました。",
+    RESET_PASSWORD_TITLE: "パスワードの再設定",
+    RESET_PASSWORD_DESCRIPTION: "新しいパスワードを入力してください。",
+    BACK_TO_LOGIN: "ログイン画面へ戻る",
   },
 } as const;
