@@ -116,11 +116,8 @@ $$ LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public;
 -- 1. users: 認証済みユーザーなら誰でも見れる（検索用）
 CREATE POLICY "Users viewable by all" ON public.users FOR SELECT USING (auth.uid() IS NOT NULL);
 
--- 2. groups: 自分が所属しているか、自分が作成したグループのみ
--- INSERT 後の SELECT (...RETURNING) が通るように created_by もチェック対象に含める
-CREATE POLICY "Groups select by members or creator" ON public.groups FOR SELECT USING (
-  id IN (SELECT public.get_my_groups()) OR created_by = auth.uid()
-);
+-- 2. groups: 認証済みユーザーなら誰でも見れる（招待ページで名前を表示するため）
+CREATE POLICY "Groups viewable by authenticated" ON public.groups FOR SELECT USING (auth.uid() IS NOT NULL);
 CREATE POLICY "Groups insert by authenticated" ON public.groups FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
 CREATE POLICY "Groups update by creator" ON public.groups FOR UPDATE USING (created_by = auth.uid());
 CREATE POLICY "Groups delete by creator" ON public.groups FOR DELETE USING (created_by = auth.uid());
