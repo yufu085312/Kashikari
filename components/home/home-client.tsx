@@ -372,7 +372,7 @@ export function HomePageClient({
                   参加しているグループがありません
                 </p>
                 <p className="text-[10px] mt-1 opacity-50">
-                  右上のボタンから作成しましょう
+                  作成ボタンから作成しましょう
                 </p>
               </GlassCard>
             </div>

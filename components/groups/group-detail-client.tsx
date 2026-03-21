@@ -392,7 +392,7 @@ export function GroupDetailClient({
       <Modal
         isOpen={showMembersModal}
         onClose={() => setShowMembersModal(false)}
-        title="メンバー一覧"
+        title="参加メンバー"
       >
         <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
           {initialMembers.map((m) => (
@@ -400,17 +400,10 @@ export function GroupDetailClient({
               key={m.id}
               className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors"
             >
-              <div className="flex items-center gap-3 overflow-hidden">
-                <div className="shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-brand-400/20 to-brand-600/20 flex items-center justify-center border border-brand-500/20 shadow-inner">
-                  <span className="text-brand-400 font-black text-lg">
-                    {m.name.charAt(0).toUpperCase()}
-                  </span>
-                </div>
-                <div className="min-w-0">
-                  <p className="text-sm font-bold text-white truncate">
-                    {m.name}
-                  </p>
-                </div>
+              <div className="flex items-center min-w-0">
+                <p className="text-sm font-bold text-white truncate">
+                  {m.name}
+                </p>
               </div>
               {m.id === initialCreatedBy && (
                 <span className="shrink-0 ml-2 text-[10px] font-bold text-brand-400 bg-brand-500/10 px-2.5 py-1 rounded-full border border-brand-500/20">
