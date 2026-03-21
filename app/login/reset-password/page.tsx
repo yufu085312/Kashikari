@@ -1,5 +1,7 @@
 "use client";
 
+export const runtime = "edge";
+
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { PasswordForm } from "@/components/home/password-form";
