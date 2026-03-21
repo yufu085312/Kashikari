@@ -11,10 +11,11 @@ import { Input } from '@/components/ui/input'
 export default function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string; next?: string }>
+  searchParams: Promise<{ error?: string; message?: string; next?: string }>
 }) {
   const params = use(searchParams)
   const serverError = params.error
+  const serverMessage = params.message
 
   const [errors, setErrors] = useState<{email?: string, password?: string}>({})
   const [isPending, startTransition] = useTransition()
@@ -103,6 +104,12 @@ export default function LoginPage({
             error={errors.password}
           />
           
+          {serverMessage && (
+            <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl px-4 py-3 text-sm text-emerald-400 mb-6 animate-fade-in">
+              {serverMessage}
+            </div>
+          )}
+
           {serverError && (
             <p className="text-red-400 text-sm mt-2">{serverError}</p>
           )}

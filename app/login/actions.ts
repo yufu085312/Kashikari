@@ -87,7 +87,7 @@ export async function signup(formData: FormData) {
   }
 
   // ② ユーザー登録処理
-  const { error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
@@ -113,12 +113,12 @@ export async function signup(formData: FormData) {
     redirect(`/signup?error=${encodeURIComponent(errorMessage)}${next !== '/' ? `&next=${encodeURIComponent(next)}` : ''}`)
   }
 
-  // ④ 確実にログイン状態にするため、明示的にサインインを実行
-  await supabase.auth.signInWithPassword({
-    email,
-    password,
-  })
+  // ④ メール確認が必要な場合（セッションがない場合）の処理
+  if (!data.session) {
+    redirect(`/login?message=${encodeURIComponent('確認メールを送信しました。メール内のリンクをクリックして登録を完了してください。')}`)
+  }
 
+  // ⑤ 開発環境などでメール確認が不要な場合、自動でログイン状態を維持
   revalidatePath('/', 'layout')
   redirect(next)
 }

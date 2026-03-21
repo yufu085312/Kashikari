@@ -85,7 +85,7 @@ CREATE TRIGGER on_auth_user_created
   FOR EACH ROW EXECUTE PROCEDURE public.handle_new_user();
 
 -- ==========================================
--- 7. RLS (Row Level Security) の設定 (根本対策版)
+-- 7. RLS (Row Level Security) の設定
 -- ==========================================
 
 -- テーブルに RLS を適用
@@ -135,6 +135,7 @@ CREATE POLICY "Members delete by authenticated" ON public.group_members FOR DELE
 -- 4. payments: 所属グループの支払いのみ
 CREATE POLICY "Payments select by members" ON public.payments FOR SELECT USING (group_id IN (SELECT public.get_my_groups()));
 CREATE POLICY "Payments insert by members" ON public.payments FOR INSERT WITH CHECK (group_id IN (SELECT public.get_my_groups()));
+CREATE POLICY "Payments delete by members" ON public.payments FOR DELETE USING (group_id IN (SELECT public.get_my_groups()));
 
 -- 5. payment_participants: 自分がメンバーであるグループの支払い参加者のみ
 CREATE POLICY "Participants select by members" ON public.payment_participants FOR SELECT USING (
@@ -143,7 +144,11 @@ CREATE POLICY "Participants select by members" ON public.payment_participants FO
 CREATE POLICY "Participants insert by members" ON public.payment_participants FOR INSERT WITH CHECK (
   payment_id IN (SELECT id FROM public.payments WHERE group_id IN (SELECT public.get_my_groups()))
 );
+CREATE POLICY "Participants delete by members" ON public.payment_participants FOR DELETE USING (
+  payment_id IN (SELECT id FROM public.payments WHERE group_id IN (SELECT public.get_my_groups()))
+);
 
 -- 6. settlements: 所属グループの精算のみ
 CREATE POLICY "Settlements select by members" ON public.settlements FOR SELECT USING (group_id IN (SELECT public.get_my_groups()));
 CREATE POLICY "Settlements insert by members" ON public.settlements FOR INSERT WITH CHECK (group_id IN (SELECT public.get_my_groups()));
+CREATE POLICY "Settlements delete by members" ON public.settlements FOR DELETE USING (group_id IN (SELECT public.get_my_groups()));
