@@ -4,17 +4,13 @@ import { type NextRequest } from 'next/server'
 
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
-import { cookies } from 'next/headers'
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
   const token_hash = searchParams.get('token_hash')
   const type = searchParams.get('type') as EmailOtpType | null
   
-  // URLパラメータの next か、Cookie に保存された遷移先を優先
-  const cookieStore = await cookies()
-  const pendingRedirect = cookieStore.get('pending_redirect')?.value
-  const next = searchParams.get('next') || pendingRedirect || '/'
+  const next = searchParams.get('next') ?? '/'
 
   if (token_hash && type) {
     const supabase = await createClient()
@@ -24,9 +20,8 @@ export async function GET(request: NextRequest) {
       token_hash,
     })
     if (!error) {
-      // 登録完了画面へリダイレクト
-      // ユーザーが元の招待URLを保持したタブに戻るよう誘導します
-      redirect('/signup/complete')
+      // 登録完了画面へリダイレクト（nextを引き継ぐ）
+      redirect(`/signup/complete?next=${encodeURIComponent(next)}`)
     }
   }
 
