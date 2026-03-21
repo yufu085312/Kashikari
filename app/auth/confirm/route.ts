@@ -24,11 +24,9 @@ export async function GET(request: NextRequest) {
       token_hash,
     })
     if (!error) {
-      // 成功したら Cookie を削除してリダイレクトを実行
-      if (pendingRedirect) {
-        cookieStore.delete('pending_redirect')
-      }
-      redirect(next)
+      // 登録完了画面へリダイレクト
+      // ユーザーが元の招待URLを保持したタブに戻るよう誘導します
+      redirect('/signup/complete')
     }
   }
 
