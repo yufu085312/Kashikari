@@ -11,6 +11,8 @@ import Link from "next/link";
 import { logout } from "@/app/login/actions";
 import { AddToHomeScreenBanner } from "@/components/ui/add-to-home-screen-banner";
 import { ROUTES, TIMEOUTS, MESSAGES, METADATA } from "@/lib/constants";
+import Image from "next/image";
+import { ProfileForm } from "./profile-form";
 
 interface HomePageClientProps {
   initialGroups: Group[];
@@ -29,6 +31,7 @@ export function HomePageClient({
   const [copied, setCopied] = useState(false);
 
   const [showSettings, setShowSettings] = useState(false);
+  const [showProfileForm, setShowProfileForm] = useState(false);
 
   const handleCopyId = () => {
     navigator.clipboard.writeText(searchId);
@@ -52,9 +55,11 @@ export function HomePageClient({
         <div className="flex-1 min-w-0 pr-10 sm:pr-0">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center shadow-lg shadow-black/10 flex-shrink-0 border border-white/10 overflow-hidden">
-              <img
+              <Image
                 src="/icon.png"
                 alt={METADATA.SHORT_NAME}
+                width={48}
+                height={48}
                 className="w-full h-full object-cover"
               />
             </div>
@@ -171,6 +176,28 @@ export function HomePageClient({
                   onClick={() => setShowSettings(false)}
                 />
                 <div className="absolute right-0 top-full mt-2 w-56 bg-[#0a0f1e]/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl overflow-hidden z-50 py-1 animate-fade-in origin-top-right">
+                  <button
+                    onClick={() => {
+                      setShowProfileForm(true);
+                      setShowSettings(false);
+                    }}
+                    className="w-full flex items-center gap-2 px-4 py-3 text-sm text-gray-300 hover:bg-white/5 hover:text-white transition-colors border-l-2 border-transparent hover:border-emerald-400 text-left"
+                  >
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={1.5}
+                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                      />
+                    </svg>
+                    {MESSAGES.UI.PROFILE_EDIT_TITLE}
+                  </button>
                   <Link
                     href={ROUTES.TERMS}
                     className="flex items-center gap-2 px-4 py-3 text-sm text-gray-300 hover:bg-white/5 hover:text-white transition-colors border-l-2 border-transparent hover:border-emerald-400"
@@ -356,13 +383,24 @@ export function HomePageClient({
           </Button>
         </div>
       </div>
-
       <Modal
         isOpen={showGroupForm}
         onClose={() => setShowGroupForm(false)}
         title={MESSAGES.UI.GROUP_CREATE}
       >
         <GroupForm onSuccess={handleGroupCreated} />
+      </Modal>
+
+      <Modal
+        isOpen={showProfileForm}
+        onClose={() => setShowProfileForm(false)}
+        title={MESSAGES.UI.PROFILE_EDIT_TITLE}
+      >
+        <ProfileForm
+          initialName={userName}
+          initialSearchId={searchId}
+          onSuccess={() => setShowProfileForm(false)}
+        />
       </Modal>
     </div>
   );

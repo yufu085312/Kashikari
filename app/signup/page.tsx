@@ -4,6 +4,7 @@ export const runtime = "edge";
 
 import { use, useState, useTransition } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { signup } from "../login/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -77,9 +78,11 @@ export default function SignupPage({
     <div className="flex flex-col items-center justify-center py-4 sm:py-6">
       <div className="flex flex-col items-center mb-4 text-center animate-fade-in">
         <div className="w-16 h-16 bg-white/5 rounded-[2rem] flex items-center justify-center shadow-2xl border border-white/10 overflow-hidden mb-3 shadow-emerald-500/10">
-          <img
+          <Image
             src="/icon.png"
             alt={METADATA.SHORT_NAME}
+            width={64}
+            height={64}
             className="w-full h-full object-cover p-2.5"
           />
         </div>
