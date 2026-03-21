@@ -33,8 +33,8 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser()
 
   const pathname = request.nextUrl.pathname
-  const isAuthRoute = pathname.startsWith('/login') || pathname.startsWith('/signup')
-  const isPublicRoute = pathname.startsWith('/privacy') || pathname.startsWith('/terms')
+  const isAuthRoute = (pathname.startsWith('/login') || pathname.startsWith('/signup')) && !pathname.startsWith('/signup/complete')
+  const isPublicRoute = pathname.startsWith('/privacy') || pathname.startsWith('/terms') || pathname.startsWith('/signup/complete') || pathname.startsWith('/auth/confirm')
   
   // APIへのリクエストはミドルウェアではなく、各Route Handlerでセッションを検証するためスキップ
   const isApiRoute = pathname.startsWith('/api')
