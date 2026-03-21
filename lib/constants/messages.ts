@@ -56,6 +56,8 @@ export const MESSAGES = {
     FETCH_FAILED: "データの取得中に問題が発生しました。",
     RETRY_LATER: "しばらく時間を置いてから再度お試しください。",
     PROFILE_UPDATE_FAILED: "プロフィールの更新に失敗しました。",
+    PASSWORD_UPDATE_FAILED: "パスワードの更新に失敗しました。",
+    PASSWORD_MISMATCH: "新しいパスワードと確認用パスワードが一致しません。",
   },
   UI: {
     APP_TAGLINE: "割り勘・貸し借り管理アプリ",
@@ -145,7 +147,11 @@ export const MESSAGES = {
     GO_TO_HOME: "ホームへ移動",
     PROFILE_EDIT_TITLE: "プロフィール編集",
     PROFILE_UPDATE_SUCCESS: "プロフィールを更新しました",
+    PASSWORD_UPDATE_SUCCESS: "パスワードを更新しました",
     SAVE: "保存する",
     SAVING: "保存中...",
+    NEW_PASSWORD_LABEL: "新しいパスワード",
+    CONFIRM_PASSWORD_LABEL: "パスワード（確認）",
+    CHANGE_PASSWORD_TITLE: "パスワード変更",
   },
 } as const;
