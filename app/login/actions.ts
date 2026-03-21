@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/utils/supabase/server'
+import { headers } from 'next/headers'
 
 export async function login(formData: FormData) {
   const supabase = await createClient()
@@ -87,6 +88,7 @@ export async function signup(formData: FormData) {
   }
 
   // ② ユーザー登録処理
+  const origin = (await headers()).get('origin') || process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
@@ -95,7 +97,7 @@ export async function signup(formData: FormData) {
         name,
         search_id,
       },
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/auth/confirm?next=${encodeURIComponent(next)}`,
+      emailRedirectTo: `${origin}/auth/confirm?next=${encodeURIComponent(next)}`,
     },
   })
 
@@ -116,7 +118,7 @@ export async function signup(formData: FormData) {
 
   // ④ メール確認が必要な場合（セッションがない場合）の処理
   if (!data.session) {
-    redirect(`/login?message=${encodeURIComponent('確認メールを送信しました。メール内のリンクをクリックして登録を完了してください。')}`)
+    redirect(`/login?message=${encodeURIComponent('確認メールを送信しました。メール内のリンクをクリックして登録を完了してください。')}${next !== '/' ? `&next=${encodeURIComponent(next)}` : ''}`)
   }
 
   // ⑤ 開発環境などでメール確認が不要な場合、自動でログイン状態を維持
