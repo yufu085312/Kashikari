@@ -22,6 +22,12 @@ export async function POST(req: NextRequest) {
     if (!groupId || !payerId || !amount || !participants) {
       return err('groupId, payerId, amount, participants are required')
     }
+    if (Number(amount) <= 0) {
+      return err('1以上の金額を入力してください')
+    }
+    if (Number(amount) > 9_999_999) {
+      return err('金額は9,999,999円以下で入力してください')
+    }
 
     const payment = await createPayment({ groupId, payerId, amount, participants, memo })
     return ok(payment)

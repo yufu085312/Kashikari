@@ -19,6 +19,7 @@ export async function POST(req: NextRequest) {
 
     const { name, memberSearchIds } = await req.json()
     if (!name) return err('name is required')
+    if (name.length > 20) return err('グループ名は20文字以内で入力してください')
 
     const group = await createGroup({
       name,

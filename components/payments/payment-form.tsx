@@ -25,6 +25,8 @@ export function PaymentForm({ groupId, members, currentUserId, onSuccess }: Paym
   const [error, setError] = useState<string | null>(null)
   const [amountError, setAmountError] = useState<string | null>(null)
 
+  const MAX_AMOUNT = 9_999_999 // 最大金額: 9,999,999円
+
   // 均等割り自動計算
   const autoSplitAmounts = calcEvenSplit(Number(amount) || 0, selectedIds)
 
@@ -59,6 +61,10 @@ export function PaymentForm({ groupId, members, currentUserId, onSuccess }: Paym
     }
     if (Number(amount) <= 0) {
       setAmountError('1以上の金額を入力してください')
+      return
+    }
+    if (Number(amount) > MAX_AMOUNT) {
+      setAmountError(`金額は${MAX_AMOUNT.toLocaleString()}円以下で入力してください`)
       return
     }
     if (selectedIds.length === 0) return
@@ -110,11 +116,18 @@ export function PaymentForm({ groupId, members, currentUserId, onSuccess }: Paym
             placeholder="0"
             value={amount}
             onChange={e => {
-              setAmount(e.target.value)
-              if (Number(e.target.value) > 0) setAmountError(null)
+              const val = e.target.value
+              setAmount(val)
+              const num = Number(val)
+              if (num > MAX_AMOUNT) {
+                setAmountError(`金額は${MAX_AMOUNT.toLocaleString()}円以下で入力してください`)
+              } else if (num > 0) {
+                setAmountError(null)
+              }
             }}
             required
             min={1}
+            max={MAX_AMOUNT}
             className={`w-full bg-white/5 border-2 rounded-2xl pl-10 pr-4 py-4 text-white text-3xl font-black placeholder-gray-800 focus:outline-none transition-all shadow-inner ${amountError ? 'border-red-500/50 focus:border-red-500/50 focus:bg-red-500/5' : 'border-white/5 focus:border-emerald-500/50 focus:bg-emerald-500/5'}`}
           />
         </div>

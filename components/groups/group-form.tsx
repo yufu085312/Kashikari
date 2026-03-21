@@ -31,6 +31,10 @@ export function GroupForm({ onSuccess }: GroupFormProps) {
       setNameError('グループ名を入力してください')
       return
     }
+    if (groupName.length > 20) {
+      setNameError('グループ名は20文字以内で入力してください')
+      return
+    }
 
     setLoading(true)
     setError(null)
@@ -49,15 +53,21 @@ export function GroupForm({ onSuccess }: GroupFormProps) {
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-5" noValidate>
       <Input
-        label="グループ名"
+        label={`グループ名 (${groupName.length}/20文字)`}
         placeholder="例：沖縄旅行、渋谷飲み会"
         value={groupName}
         onChange={e => {
-          setGroupName(e.target.value)
-          if (e.target.value.trim()) setNameError(null)
+          const val = e.target.value.slice(0, 20)
+          setGroupName(val)
+          if (val.length > 20) {
+            setNameError('グループ名は20文字以内で入力してください')
+          } else if (val.trim()) {
+            setNameError(null)
+          }
         }}
         error={nameError || undefined}
         required
+        maxLength={20}
       />
 
       <div className="flex flex-col gap-3">
