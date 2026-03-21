@@ -6,6 +6,7 @@ import { formatCurrency, formatDate } from "@/utils/format";
 import { api } from "@/lib/api/client";
 import { GlassCard } from "@/components/ui/glass-card";
 import { useAlert } from "@/components/providers/alert-provider";
+import { MESSAGES } from "@/lib/constants";
 
 interface SettlementListProps {
   settlements: Settlement[];
@@ -18,11 +19,11 @@ export function SettlementList({ settlements, onDelete }: SettlementListProps) {
 
   const handleDelete = async (id: string) => {
     const isConfirmed = await confirm({
-      title: "精算の取り消し",
-      message: "この精算記録を取り消して、貸し借りを未精算の状態に戻しますか？",
+      title: MESSAGES.UI.SETTLEMENT_CANCEL,
+      message: MESSAGES.UI.CONFIRM_CANCEL_SETTLEMENT,
       type: "warn",
-      confirmText: "取り消す",
-      cancelText: "戻る",
+      confirmText: MESSAGES.UI.CANCEL_ACTION,
+      cancelText: MESSAGES.UI.BACK,
     });
 
     if (!isConfirmed) return;
@@ -34,7 +35,7 @@ export function SettlementList({ settlements, onDelete }: SettlementListProps) {
     } catch (e) {
       await alert({
         title: "エラー",
-        message: "キャンセルに失敗しました",
+        message: MESSAGES.ERROR.CANCEL_FAILED,
         type: "error",
       });
     } finally {
@@ -105,7 +106,7 @@ export function SettlementList({ settlements, onDelete }: SettlementListProps) {
               onClick={() => handleDelete(s.id)}
               disabled={deletingId === s.id}
               className="transition-all p-2 rounded-xl flex-shrink-0 text-gray-500 hover:text-blue-400 hover:bg-blue-500/10 active:scale-95"
-              title="精算を取り消して貸し借りに戻す"
+              title={MESSAGES.UI.SETTLEMENT_CANCEL}
             >
               <svg
                 className="w-5 h-5"

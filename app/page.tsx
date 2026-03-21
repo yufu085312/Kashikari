@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { GlassCard } from "@/components/ui/glass-card";
 import Link from "next/link";
+import { ROUTES, MESSAGES } from "@/lib/constants";
 
 const isRedirectError = (error: any) =>
   error?.digest?.startsWith("NEXT_REDIRECT");
@@ -25,7 +26,7 @@ export default async function HomePage(props: {
       error: authError,
     } = await supabase.auth.getUser();
     if (authError || !user) {
-      redirect("/login");
+      redirect(ROUTES.LOGIN);
     }
 
     // メール確認後のトップページ遷移時に、Cookieに残っている遷移先があればそこへ飛ばす
@@ -45,7 +46,7 @@ export default async function HomePage(props: {
       throw ge;
     }
 
-    const userName = user.user_metadata?.name || "ゲスト";
+    const userName = user.user_metadata?.name || MESSAGES.UI.GUEST;
     const searchId = user.user_metadata?.search_id || "";
 
     return (
@@ -99,18 +100,18 @@ export default async function HomePage(props: {
             </svg>
           </div>
           <h2 className="text-xl font-bold text-white mb-3">
-            エラーが発生しました
+            {MESSAGES.UI.ERROR_OCCURRED}
           </h2>
           <p className="text-sm text-gray-400 mb-8 leading-relaxed">
-            データの取得中に問題が発生しました。
+            {MESSAGES.ERROR.FETCH_FAILED}
             <br />
-            しばらく時間を置いてから再度お試しください。
+            {MESSAGES.ERROR.RETRY_LATER}
           </p>
           <Link
-            href="/"
+            href={ROUTES.HOME}
             className="inline-flex items-center justify-center w-full px-6 py-3 text-sm font-bold text-white transition-all bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 active:scale-95"
           >
-            再読み込み
+            {MESSAGES.UI.RELOAD}
           </Link>
         </GlassCard>
       </div>

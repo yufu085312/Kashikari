@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { api } from "@/lib/api/client";
+import { LIMITS, MESSAGES } from "@/lib/constants";
 
 interface GroupFormProps {
   onSuccess?: (groupId: string) => void;
@@ -29,11 +30,11 @@ export function GroupForm({ onSuccess }: GroupFormProps) {
     setNameError(null);
 
     if (!groupName.trim()) {
-      setNameError("グループ名を入力してください");
+      setNameError(MESSAGES.ERROR.GROUP_NAME_REQUIRED);
       return;
     }
-    if (groupName.length > 20) {
-      setNameError("グループ名は20文字以内で入力してください");
+    if (groupName.length > LIMITS.MAX_GROUP_NAME_LENGTH) {
+      setNameError(MESSAGES.ERROR.GROUP_NAME_TOO_LONG);
       return;
     }
 
@@ -57,33 +58,33 @@ export function GroupForm({ onSuccess }: GroupFormProps) {
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-5" noValidate>
       <Input
-        label={`グループ名 (${groupName.length}/20文字)`}
-        placeholder="例：沖縄旅行、渋谷飲み会"
+        label={`${MESSAGES.UI.NAME_LABEL} (${groupName.length}/${LIMITS.MAX_GROUP_NAME_LENGTH}文字)`}
+        placeholder={MESSAGES.UI.GROUP_NAME_EXAMPLE}
         value={groupName}
         onChange={(e) => {
-          const val = e.target.value.slice(0, 20);
+          const val = e.target.value.slice(0, LIMITS.MAX_GROUP_NAME_LENGTH);
           setGroupName(val);
-          if (val.length > 20) {
-            setNameError("グループ名は20文字以内で入力してください");
+          if (val.length > LIMITS.MAX_GROUP_NAME_LENGTH) {
+            setNameError(MESSAGES.ERROR.GROUP_NAME_TOO_LONG);
           } else if (val.trim()) {
             setNameError(null);
           }
         }}
         error={nameError || undefined}
         required
-        maxLength={20}
+        maxLength={LIMITS.MAX_GROUP_NAME_LENGTH}
       />
 
       <div className="flex flex-col gap-3">
         <label className="text-sm font-medium text-gray-300">
-          招待するメンバーの検索ID (任意)
+          {MESSAGES.UI.INVITE_SEARCH_ID_LABEL}
         </label>
 
         {memberSearchIds.map((id, i) => (
           <div key={i} className="flex gap-2 items-start">
             <div className="flex-1">
               <Input
-                placeholder="例: tanaka_123"
+                placeholder={MESSAGES.UI.SEARCH_ID_EXAMPLE}
                 value={id}
                 onChange={(e) => updateSearchId(i, e.target.value)}
               />
@@ -130,7 +131,7 @@ export function GroupForm({ onSuccess }: GroupFormProps) {
               d="M12 4v16m8-8H4"
             />
           </svg>
-          検索IDを追加
+          {MESSAGES.UI.ADD_SEARCH_ID}
         </button>
       </div>
 
@@ -141,7 +142,7 @@ export function GroupForm({ onSuccess }: GroupFormProps) {
       )}
 
       <Button type="submit" size="lg" loading={loading} className="w-full">
-        グループを作成
+        {MESSAGES.UI.GROUP_CREATE}
       </Button>
     </form>
   );

@@ -14,6 +14,7 @@ vi.mock("@/lib/usecases/settleDebt", () => ({
 import { createClient } from "@/utils/supabase/server";
 import { settleDebt } from "@/lib/usecases/settleDebt";
 import { POST } from "@/app/api/v1/settlements/route";
+import { MESSAGES } from "@/lib/constants";
 
 const mockCreateClient = vi.mocked(createClient);
 const mockSettleDebt = vi.mocked(settleDebt);
@@ -63,7 +64,7 @@ describe("POST /api/v1/settlements", () => {
     const json = await res.json();
 
     expect(res.status).toBe(401);
-    expect(json.error.message).toBe("Unauthorized");
+    expect(json.error.message).toBe(MESSAGES.ERROR.UNAUTHORIZED);
   });
 
   it("必須パラメータが不足している場合、400 を返す", async () => {

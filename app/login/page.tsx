@@ -7,6 +7,7 @@ import Link from "next/link";
 import { login } from "./actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { ROUTES, LIMITS, MESSAGES, METADATA } from "@/lib/constants";
 
 export default function LoginPage({
   searchParams,
@@ -30,12 +31,12 @@ export default function LoginPage({
 
     const newErrors: { email?: string; password?: string } = {};
     if (!email) {
-      newErrors.email = "メールアドレスを入力してください";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      newErrors.email = "正しいメールアドレスの形式で入力してください";
+      newErrors.email = MESSAGES.ERROR.EMAIL_REQUIRED;
+    } else if (!LIMITS.EMAIL_PATTERN.test(email)) {
+      newErrors.email = MESSAGES.ERROR.EMAIL_INVALID;
     }
 
-    if (!password) newErrors.password = "パスワードを入力してください";
+    if (!password) newErrors.password = MESSAGES.ERROR.PASSWORD_REQUIRED;
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -146,16 +147,16 @@ export default function LoginPage({
           </svg>
         </div>
         <h1 className="text-4xl font-black text-white tracking-tighter mb-3">
-          Kashikari
+          {METADATA.SHORT_NAME}
         </h1>
         <p className="text-gray-400 font-medium tracking-wide">
-          スマートな割り勘、カンタンな貸し借り管理。
+          {MESSAGES.UI.APP_TAGLINE}
         </p>
       </div>
 
       <div className="w-full max-w-md p-8 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl animate-slide-up">
         <h2 className="text-xl font-bold text-white mb-8 text-center">
-          ログイン
+          {MESSAGES.UI.LOGIN}
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-6" noValidate>
@@ -165,7 +166,7 @@ export default function LoginPage({
           <Input
             name="email"
             type="email"
-            label="メールアドレス"
+            label={MESSAGES.UI.EMAIL_LABEL}
             placeholder="you@example.com"
             autoComplete="email"
             required
@@ -174,7 +175,7 @@ export default function LoginPage({
           <Input
             name="password"
             type="password"
-            label="パスワード"
+            label={MESSAGES.UI.PASSWORD_LABEL}
             placeholder="••••••••"
             autoComplete="current-password"
             required
@@ -197,29 +198,29 @@ export default function LoginPage({
             size="lg"
             disabled={isPending}
           >
-            {isPending ? "ログイン中..." : "ログイン"}
+            {isPending ? MESSAGES.UI.LOGGING_IN : MESSAGES.UI.LOGIN}
           </Button>
         </form>
 
         <div className="mt-6 flex flex-col items-center gap-4 text-sm text-gray-400">
           <Link
-            href={`/signup${params.next ? `?next=${encodeURIComponent(params.next)}` : ""}`}
+            href={`${ROUTES.SIGNUP}${params.next ? `?next=${encodeURIComponent(params.next)}` : ""}`}
             className="hover:text-brand-300 transition-colors"
           >
-            アカウントをお持ちでない方はこちら
+            {MESSAGES.UI.NO_ACCOUNT_PROMPT}
           </Link>
           <div className="flex items-center gap-4 text-xs text-gray-500 mt-2">
             <Link
-              href="/terms"
+              href={ROUTES.TERMS}
               className="hover:text-gray-300 transition-colors"
             >
-              利用規約
+              {MESSAGES.UI.TERMS_LABEL}
             </Link>
             <Link
-              href="/privacy"
+              href={ROUTES.PRIVACY}
               className="hover:text-gray-300 transition-colors"
             >
-              プライバシーポリシー
+              {MESSAGES.UI.PRIVACY_POLICY_LABEL}
             </Link>
           </div>
         </div>

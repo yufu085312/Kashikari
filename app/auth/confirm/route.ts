@@ -4,6 +4,7 @@ import { type NextRequest } from "next/server";
 
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
+import { ROUTES } from "@/lib/constants";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -25,6 +26,11 @@ export async function GET(request: NextRequest) {
     }
   }
 
+  const supabase = await createClient();
+  const { MESSAGES } = await import("@/lib/constants");
+
   // 失敗した場合はエラー画面（またはログイン画面）へ
-  redirect("/login?error=認証に失敗したか、リンクの期限が切れています。");
+  redirect(
+    `${ROUTES.LOGIN}?error=${encodeURIComponent(MESSAGES.ERROR.AUTH_REDIRECT_ERROR)}`,
+  );
 }

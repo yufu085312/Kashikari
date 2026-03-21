@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { api } from "@/lib/api/client";
 import { useAlert } from "@/components/providers/alert-provider";
+import { ROUTES, TIMEOUTS, MESSAGES } from "@/lib/constants";
 
 interface GroupDetailClientProps {
   groupId: string;
@@ -63,7 +64,7 @@ export function GroupDetailClient({
   const handleCopyInvite = () => {
     navigator.clipboard.writeText(inviteUrl);
     setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    setTimeout(() => setCopied(false), TIMEOUTS.COPY_FEEDBACK);
   };
 
   const handleAddMemberBySearchId = async () => {
@@ -77,7 +78,7 @@ export function GroupDetailClient({
       // リフレッシュ
       window.location.reload();
     } catch (e) {
-      setAddMemberError("ユーザーが見つからないか、既に追加されています");
+      setAddMemberError(MESSAGES.ERROR.USER_NOT_FOUND);
     } finally {
       setIsAddingMember(false);
     }
@@ -109,20 +110,18 @@ export function GroupDetailClient({
     if (hasBalance) {
       await alert({
         title: "削除できません",
-        message:
-          "精算が完了していない貸し借りがあるため、削除できません。\nすべての精算を完了させてから削除してください。",
+        message: MESSAGES.ERROR.GROUP_DELETE_SETTLEMENT_PENDING,
         type: "warn",
       });
       return;
     }
 
     const isConfirmed = await confirm({
-      title: "グループの削除",
-      message:
-        "このグループを完全に削除してもよろしいですか？\nこの操作は取り消せません。",
+      title: MESSAGES.UI.GROUP_DELETE,
+      message: MESSAGES.UI.CONFIRM_DELETE_GROUP,
       type: "danger",
       confirmText: "削除する",
-      cancelText: "戻る",
+      cancelText: MESSAGES.UI.BACK,
     });
 
     if (!isConfirmed) return;
@@ -130,11 +129,11 @@ export function GroupDetailClient({
     setIsDeleting(true);
     try {
       await api.deleteGroup(groupId);
-      router.push("/");
+      router.push(ROUTES.HOME);
     } catch (e) {
       await alert({
         title: "エラー",
-        message: "グループの削除に失敗しました",
+        message: MESSAGES.ERROR.GROUP_DELETE_FAILED,
         type: "error",
       });
     } finally {
@@ -149,7 +148,7 @@ export function GroupDetailClient({
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0 flex-1">
             <Link
-              href="/"
+              href={ROUTES.HOME}
               className="inline-flex items-center text-[10px] font-bold text-gray-500 hover:text-white transition-colors mb-4 group"
             >
               <svg
@@ -180,7 +179,7 @@ export function GroupDetailClient({
               onClick={handleDeleteGroup}
               className="rounded-2xl p-2.5 bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 active:scale-95 transition-all flex-shrink-0"
               loading={isDeleting}
-              title="グループを削除"
+              title={MESSAGES.UI.GROUP_DELETE}
             >
               <svg
                 className="w-5 h-5"
@@ -247,7 +246,7 @@ export function GroupDetailClient({
               ? "貸し借り"
               : tab === "payment"
                 ? "履歴"
-                : "精算"}
+                : MESSAGES.UI.SETTLEMENT_EXECUTE.replace("の実行", "")}
           </button>
         ))}
       </div>
@@ -320,7 +319,7 @@ export function GroupDetailClient({
               d="M12 4v16m8-8H4"
             />
           </svg>
-          支払いを記録する
+          {MESSAGES.UI.PAYMENT_RECORD}
         </Button>
       </div>
 
@@ -328,7 +327,7 @@ export function GroupDetailClient({
       <Modal
         isOpen={showInviteModal}
         onClose={() => setShowInviteModal(false)}
-        title="メンバーを招待"
+        title={MESSAGES.UI.MEMBER_INVITE}
       >
         <div className="space-y-6">
           <div className="space-y-3">
@@ -378,7 +377,7 @@ export function GroupDetailClient({
                 onClick={handleCopyInvite}
                 className="rounded-xl whitespace-nowrap"
               >
-                {copied ? "コピー済み" : "コピー"}
+                {copied ? MESSAGES.UI.COPIED : MESSAGES.UI.COPY}
               </Button>
             </div>
             <p className="text-[10px] text-gray-500">
@@ -392,7 +391,7 @@ export function GroupDetailClient({
       <Modal
         isOpen={showMembersModal}
         onClose={() => setShowMembersModal(false)}
-        title="参加メンバー"
+        title={MESSAGES.UI.MEMBER_LIST}
       >
         <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
           {initialMembers.map((m) => (
@@ -419,7 +418,7 @@ export function GroupDetailClient({
             className="w-full rounded-xl"
             onClick={() => setShowMembersModal(false)}
           >
-            閉じる
+            {MESSAGES.UI.CLOSE}
           </Button>
         </div>
       </Modal>
@@ -428,7 +427,7 @@ export function GroupDetailClient({
       <Modal
         isOpen={showPaymentModal}
         onClose={() => setShowPaymentModal(false)}
-        title="支払いを記録"
+        title={MESSAGES.UI.PAYMENT_RECORD}
       >
         <PaymentForm
           currentUserId={userId}

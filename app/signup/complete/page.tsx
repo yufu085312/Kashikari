@@ -2,6 +2,7 @@
 
 import React, { use } from "react";
 import { Button } from "@/components/ui/button";
+import { MESSAGES } from "@/lib/constants";
 
 export default function SignupCompletePage({
   searchParams,
@@ -32,14 +33,14 @@ export default function SignupCompletePage({
         </div>
 
         <h1 className="text-3xl font-black text-white tracking-tight mb-4">
-          登録が完了しました！
+          {MESSAGES.UI.SIGNUP_COMPLETE_TITLE}
         </h1>
 
         <p className="text-gray-400 font-medium mb-10 leading-relaxed">
-          認証に成功しました。そのままアプリをご利用いただけます。
+          {MESSAGES.UI.SIGNUP_COMPLETE_MSG}
           {isInvite && (
             <span className="text-emerald-400 font-bold block mt-3">
-              招待されたグループへ移動して参加を完了しましょう。
+              {MESSAGES.UI.INVITE_COMPLETE_PROMPT}
             </span>
           )}
         </p>
@@ -49,7 +50,7 @@ export default function SignupCompletePage({
             className="w-full h-14 text-lg font-bold shadow-lg shadow-emerald-500/10 bg-emerald-500 hover:bg-emerald-400 text-white border-none"
             onClick={() => (window.location.href = next)}
           >
-            {isInvite ? "グループ招待ページへ" : "ホームへ移動"}
+            {isInvite ? MESSAGES.UI.GO_TO_INVITE_PAGE : MESSAGES.UI.GO_TO_HOME}
           </Button>
         </div>
       </div>

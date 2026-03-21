@@ -10,6 +10,7 @@ import { Group } from "@/types/group";
 import Link from "next/link";
 import { logout } from "@/app/login/actions";
 import { AddToHomeScreenBanner } from "@/components/ui/add-to-home-screen-banner";
+import { ROUTES, TIMEOUTS, MESSAGES, METADATA } from "@/lib/constants";
 
 interface HomePageClientProps {
   initialGroups: Group[];
@@ -32,7 +33,7 @@ export function HomePageClient({
   const handleCopyId = () => {
     navigator.clipboard.writeText(searchId);
     setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    setTimeout(() => setCopied(false), TIMEOUTS.COPY_FEEDBACK);
   };
 
   const handleGroupCreated = (groupId: string) => {
@@ -145,19 +146,19 @@ export function HomePageClient({
               </svg>
             </div>
             <h1 className="text-lg sm:text-2xl font-black text-white tracking-tight">
-              割り勘・貸し借り管理アプリ
+              {MESSAGES.UI.APP_TAGLINE}
             </h1>
           </div>
           <div className="flex flex-wrap items-center gap-x-3 gap-y-2 mt-6 sm:mt-8">
             <button
               onClick={handleCopyId}
               className="group flex items-center justify-center min-w-[120px] gap-1.5 text-[10px] text-gray-600 hover:text-emerald-400 transition-colors bg-white/5 px-2 py-0.5 rounded-full border border-white/5 active:scale-95"
-              title="IDをコピー"
+              title={MESSAGES.UI.COPY_ID}
             >
               {copied ? (
                 <>
                   <span className="font-bold text-emerald-400">
-                    コピーしました
+                    {MESSAGES.UI.ID_COPY_SUCCESS}
                   </span>
                   <svg
                     className="w-3 h-3 text-emerald-400 animate-fade-in"
@@ -175,7 +176,9 @@ export function HomePageClient({
                 </>
               ) : (
                 <>
-                  <span className="font-mono">ID: {searchId}</span>
+                  <span className="font-mono">
+                    {MESSAGES.UI.ID_LABEL}: {searchId}
+                  </span>
                   <svg
                     className="w-3 h-3 text-gray-500 group-hover:text-emerald-400 transition-colors"
                     fill="none"
@@ -193,7 +196,8 @@ export function HomePageClient({
               )}
             </button>
             <p className="text-sm text-gray-500 font-medium">
-              こんにちは、<span className="text-emerald-400">{userName}</span>
+              {MESSAGES.UI.HELLO}、
+              <span className="text-emerald-400">{userName}</span>
             </p>
           </div>
         </div>
@@ -217,14 +221,14 @@ export function HomePageClient({
                 d="M12 4v16m8-8H4"
               />
             </svg>
-            新しいグループ
+            {MESSAGES.UI.NEW_GROUP_LABEL}
           </Button>
 
           <div className="absolute right-0 top-0 sm:relative sm:top-auto sm:right-auto">
             <button
               onClick={() => setShowSettings(!showSettings)}
               className="p-2 text-gray-500 hover:text-white transition-colors rounded-full hover:bg-white/5 active:scale-95"
-              title="設定"
+              title={MESSAGES.UI.SETTINGS_LABEL}
             >
               <svg
                 className="w-5 h-5"
@@ -255,7 +259,7 @@ export function HomePageClient({
                 />
                 <div className="absolute right-0 top-full mt-2 w-56 bg-[#0a0f1e]/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl overflow-hidden z-50 py-1 animate-fade-in origin-top-right">
                   <Link
-                    href="/terms"
+                    href={ROUTES.TERMS}
                     className="flex items-center gap-2 px-4 py-3 text-sm text-gray-300 hover:bg-white/5 hover:text-white transition-colors border-l-2 border-transparent hover:border-emerald-400"
                   >
                     <svg
@@ -271,10 +275,10 @@ export function HomePageClient({
                         d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                       />
                     </svg>
-                    利用規約
+                    {MESSAGES.UI.TERMS_LABEL}
                   </Link>
                   <Link
-                    href="/privacy"
+                    href={ROUTES.PRIVACY}
                     className="flex items-center gap-2 px-4 py-3 text-sm text-gray-300 hover:bg-white/5 hover:text-white transition-colors border-l-2 border-transparent hover:border-emerald-400"
                   >
                     <svg
@@ -290,10 +294,10 @@ export function HomePageClient({
                         d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
                       />
                     </svg>
-                    プライバシーポリシー
+                    {MESSAGES.UI.PRIVACY_POLICY_LABEL}
                   </Link>
                   <Link
-                    href="/contact"
+                    href={ROUTES.CONTACT}
                     className="flex items-center gap-2 px-4 py-3 text-sm text-gray-300 hover:bg-white/5 hover:text-white transition-colors border-l-2 border-transparent hover:border-emerald-400"
                   >
                     <svg
@@ -309,7 +313,7 @@ export function HomePageClient({
                         d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
                       />
                     </svg>
-                    お問い合わせ
+                    {MESSAGES.UI.CONTACT_LABEL}
                   </Link>
                   <div className="h-px bg-white/10 my-1 mx-2"></div>
                   <form action={logout}>
@@ -330,7 +334,7 @@ export function HomePageClient({
                           d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
                         />
                       </svg>
-                      ログアウト
+                      {MESSAGES.UI.LOGOUT_LABEL}
                     </button>
                   </form>
                 </div>
@@ -344,7 +348,7 @@ export function HomePageClient({
       <section>
         <div className="flex items-center gap-2 mb-4 px-1">
           <h2 className="text-xs font-black text-gray-500 uppercase tracking-widest">
-            グループ一覧
+            {MESSAGES.UI.GROUP_LIST_LABEL}
           </h2>
           <div className="h-px flex-1 bg-white/5"></div>
         </div>
@@ -369,10 +373,10 @@ export function HomePageClient({
                   </svg>
                 </div>
                 <p className="text-sm font-medium">
-                  参加しているグループがありません
+                  {MESSAGES.UI.NO_GROUPS_MSG}
                 </p>
                 <p className="text-[10px] mt-1 opacity-50">
-                  作成ボタンから作成しましょう
+                  {MESSAGES.UI.CREATE_GROUP_PROMPT}
                 </p>
               </GlassCard>
             </div>
@@ -388,7 +392,8 @@ export function HomePageClient({
                       {group.name}
                     </h3>
                     <p className="text-[10px] text-gray-600 font-medium mt-1">
-                      {group.members?.length || 0}人のメンバー
+                      {group.members?.length || 0}
+                      {MESSAGES.UI.MEMBER_COUNT_SUFFIX}
                     </p>
                   </div>
                   <div className="w-8 h-8 rounded-full bg-white/5 border border-white/5 flex items-center justify-center text-gray-700 group-hover:text-emerald-400 group-hover:border-emerald-500/30 group-hover:bg-emerald-500/10 transition-all">
@@ -434,7 +439,7 @@ export function HomePageClient({
                 d="M12 4v16m8-8H4"
               />
             </svg>
-            新しいグループ
+            {MESSAGES.UI.NEW_GROUP_LABEL}
           </Button>
         </div>
       </div>
@@ -442,7 +447,7 @@ export function HomePageClient({
       <Modal
         isOpen={showGroupForm}
         onClose={() => setShowGroupForm(false)}
-        title="グループを作成"
+        title={MESSAGES.UI.GROUP_CREATE}
       >
         <GroupForm onSuccess={handleGroupCreated} />
       </Modal>

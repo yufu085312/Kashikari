@@ -4,27 +4,28 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { headers } from "next/headers";
+import { ROUTES, LIMITS, MESSAGES } from "@/lib/constants";
 
 export async function login(formData: FormData) {
   const supabase = await createClient();
 
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
-  const next = (formData.get("next") as string) || "/";
+  const next = (formData.get("next") as string) || ROUTES.HOME;
 
   if (!email && !password) {
     redirect(
-      `/login?error=${encodeURIComponent("メールアドレスとパスワードを入力してください")}${next !== "/" ? `&next=${encodeURIComponent(next)}` : ""}`,
+      `${ROUTES.LOGIN}?error=${encodeURIComponent(MESSAGES.ERROR.EMAIL_PASSWORD_REQUIRED)}${next !== ROUTES.HOME ? `&next=${encodeURIComponent(next)}` : ""}`,
     );
   }
   if (!email) {
     redirect(
-      `/login?error=${encodeURIComponent("メールアドレスを入力してください")}${next !== "/" ? `&next=${encodeURIComponent(next)}` : ""}`,
+      `${ROUTES.LOGIN}?error=${encodeURIComponent(MESSAGES.ERROR.EMAIL_REQUIRED)}${next !== ROUTES.HOME ? `&next=${encodeURIComponent(next)}` : ""}`,
     );
   }
   if (!password) {
     redirect(
-      `/login?error=${encodeURIComponent("パスワードを入力してください")}${next !== "/" ? `&next=${encodeURIComponent(next)}` : ""}`,
+      `${ROUTES.LOGIN}?error=${encodeURIComponent(MESSAGES.ERROR.PASSWORD_REQUIRED)}${next !== ROUTES.HOME ? `&next=${encodeURIComponent(next)}` : ""}`,
     );
   }
 
@@ -37,11 +38,11 @@ export async function login(formData: FormData) {
   if (error) {
     // セキュリティのため、メッセージを統一します
     redirect(
-      `/login?error=${encodeURIComponent("メールアドレスまたはパスワードが正しくありません")}${next !== "/" ? `&next=${encodeURIComponent(next)}` : ""}`,
+      `${ROUTES.LOGIN}?error=${encodeURIComponent(MESSAGES.ERROR.LOGIN_FAILED)}${next !== ROUTES.HOME ? `&next=${encodeURIComponent(next)}` : ""}`,
     );
   }
 
-  revalidatePath("/", "layout");
+  revalidatePath(ROUTES.HOME, "layout");
   redirect(next);
 }
 
@@ -52,50 +53,50 @@ export async function signup(formData: FormData) {
   const search_id = formData.get("search_id") as string;
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
-  const next = (formData.get("next") as string) || "/";
+  const next = (formData.get("next") as string) || ROUTES.HOME;
 
   if (!name && !search_id && !email && !password) {
     redirect(
-      `/signup?error=${encodeURIComponent("すべての項目を入力してください")}${next !== "/" ? `&next=${encodeURIComponent(next)}` : ""}`,
+      `${ROUTES.SIGNUP}?error=${encodeURIComponent(MESSAGES.ERROR.ALL_FIELDS_REQUIRED)}${next !== ROUTES.HOME ? `&next=${encodeURIComponent(next)}` : ""}`,
     );
   }
   if (!name) {
     redirect(
-      `/signup?error=${encodeURIComponent("表示名を入力してください")}${next !== "/" ? `&next=${encodeURIComponent(next)}` : ""}`,
+      `${ROUTES.SIGNUP}?error=${encodeURIComponent(MESSAGES.ERROR.NAME_REQUIRED)}${next !== ROUTES.HOME ? `&next=${encodeURIComponent(next)}` : ""}`,
     );
   }
   if (!search_id) {
     redirect(
-      `/signup?error=${encodeURIComponent("検索IDを入力してください")}${next !== "/" ? `&next=${encodeURIComponent(next)}` : ""}`,
+      `${ROUTES.SIGNUP}?error=${encodeURIComponent(MESSAGES.ERROR.SEARCH_ID_REQUIRED)}${next !== ROUTES.HOME ? `&next=${encodeURIComponent(next)}` : ""}`,
     );
   }
   if (!email) {
     redirect(
-      `/signup?error=${encodeURIComponent("メールアドレスを入力してください")}${next !== "/" ? `&next=${encodeURIComponent(next)}` : ""}`,
+      `${ROUTES.SIGNUP}?error=${encodeURIComponent(MESSAGES.ERROR.EMAIL_REQUIRED)}${next !== ROUTES.HOME ? `&next=${encodeURIComponent(next)}` : ""}`,
     );
   }
   if (!password) {
     redirect(
-      `/signup?error=${encodeURIComponent("パスワードを入力してください")}${next !== "/" ? `&next=${encodeURIComponent(next)}` : ""}`,
+      `${ROUTES.SIGNUP}?error=${encodeURIComponent(MESSAGES.ERROR.PASSWORD_REQUIRED)}${next !== ROUTES.HOME ? `&next=${encodeURIComponent(next)}` : ""}`,
     );
   }
 
   // 文字数制限
-  if (name.length > 20) {
+  if (name.length > LIMITS.MAX_NAME_LENGTH) {
     redirect(
-      `/signup?error=${encodeURIComponent("表示名は20文字以内で入力してください")}${next !== "/" ? `&next=${encodeURIComponent(next)}` : ""}`,
+      `${ROUTES.SIGNUP}?error=${encodeURIComponent(MESSAGES.ERROR.NAME_TOO_LONG)}${next !== ROUTES.HOME ? `&next=${encodeURIComponent(next)}` : ""}`,
     );
   }
-  if (search_id.length > 20) {
+  if (search_id.length > LIMITS.MAX_SEARCH_ID_LENGTH) {
     redirect(
-      `/signup?error=${encodeURIComponent("検索IDは20文字以内で入力してください")}${next !== "/" ? `&next=${encodeURIComponent(next)}` : ""}`,
+      `${ROUTES.SIGNUP}?error=${encodeURIComponent(MESSAGES.ERROR.SEARCH_ID_TOO_LONG)}${next !== ROUTES.HOME ? `&next=${encodeURIComponent(next)}` : ""}`,
     );
   }
 
   // search_id は英数字とアンダースコアのみ許容
-  if (!/^[a-zA-Z0-9_]+$/.test(search_id)) {
+  if (!LIMITS.SEARCH_ID_PATTERN.test(search_id)) {
     redirect(
-      `/signup?error=${encodeURIComponent("検索用IDは英数字とアンダースコアのみ使用できます")}${next !== "/" ? `&next=${encodeURIComponent(next)}` : ""}`,
+      `${ROUTES.SIGNUP}?error=${encodeURIComponent(MESSAGES.ERROR.SEARCH_ID_INVALID)}${next !== ROUTES.HOME ? `&next=${encodeURIComponent(next)}` : ""}`,
     );
   }
 
@@ -108,7 +109,7 @@ export async function signup(formData: FormData) {
 
   if (existingUser) {
     redirect(
-      `/signup?error=${encodeURIComponent("この検索IDはすでに使用されています。別のIDをお試しください。")}${next !== "/" ? `&next=${encodeURIComponent(next)}` : ""}`,
+      `${ROUTES.SIGNUP}?error=${encodeURIComponent(MESSAGES.ERROR.SEARCH_ID_DUPLICATE)}${next !== ROUTES.HOME ? `&next=${encodeURIComponent(next)}` : ""}`,
     );
   }
 
@@ -133,17 +134,16 @@ export async function signup(formData: FormData) {
   if (error) {
     let errorMessage = error.message;
     if (errorMessage.includes("already registered")) {
-      errorMessage = "このメールアドレスはすでに登録されています";
+      errorMessage = MESSAGES.ERROR.EMAIL_ALREADY_REGISTERED;
     } else if (errorMessage.includes("Weak password")) {
-      errorMessage = "パスワードが弱すぎます（6文字以上で設定してください）";
+      errorMessage = MESSAGES.ERROR.PASSWORD_TOO_SHORT;
     } else if (errorMessage.includes("Database error saving new user")) {
-      errorMessage =
-        "ユーザー作成時に問題が発生しました（検索IDがすでに使われている可能性があります）";
+      errorMessage = MESSAGES.ERROR.USER_CREATE_FAILED;
     } else {
-      errorMessage = "エラーが発生しました: " + errorMessage;
+      errorMessage = MESSAGES.ERROR.GENERAL_ERROR_PREFIX + errorMessage;
     }
     redirect(
-      `/signup?error=${encodeURIComponent(errorMessage)}${next !== "/" ? `&next=${encodeURIComponent(next)}` : ""}`,
+      `${ROUTES.SIGNUP}?error=${encodeURIComponent(errorMessage)}${next !== ROUTES.HOME ? `&next=${encodeURIComponent(next)}` : ""}`,
     );
   }
 
@@ -151,12 +151,12 @@ export async function signup(formData: FormData) {
   if (!data.session) {
     // 6桁のコード入力画面へ遷移
     redirect(
-      `/signup/verify?email=${encodeURIComponent(email)}&next=${encodeURIComponent(next)}`,
+      `${ROUTES.VERIFY}?email=${encodeURIComponent(email)}&next=${encodeURIComponent(next)}`,
     );
   }
 
   // ⑤ 開発環境などでメール確認が不要な場合、自動でログイン状態を維持
-  revalidatePath("/", "layout");
+  revalidatePath(ROUTES.HOME, "layout");
   redirect(next);
 }
 
@@ -164,7 +164,7 @@ export async function verifySignupOtp(formData: FormData) {
   const supabase = await createClient();
   const email = formData.get("email") as string;
   const token = formData.get("token") as string;
-  const next = (formData.get("next") as string) || "/";
+  const next = (formData.get("next") as string) || ROUTES.HOME;
 
   const { error } = await supabase.auth.verifyOtp({
     email,
@@ -174,24 +174,24 @@ export async function verifySignupOtp(formData: FormData) {
 
   if (error) {
     redirect(
-      `/signup/verify?email=${encodeURIComponent(email)}&next=${encodeURIComponent(next)}&error=${encodeURIComponent("確認コードが正しくないか、期限が切れています。")}`,
+      `${ROUTES.VERIFY}?email=${encodeURIComponent(email)}&next=${encodeURIComponent(next)}&error=${encodeURIComponent(MESSAGES.ERROR.OTP_EXPIRED_OR_INVALID)}`,
     );
   }
 
-  revalidatePath("/", "layout");
-  redirect(`/signup/complete?next=${encodeURIComponent(next)}`);
+  revalidatePath(ROUTES.HOME, "layout");
+  redirect(`${ROUTES.COMPLETE}?next=${encodeURIComponent(next)}`);
 }
 
 export async function logout() {
   const supabase = await createClient();
   await supabase.auth.signOut();
-  redirect("/login");
+  redirect(ROUTES.LOGIN);
 }
 
 export async function resendSignupOtp(formData: FormData) {
   const supabase = await createClient();
   const email = formData.get("email") as string;
-  const next = (formData.get("next") as string) || "/";
+  const next = (formData.get("next") as string) || ROUTES.HOME;
 
   const { error } = await supabase.auth.resend({
     type: "signup",
@@ -201,14 +201,14 @@ export async function resendSignupOtp(formData: FormData) {
   if (error) {
     // Supabase のクールダウンエラーをわかりやすく変換
     const msg = error.message.includes("after")
-      ? "しばらく待ってから再送信してください（45秒間隔の制限があります）"
-      : `再送信エラー: ${error.message}`;
+      ? MESSAGES.ERROR.RESEND_COOLDOWN
+      : `${MESSAGES.ERROR.RESEND_ERROR_PREFIX}${error.message}`;
     redirect(
-      `/signup/verify?email=${encodeURIComponent(email)}&next=${encodeURIComponent(next)}&error=${encodeURIComponent(msg)}`,
+      `${ROUTES.VERIFY}?email=${encodeURIComponent(email)}&next=${encodeURIComponent(next)}&error=${encodeURIComponent(msg)}`,
     );
   }
 
   redirect(
-    `/signup/verify?email=${encodeURIComponent(email)}&next=${encodeURIComponent(next)}&message=${encodeURIComponent("確認コードを再送信しました。メールをご確認ください。")}`,
+    `${ROUTES.VERIFY}?email=${encodeURIComponent(email)}&next=${encodeURIComponent(next)}&message=${encodeURIComponent(MESSAGES.UI.OTP_RESENT_MSG)}`,
   );
 }

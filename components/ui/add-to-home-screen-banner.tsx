@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { MESSAGES } from "@/lib/constants";
 
 export function AddToHomeScreenBanner() {
   const [show, setShow] = useState(false);
@@ -85,7 +86,7 @@ export function AddToHomeScreenBanner() {
         {/* テキスト */}
         <div className="flex-1 min-w-0">
           <p className="text-sm font-bold text-white leading-tight">
-            ホーム画面に追加しよう
+            {MESSAGES.UI.ADD_TO_HOME_SCREEN}
           </p>
           {isIos ? (
             <p className="text-xs text-gray-400 mt-1 leading-relaxed">
@@ -118,7 +119,7 @@ export function AddToHomeScreenBanner() {
             onClick={handleInstall}
             className="shrink-0 px-3 py-1.5 text-xs font-bold text-white bg-brand-500 hover:bg-brand-400 rounded-xl transition-all active:scale-95"
           >
-            追加
+            {MESSAGES.UI.ADD}
           </button>
         )}
 
@@ -126,7 +127,7 @@ export function AddToHomeScreenBanner() {
         <button
           onClick={handleDismiss}
           className="shrink-0 w-6 h-6 flex items-center justify-center rounded-lg text-gray-500 hover:text-gray-300 hover:bg-white/10 transition-all"
-          aria-label="閉じる"
+          aria-label={MESSAGES.UI.CLOSE}
         >
           <svg
             className="w-4 h-4"

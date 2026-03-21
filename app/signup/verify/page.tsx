@@ -3,6 +3,7 @@
 import { use, useState, useTransition, useEffect } from "react";
 import { verifySignupOtp, resendSignupOtp } from "@/app/login/actions";
 import { Button } from "@/components/ui/button";
+import { MESSAGES, ROUTES } from "@/lib/constants";
 
 export default function VerifyOtpPage({
   searchParams,
@@ -16,7 +17,7 @@ export default function VerifyOtpPage({
 }) {
   const params = use(searchParams);
   const email = params.email || "";
-  const next = params.next || "/";
+  const next = params.next || ROUTES.HOME;
   const serverError = params.error;
   const serverMessage = params.message;
 
@@ -35,7 +36,7 @@ export default function VerifyOtpPage({
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (token.length < 6) {
-      setError("確認コードを正しく入力してください");
+      setError(MESSAGES.ERROR.OTP_INVALID);
       return;
     }
     setError("");
@@ -122,7 +123,7 @@ export default function VerifyOtpPage({
             className="w-full h-14 text-lg font-bold"
             disabled={isPending || token.length < 6}
           >
-            {isPending ? "認証中..." : "認証する"}
+            {isPending ? MESSAGES.UI.AUTHENTICATING : MESSAGES.UI.AUTHENTICATE}
           </Button>
         </form>
 
@@ -130,18 +131,18 @@ export default function VerifyOtpPage({
           <p className="text-sm text-gray-500">
             メールが届かない場合は、迷惑メールフォルダを確認してください。
           </p>
-          <button
+          <Button
             type="button"
             onClick={handleResend}
             disabled={isResending || countdown > 0}
             className="text-emerald-400 hover:text-emerald-300 text-sm font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isResending
-              ? "送信中..."
+              ? MESSAGES.UI.SENDING
               : countdown > 0
                 ? `再送信できるまで ${countdown}秒`
-                : "コードを再送信する"}
-          </button>
+                : MESSAGES.UI.RESEND_OTP}
+          </Button>
         </div>
       </div>
     </div>

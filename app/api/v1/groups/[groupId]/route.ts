@@ -2,6 +2,7 @@ export const runtime = "edge";
 import { NextRequest, NextResponse } from "next/server";
 import { getGroupById } from "@/lib/repositories/groupRepository";
 import { createClient } from "@/utils/supabase/server";
+import { MESSAGES } from "@/lib/constants";
 
 function ok<T>(data: T) {
   return NextResponse.json({ data, error: null });
@@ -19,7 +20,7 @@ export async function GET(
     const {
       data: { user },
     } = await supabase.auth.getUser();
-    if (!user) return err("Unauthorized", 401);
+    if (!user) return err(MESSAGES.ERROR.UNAUTHORIZED, 401);
 
     const { groupId } = await params;
     const group = await getGroupById(groupId);
@@ -27,7 +28,7 @@ export async function GET(
     // ここでグループメンバーかどうかのチェックを入れることも可能
     const isMember = group.members.some((m) => m.id === user.id);
     if (!isMember) {
-      return err("アクセス権がありません", 403);
+      return err(MESSAGES.ERROR.FORBIDDEN, 403);
     }
 
     return ok(group);
@@ -46,7 +47,7 @@ export async function DELETE(
     const {
       data: { user },
     } = await supabase.auth.getUser();
-    if (!user) return err("Unauthorized", 401);
+    if (!user) return err(MESSAGES.ERROR.UNAUTHORIZED, 401);
 
     const { groupId } = await params;
     const group = await getGroupById(groupId);
@@ -54,7 +55,7 @@ export async function DELETE(
     // メンバーであれば削除可能
     const isMember = group.members.some((m) => m.id === user.id);
     if (!isMember) {
-      return err("グループメンバーのみが削除できます", 403);
+      return err(MESSAGES.ERROR.GROUP_DELETE_NOT_MEMBER, 403);
     }
 
     const { deleteGroup } = await import("@/lib/repositories/groupRepository");

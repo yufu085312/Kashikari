@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { MESSAGES, ROUTES } from "@/lib/constants";
 
 export default function TermsPage() {
   return (
@@ -21,13 +22,13 @@ export default function TermsPage() {
               d="M15 19l-7-7 7-7"
             />
           </svg>
-          戻る
+          {MESSAGES.UI.BACK}
         </Link>
       </div>
 
       <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 sm:p-12 shadow-2xl">
         <h1 className="text-3xl font-black text-white mb-8 tracking-tight">
-          利用規約
+          {MESSAGES.UI.TERMS_LABEL}
         </h1>
 
         <div className="space-y-8 text-gray-300 leading-relaxed text-sm sm:text-base">

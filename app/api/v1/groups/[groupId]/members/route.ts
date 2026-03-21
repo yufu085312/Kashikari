@@ -2,6 +2,7 @@ export const runtime = "edge";
 import { NextRequest, NextResponse } from "next/server";
 import { addMemberToGroup } from "@/lib/repositories/groupRepository";
 import { createClient } from "@/utils/supabase/server";
+import { MESSAGES } from "@/lib/constants";
 
 function ok<T>(data: T) {
   return NextResponse.json({ data, error: null });
@@ -19,11 +20,11 @@ export async function POST(
     const {
       data: { user },
     } = await supabase.auth.getUser();
-    if (!user) return err("Unauthorized", 401);
+    if (!user) return err(MESSAGES.ERROR.UNAUTHORIZED, 401);
 
     const { groupId } = await params;
     const { searchId } = await req.json();
-    if (!searchId) return err("searchId is required");
+    if (!searchId) return err(MESSAGES.ERROR.SEARCH_ID_REQUIRED);
 
     const { data: targetUser, error } = await supabase
       .from("users")
@@ -32,7 +33,7 @@ export async function POST(
       .single();
 
     if (error || !targetUser) {
-      return err("ユーザーが見つかりません", 404);
+      return err(MESSAGES.ERROR.USER_NOT_FOUND, 404);
     }
 
     await addMemberToGroup(groupId, targetUser.id);
@@ -41,7 +42,7 @@ export async function POST(
     const errorMsg = e instanceof Error ? e.message : String(e);
     // Unique制約エラーなどのハンドリング
     if (errorMsg.includes("unique constraint")) {
-      return err("すでに参加しているユーザーです", 400);
+      return err(MESSAGES.ERROR.USER_ALREADY_MEMBER, 400);
     }
     return err(errorMsg, 500);
   }

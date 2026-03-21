@@ -3,29 +3,23 @@ import type { Metadata } from "next";
 import "@/styles/globals.css";
 import { GoogleAnalytics } from "@next/third-parties/google";
 
+import { METADATA } from "@/lib/constants";
+
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "割り勘・貸し借り管理アプリ Kashikari",
-  description:
-    "割り勘も貸し借りも、これ1つで簡単管理。誰がいくら借りてるか、一目でわかる割り勘・貸し借り管理アプリ。",
-  keywords: [
-    "割り勘",
-    "割り勘アプリ",
-    "貸し借り管理",
-    "お金管理",
-    "飲み会",
-    "旅行",
-  ],
+  title: METADATA.TITLE,
+  description: METADATA.DESCRIPTION,
+  keywords: [...METADATA.KEYWORDS],
   themeColor: "#10b981",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Kashikari",
+    title: METADATA.SHORT_NAME,
   },
   openGraph: {
-    title: "割り勘・貸し借り管理アプリ Kashikari",
-    description: "もう精算で揉めない。シンプルな割り勘アプリ",
+    title: METADATA.TITLE,
+    description: METADATA.DESCRIPTION,
     type: "website",
   },
 };

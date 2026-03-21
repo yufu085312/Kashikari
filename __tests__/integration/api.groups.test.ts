@@ -22,6 +22,7 @@ import { createClient } from "@/utils/supabase/server";
 import { createGroup } from "@/lib/usecases/createGroup";
 import { getGroupsByUserId } from "@/lib/repositories/groupRepository";
 import { POST, GET } from "@/app/api/v1/groups/route";
+import { MESSAGES, LIMITS } from "@/lib/constants";
 
 // モック型アサーション用ヘルパー
 const mockCreateClient = vi.mocked(createClient);
@@ -73,7 +74,7 @@ describe("POST /api/v1/groups", () => {
     const json = await res.json();
 
     expect(res.status).toBe(401);
-    expect(json.error.message).toBe("Unauthorized");
+    expect(json.error.message).toBe(MESSAGES.ERROR.UNAUTHORIZED);
   });
 
   it("name が未指定の場合、400 を返す", async () => {
@@ -83,17 +84,19 @@ describe("POST /api/v1/groups", () => {
     const json = await res.json();
 
     expect(res.status).toBe(400);
-    expect(json.error.message).toBe("name is required");
+    expect(json.error.message).toBe(MESSAGES.ERROR.GROUP_NAME_REQUIRED);
   });
 
   it("グループ名が20文字を超える場合、400 を返す", async () => {
     mockCreateClient.mockResolvedValue(makeAuthenticatedSupabase() as never);
-    const req = makeRequest({ name: "a".repeat(21) });
+    const req = makeRequest({
+      name: "a".repeat(LIMITS.MAX_GROUP_NAME_LENGTH + 1),
+    });
     const res = await POST(req);
     const json = await res.json();
 
     expect(res.status).toBe(400);
-    expect(json.error.message).toBe("グループ名は20文字以内で入力してください");
+    expect(json.error.message).toBe(MESSAGES.ERROR.GROUP_NAME_TOO_LONG);
   });
 
   it("正常なリクエストの場合、201 相当のデータを返す", async () => {
@@ -127,7 +130,7 @@ describe("GET /api/v1/groups", () => {
     const json = await res.json();
 
     expect(res.status).toBe(401);
-    expect(json.error.message).toBe("Unauthorized");
+    expect(json.error.message).toBe(MESSAGES.ERROR.UNAUTHORIZED);
   });
 
   it("認証済みの場合、グループ一覧を返す", async () => {
