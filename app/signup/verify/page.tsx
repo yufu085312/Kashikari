@@ -1,6 +1,6 @@
 'use client'
 
-import { use, useState, useTransition } from 'react'
+import { use, useState, useTransition, useEffect } from 'react'
 import { verifySignupOtp, resendSignupOtp } from '@/app/login/actions'
 import { Button } from '@/components/ui/button'
 
@@ -19,6 +19,13 @@ export default function VerifyOtpPage({
   const [error, setError] = useState('')
   const [isPending, startTransition] = useTransition()
   const [isResending, startResend] = useTransition()
+  const [countdown, setCountdown] = useState(45) // 再送信までのカウントダウン
+
+  useEffect(() => {
+    if (countdown <= 0) return
+    const timer = setTimeout(() => setCountdown(c => c - 1), 1000)
+    return () => clearTimeout(timer)
+  }, [countdown])
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -41,6 +48,7 @@ export default function VerifyOtpPage({
     const formData = new FormData()
     formData.append('email', email)
     formData.append('next', next)
+    setCountdown(45) // 再送信後にカウントダウンリセット
     startResend(() => {
       resendSignupOtp(formData)
     })
@@ -99,10 +107,14 @@ export default function VerifyOtpPage({
           <button
             type="button"
             onClick={handleResend}
-            disabled={isResending}
-            className="text-emerald-400 hover:text-emerald-300 text-sm font-bold transition-colors disabled:opacity-50"
+            disabled={isResending || countdown > 0}
+            className="text-emerald-400 hover:text-emerald-300 text-sm font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isResending ? '送信中...' : 'コードを再送信する'}
+            {isResending
+              ? '送信中...'
+              : countdown > 0
+              ? `再送信できるまで ${countdown}秒`
+              : 'コードを再送信する'}
           </button>
         </div>
       </div>

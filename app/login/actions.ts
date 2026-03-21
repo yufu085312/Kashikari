@@ -164,7 +164,11 @@ export async function resendSignupOtp(formData: FormData) {
   })
 
   if (error) {
-    redirect(`/signup/verify?email=${encodeURIComponent(email)}&next=${encodeURIComponent(next)}&error=${encodeURIComponent(`再送信エラー: ${error.message}`)}`)
+    // Supabase のクールダウンエラーをわかりやすく変換
+    const msg = error.message.includes('after')
+      ? 'しばらく待ってから再送信してください（45秒間隔の制限があります）'
+      : `再送信エラー: ${error.message}`
+    redirect(`/signup/verify?email=${encodeURIComponent(email)}&next=${encodeURIComponent(next)}&error=${encodeURIComponent(msg)}`)
   }
 
   redirect(`/signup/verify?email=${encodeURIComponent(email)}&next=${encodeURIComponent(next)}&message=${encodeURIComponent('確認コードを再送信しました。メールをご確認ください。')}`)
