@@ -88,17 +88,24 @@ CREATE TRIGGER on_auth_user_created
 -- 7. RLS (Row Level Security) の設定 (根本対策版)
 -- ==========================================
 
--- 一旦すべてのポリシーと関数をきれいに削除
-DROP POLICY IF EXISTS "Users are viewable by authenticated users" ON public.users;
-DROP POLICY IF EXISTS "Groups viewable by members" ON public.groups;
-DROP POLICY IF EXISTS "Authenticated users can create groups" ON public.groups;
-DROP POLICY IF EXISTS "Members viewable by fellow members" ON public.group_members;
-DROP POLICY IF EXISTS "Authenticated users can join groups" ON public.group_members;
-DROP POLICY IF EXISTS "Payments viewable by members" ON public.payments;
-DROP POLICY IF EXISTS "Members can create payments" ON public.payments;
-DROP POLICY IF EXISTS "Settlements viewable by members" ON public.settlements;
-DROP POLICY IF EXISTS "Members can create settlements" ON public.settlements;
-DROP FUNCTION IF EXISTS public.is_group_member;
+-- テーブルに RLS を適用
+ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.groups ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.group_members ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.payments ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.payment_participants ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.settlements ENABLE ROW LEVEL SECURITY;
+
+-- 全ポリシーをきれいに削除（重複作成エラー防止のため）
+DO $$ 
+DECLARE 
+    pol record;
+BEGIN
+    FOR pol IN (SELECT policyname, tablename FROM pg_policies WHERE schemaname = 'public') 
+    LOOP
+        EXECUTE format('DROP POLICY IF EXISTS %I ON %I', pol.policyname, pol.tablename);
+    END LOOP;
+END $$;
 
 -- 再帰を使わずに「自分がメンバーであるグループID」を返す関数（SECURITY DEFINER で RLS をバイパス）
 CREATE OR REPLACE FUNCTION public.get_my_groups()
@@ -107,22 +114,36 @@ RETURNS setof uuid AS $$
 $$ LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public;
 
 -- 1. users: 認証済みユーザーなら誰でも見れる（検索用）
-CREATE POLICY "Users are viewable by all" ON public.users FOR SELECT USING (auth.uid() IS NOT NULL);
+CREATE POLICY "Users viewable by all" ON public.users FOR SELECT USING (auth.uid() IS NOT NULL);
 
--- 2. groups: 自分が所属しているグループのみ
-CREATE POLICY "Groups viewable by members" ON public.groups FOR SELECT USING (id IN (SELECT public.get_my_groups()));
-CREATE POLICY "Groups insert by all" ON public.groups FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
+-- 2. groups: 自分が所属しているか、自分が作成したグループのみ
+-- INSERT 後の SELECT (...RETURNING) が通るように created_by もチェック対象に含める
+CREATE POLICY "Groups select by members or creator" ON public.groups FOR SELECT USING (
+  id IN (SELECT public.get_my_groups()) OR created_by = auth.uid()
+);
+CREATE POLICY "Groups insert by authenticated" ON public.groups FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
+CREATE POLICY "Groups update by creator" ON public.groups FOR UPDATE USING (created_by = auth.uid());
+CREATE POLICY "Groups delete by creator" ON public.groups FOR DELETE USING (created_by = auth.uid());
 
--- 3. group_members: 自分が所属しているグループのメンバーのみ
-CREATE POLICY "Members viewable by fellow members" ON public.group_members FOR SELECT USING (group_id IN (SELECT public.get_my_groups()));
-CREATE POLICY "Members insert by all" ON public.group_members FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
+-- 3. group_members: 自分が所属しているグループのメンバー情報、または自分自身の追加
+CREATE POLICY "Members select by fellow members" ON public.group_members FOR SELECT USING (
+  group_id IN (SELECT public.get_my_groups()) OR user_id = auth.uid()
+);
+CREATE POLICY "Members insert by authenticated" ON public.group_members FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
+CREATE POLICY "Members delete by authenticated" ON public.group_members FOR DELETE USING (user_id = auth.uid());
 
--- 4. payments: 同様
-CREATE POLICY "Payments viewable by members" ON public.payments FOR SELECT USING (group_id IN (SELECT public.get_my_groups()));
+-- 4. payments: 所属グループの支払いのみ
+CREATE POLICY "Payments select by members" ON public.payments FOR SELECT USING (group_id IN (SELECT public.get_my_groups()));
 CREATE POLICY "Payments insert by members" ON public.payments FOR INSERT WITH CHECK (group_id IN (SELECT public.get_my_groups()));
 
--- 5. settlements: 同様
-CREATE POLICY "Settlements viewable by members" ON public.settlements FOR SELECT USING (group_id IN (SELECT public.get_my_groups()));
+-- 5. payment_participants: 自分がメンバーであるグループの支払い参加者のみ
+CREATE POLICY "Participants select by members" ON public.payment_participants FOR SELECT USING (
+  payment_id IN (SELECT id FROM public.payments WHERE group_id IN (SELECT public.get_my_groups()))
+);
+CREATE POLICY "Participants insert by members" ON public.payment_participants FOR INSERT WITH CHECK (
+  payment_id IN (SELECT id FROM public.payments WHERE group_id IN (SELECT public.get_my_groups()))
+);
+
+-- 6. settlements: 所属グループの精算のみ
+CREATE POLICY "Settlements select by members" ON public.settlements FOR SELECT USING (group_id IN (SELECT public.get_my_groups()));
 CREATE POLICY "Settlements insert by members" ON public.settlements FOR INSERT WITH CHECK (group_id IN (SELECT public.get_my_groups()));
-
-
