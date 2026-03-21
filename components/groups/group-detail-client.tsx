@@ -99,12 +99,12 @@ export function GroupDetailClient({
   const [isDeleting, setIsDeleting] = useState(false)
 
   const handleDeleteGroup = async () => {
-    // 残高チェック
+    // 貸し借りチェック
     const hasBalance = balances.some(b => b.amount > 0)
     if (hasBalance) {
       await alert({
         title: '削除できません',
-        message: '精算が完了していない残高があるため、削除できません。\nすべての精算を完了させてから削除してください。',
+        message: '精算が完了していない貸し借りがあるため、削除できません。\nすべての精算を完了させてから削除してください。',
         type: 'warn'
       })
       return
@@ -204,7 +204,7 @@ export function GroupDetailClient({
                 : 'text-gray-500 hover:text-gray-300'
             }`}
           >
-            {tab === 'balance' ? '残高' : tab === 'payment' ? '履歴' : '精算'}
+            {tab === 'balance' ? '貸し借り' : tab === 'payment' ? '履歴' : '精算'}
           </button>
         ))}
       </div>
