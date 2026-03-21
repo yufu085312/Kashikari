@@ -120,7 +120,7 @@ CREATE POLICY "Users viewable by all" ON public.users FOR SELECT USING (auth.uid
 CREATE POLICY "Groups viewable by authenticated" ON public.groups FOR SELECT USING (auth.uid() IS NOT NULL);
 CREATE POLICY "Groups insert by authenticated" ON public.groups FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
 CREATE POLICY "Groups update by creator" ON public.groups FOR UPDATE USING (created_by = auth.uid());
-CREATE POLICY "Groups delete by creator" ON public.groups FOR DELETE USING (created_by = auth.uid());
+CREATE POLICY "Groups delete by members" ON public.groups FOR DELETE USING (id IN (SELECT public.get_my_groups()));
 
 -- 3. group_members: 自分が所属しているグループのメンバー情報、または自分自身の追加
 CREATE POLICY "Members select by fellow members" ON public.group_members FOR SELECT USING (

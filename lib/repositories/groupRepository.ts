@@ -68,10 +68,11 @@ export async function addMemberToGroup(groupId: string, userId: string): Promise
 
 export async function deleteGroup(groupId: string): Promise<void> {
   const supabase = await createClient()
-  const { error } = await supabase
+  const { error, count } = await supabase
     .from('groups')
-    .delete()
+    .delete({ count: 'exact' })
     .eq('id', groupId)
-
+ 
   if (error) throw new Error(error.message)
+  if (count === 0) throw new Error('グループを削除する権限がないか、グループが見つかりません')
 }
