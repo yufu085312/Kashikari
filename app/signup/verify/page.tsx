@@ -20,8 +20,8 @@ export default function VerifyOtpPage({
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    if (token.length !== 6) {
-      setError('6桁のコードを入力してください')
+    if (token.length < 6) {
+      setError('確認コードを正しく入力してください')
       return
     }
     setError('')
@@ -46,7 +46,7 @@ export default function VerifyOtpPage({
         
         <h1 className="text-3xl font-black tracking-tight mb-4 text-white">確認コードを入力</h1>
         <p className="text-gray-400 font-medium mb-8 leading-relaxed">
-          <span className="text-emerald-400 font-bold">{email}</span> 宛てに届いた<br />6桁のコードを入力してください。
+          <span className="text-emerald-400 font-bold">{email}</span> 宛てに届いた<br />確認コードを入力してください。
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -55,9 +55,9 @@ export default function VerifyOtpPage({
               type="text"
               name="token"
               value={token}
-              onChange={(e) => setToken(e.target.value.replace(/\D/g, '').slice(0, 6))}
-              placeholder="000000"
-              className="w-full h-20 text-center text-5xl font-mono tracking-[0.3em] bg-white/5 border border-white/10 rounded-2xl focus:border-emerald-500/50 focus:ring-4 focus:ring-emerald-500/10 transition-all outline-none placeholder:text-white/10 text-white"
+              onChange={(e) => setToken(e.target.value.replace(/\D/g, '').slice(0, 8))}
+              placeholder="00000000"
+              className="w-full h-20 text-center text-4xl font-mono tracking-[0.2em] bg-white/5 border border-white/10 rounded-2xl focus:border-emerald-500/50 focus:ring-4 focus:ring-emerald-500/10 transition-all outline-none placeholder:text-white/10 text-white"
               autoFocus
               required
               autoComplete="one-time-code"
@@ -70,7 +70,7 @@ export default function VerifyOtpPage({
             </div>
           )}
 
-          <Button type="submit" className="w-full h-14 text-lg font-bold" disabled={isPending || token.length !== 6}>
+          <Button type="submit" className="w-full h-14 text-lg font-bold" disabled={isPending || token.length < 6}>
             {isPending ? '認証中...' : '認証する'}
           </Button>
         </form>
