@@ -52,98 +52,11 @@ export function HomePageClient({
         <div className="flex-1 min-w-0 pr-10 sm:pr-0">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center shadow-lg shadow-black/10 flex-shrink-0 border border-white/10 overflow-hidden">
-              <svg
-                className="w-full h-full"
-                viewBox="0 0 1024 1024"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <defs>
-                  <linearGradient id="header-bg" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stopColor="#4ade80" />
-                    <stop offset="100%" stopColor="#16a34a" />
-                  </linearGradient>
-                  <linearGradient
-                    id="header-wallet"
-                    x1="0"
-                    y1="0"
-                    x2="1"
-                    y2="1"
-                  >
-                    <stop offset="0%" stopColor="#60a5fa" />
-                    <stop offset="100%" stopColor="#2563eb" />
-                  </linearGradient>
-                  <filter
-                    id="header-shadow"
-                    x="-20%"
-                    y="-20%"
-                    width="140%"
-                    height="140%"
-                  >
-                    <feDropShadow
-                      dx="0"
-                      dy="20"
-                      stdDeviation="30"
-                      floodOpacity="0.18"
-                    />
-                  </filter>
-                </defs>
-                <rect
-                  x="0"
-                  y="0"
-                  width="1024"
-                  height="1024"
-                  rx="220"
-                  fill="url(#header-bg)"
-                />
-                <g filter="url(#header-shadow)">
-                  <rect
-                    x="180"
-                    y="380"
-                    width="664"
-                    height="360"
-                    rx="80"
-                    fill="url(#header-wallet)"
-                  />
-                </g>
-                <rect
-                  x="600"
-                  y="420"
-                  width="240"
-                  height="260"
-                  rx="60"
-                  fill="#1d4ed8"
-                />
-                <circle cx="720" cy="550" r="18" fill="#fde047" />
-                <text
-                  x="360"
-                  y="600"
-                  fontSize="220"
-                  fill="white"
-                  fontWeight="700"
-                  fontFamily="Arial, sans-serif"
-                >
-                  ¥
-                </text>
-                <path
-                  d="M380 250 L640 250 M640 250 L600 210 M640 250 L600 290"
-                  stroke="white"
-                  strokeWidth="18"
-                  fill="none"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  opacity="0.9"
-                />
-                <circle cx="780" cy="260" r="70" fill="white" opacity="0.95" />
-                <path
-                  d="M740 260 L770 290 L820 230"
-                  stroke="#22c55e"
-                  strokeWidth="20"
-                  fill="none"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
+              <img
+                src="/icon.png"
+                alt={METADATA.SHORT_NAME}
+                className="w-full h-full object-cover"
+              />
             </div>
             <h1 className="text-lg sm:text-2xl font-black text-white tracking-tight">
               {MESSAGES.UI.APP_TAGLINE}

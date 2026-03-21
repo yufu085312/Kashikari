@@ -22,6 +22,10 @@ export const metadata: Metadata = {
     description: METADATA.DESCRIPTION,
     type: "website",
   },
+  icons: {
+    icon: "/icon.png",
+    apple: "/apple-touch-icon.png",
+  },
 };
 
 export const runtime = "edge";
@@ -35,9 +39,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ja">
-      <head>
-        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-      </head>
+      <head></head>
       <body
         className={`${inter.className} bg-background text-white min-h-screen selection:bg-emerald-500/30`}
       >
