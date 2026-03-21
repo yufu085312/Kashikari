@@ -52,7 +52,9 @@ export async function getGroupsByUserId(userId: string): Promise<Group[]> {
   if (error) throw new Error(error.message)
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return (data || []).map((row: any) => row.group as Group)
+  return (data || [])
+    .filter((row: any) => row.group !== null)
+    .map((row: any) => row.group as Group)
 }
 
 export async function addMemberToGroup(groupId: string, userId: string): Promise<void> {
