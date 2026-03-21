@@ -18,6 +18,7 @@ vi.mock("@/lib/repositories/groupRepository", () => ({
 import { createClient } from "@/utils/supabase/server";
 import { getGroupById, deleteGroup } from "@/lib/repositories/groupRepository";
 import { GET, DELETE } from "@/app/api/v1/groups/[groupId]/route";
+import { MESSAGES } from "@/lib/constants";
 
 const mockCreateClient = vi.mocked(createClient);
 const mockGetGroupById = vi.mocked(getGroupById);
@@ -65,7 +66,7 @@ describe("GET /api/v1/groups/[groupId]", () => {
     const json = await res.json();
 
     expect(res.status).toBe(401);
-    expect(json.error.message).toBe("Unauthorized");
+    expect(json.error.message).toBe(MESSAGES.ERROR.UNAUTHORIZED);
   });
 
   it("メンバーでないユーザーは 403 を返す", async () => {
@@ -79,7 +80,7 @@ describe("GET /api/v1/groups/[groupId]", () => {
     const json = await res.json();
 
     expect(res.status).toBe(403);
-    expect(json.error.message).toBe("アクセス権がありません");
+    expect(json.error.message).toBe(MESSAGES.ERROR.FORBIDDEN);
   });
 
   it("メンバーであればグループ情報を返す", async () => {
@@ -110,7 +111,7 @@ describe("DELETE /api/v1/groups/[groupId]", () => {
     const json = await res.json();
 
     expect(res.status).toBe(401);
-    expect(json.error.message).toBe("Unauthorized");
+    expect(json.error.message).toBe(MESSAGES.ERROR.UNAUTHORIZED);
   });
 
   it("メンバーでないユーザーは 403 を返す", async () => {
@@ -126,7 +127,7 @@ describe("DELETE /api/v1/groups/[groupId]", () => {
     const json = await res.json();
 
     expect(res.status).toBe(403);
-    expect(json.error.message).toBe("グループメンバーのみが削除できます");
+    expect(json.error.message).toBe(MESSAGES.ERROR.GROUP_DELETE_NOT_MEMBER);
   });
 
   it("メンバーであれば削除に成功する", async () => {

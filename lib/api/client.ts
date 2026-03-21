@@ -1,4 +1,6 @@
-const BASE_URL = "/api/v1";
+import { API_PATHS } from "../constants";
+
+const BASE_URL = API_PATHS.BASE_V1;
 
 interface ApiResponse<T> {
   data: T | null;

@@ -6,6 +6,7 @@ import { formatDate } from "@/utils/format";
 import { api } from "@/lib/api/client";
 import { GlassCard } from "@/components/ui/glass-card";
 import { useAlert } from "@/components/providers/alert-provider";
+import { MESSAGES } from "@/lib/constants";
 
 interface PaymentListProps {
   payments: Payment[];
@@ -31,16 +32,15 @@ export function PaymentList({
     if (payment && isLocked(payment.created_at)) {
       await alert({
         title: "削除できません",
-        message:
-          "この支払いはすでに精算が済んでいる履歴に含まれているため、削除できません。\n修正したい場合は、先に「精算」タブから対象の精算（↩︎）を取り消してください。",
+        message: MESSAGES.ERROR.PAYMENT_LOCKED_DELETE,
         type: "warn",
       });
       return;
     }
 
     const isConfirmed = await confirm({
-      title: "支払いの削除",
-      message: "この支払いを削除しますか？",
+      title: MESSAGES.UI.GROUP_DELETE,
+      message: MESSAGES.UI.CONFIRM_DELETE_PAYMENT,
       type: "danger",
       confirmText: "削除",
       cancelText: "キャンセル",
@@ -54,7 +54,7 @@ export function PaymentList({
     } catch (e) {
       await alert({
         title: "エラー",
-        message: "削除に失敗しました",
+        message: MESSAGES.ERROR.DELETE_FAILED,
         type: "error",
       });
     } finally {
@@ -143,7 +143,7 @@ export function PaymentList({
               }`}
               title={
                 isLocked(payment.created_at)
-                  ? "精算済みのデータに含まれているため削除できません。まず精算履歴を取り消してください。"
+                  ? MESSAGES.ERROR.PAYMENT_LOCKED_DELETE_SHORT
                   : "支払いを削除"
               }
             >

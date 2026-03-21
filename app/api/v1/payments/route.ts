@@ -2,6 +2,7 @@ export const runtime = "edge";
 import { NextRequest, NextResponse } from "next/server";
 import { createPayment } from "@/lib/usecases/createPayment";
 import { createClient } from "@/utils/supabase/server";
+import { MESSAGES, LIMITS } from "@/lib/constants";
 
 function ok<T>(data: T) {
   return NextResponse.json({ data, error: null });
@@ -16,7 +17,7 @@ export async function POST(req: NextRequest) {
     const {
       data: { user },
     } = await supabase.auth.getUser();
-    if (!user) return err("Unauthorized", 401);
+    if (!user) return err(MESSAGES.ERROR.UNAUTHORIZED, 401);
 
     const body = await req.json();
     const { groupId, payerId, amount, participants, memo } = body;
@@ -24,11 +25,11 @@ export async function POST(req: NextRequest) {
     if (!groupId || !payerId || !amount || !participants) {
       return err("groupId, payerId, amount, participants are required");
     }
-    if (Number(amount) <= 0) {
-      return err("1以上の金額を入力してください");
+    if (Number(amount) < LIMITS.MIN_PAYMENT_AMOUNT) {
+      return err(MESSAGES.ERROR.PAYMENT_AMOUNT_MIN);
     }
-    if (Number(amount) > 9_999_999) {
-      return err("金額は9,999,999円以下で入力してください");
+    if (Number(amount) > LIMITS.MAX_PAYMENT_AMOUNT) {
+      return err(MESSAGES.ERROR.PAYMENT_AMOUNT_MAX);
     }
 
     const payment = await createPayment({

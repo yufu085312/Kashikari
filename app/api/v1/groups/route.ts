@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createGroup } from "@/lib/usecases/createGroup";
 import { getGroupsByUserId } from "@/lib/repositories/groupRepository";
 import { createClient } from "@/utils/supabase/server";
+import { MESSAGES, LIMITS } from "@/lib/constants";
 
 function ok<T>(data: T) {
   return NextResponse.json({ data, error: null });
@@ -17,12 +18,12 @@ export async function POST(req: NextRequest) {
     const {
       data: { user },
     } = await supabase.auth.getUser();
-    if (!user) return err("Unauthorized", 401);
+    if (!user) return err(MESSAGES.ERROR.UNAUTHORIZED, 401);
 
     const { name, memberSearchIds } = await req.json();
-    if (!name) return err("name is required");
-    if (name.length > 20)
-      return err("グループ名は20文字以内で入力してください");
+    if (!name) return err(MESSAGES.ERROR.GROUP_NAME_REQUIRED);
+    if (name.length > LIMITS.MAX_GROUP_NAME_LENGTH)
+      return err(MESSAGES.ERROR.GROUP_NAME_TOO_LONG);
 
     const group = await createGroup({
       name,
@@ -42,7 +43,7 @@ export async function GET() {
     const {
       data: { user },
     } = await supabase.auth.getUser();
-    if (!user) return err("Unauthorized", 401);
+    if (!user) return err(MESSAGES.ERROR.UNAUTHORIZED, 401);
 
     const groups = await getGroupsByUserId(user.id);
     return ok(groups);

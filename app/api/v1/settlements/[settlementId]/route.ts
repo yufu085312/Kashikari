@@ -5,6 +5,7 @@ import {
   deleteSettlement,
   getSettlementsByGroupId,
 } from "@/lib/repositories/settlementRepository";
+import { MESSAGES } from "@/lib/constants";
 
 function ok<T>(data: T) {
   return NextResponse.json({ data, error: null });
@@ -22,7 +23,7 @@ export async function DELETE(
     const {
       data: { user },
     } = await supabase.auth.getUser();
-    if (!user) return err("Unauthorized", 401);
+    if (!user) return err(MESSAGES.ERROR.UNAUTHORIZED, 401);
 
     const { settlementId } = await params;
     if (!settlementId) return err("settlementId is required");
@@ -34,7 +35,8 @@ export async function DELETE(
       .eq("id", settlementId)
       .single();
 
-    if (fetchError || !settlement) return err("Settlement not found", 404);
+    if (fetchError || !settlement)
+      return err(MESSAGES.ERROR.SETTLEMENT_NOT_FOUND, 404);
 
     const { data: membership, error: memberError } = await supabase
       .from("group_members")
@@ -43,8 +45,7 @@ export async function DELETE(
       .eq("user_id", user.id)
       .single();
 
-    if (memberError || !membership)
-      return err("Unauthorized: You are not a member of this group", 403);
+    if (memberError || !membership) return err(MESSAGES.ERROR.FORBIDDEN, 403);
 
     // 削除実行
     await deleteSettlement(settlementId);

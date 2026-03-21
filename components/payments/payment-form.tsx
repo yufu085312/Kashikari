@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { api } from "@/lib/api/client";
 import { calcEvenSplit } from "@/utils/format";
+import { LIMITS, MESSAGES } from "@/lib/constants";
 
 interface PaymentFormProps {
   groupId: string;
@@ -34,7 +35,7 @@ export function PaymentForm({
   const [error, setError] = useState<string | null>(null);
   const [amountError, setAmountError] = useState<string | null>(null);
 
-  const MAX_AMOUNT = 9_999_999; // 最大金額: 9,999,999円
+  const MAX_AMOUNT = LIMITS.MAX_PAYMENT_AMOUNT; // 最大金額: 9,999,999円
 
   // 均等割り自動計算
   const autoSplitAmounts = calcEvenSplit(Number(amount) || 0, selectedIds);
@@ -70,17 +71,15 @@ export function PaymentForm({
     setAmountError(null);
 
     if (!amount) {
-      setAmountError("金額を入力してください");
+      setAmountError(MESSAGES.ERROR.PAYMENT_AMOUNT_MIN);
       return;
     }
-    if (Number(amount) <= 0) {
-      setAmountError("1以上の金額を入力してください");
+    if (Number(amount) < LIMITS.MIN_PAYMENT_AMOUNT) {
+      setAmountError(MESSAGES.ERROR.PAYMENT_AMOUNT_MIN);
       return;
     }
-    if (Number(amount) > MAX_AMOUNT) {
-      setAmountError(
-        `金額は${MAX_AMOUNT.toLocaleString()}円以下で入力してください`,
-      );
+    if (Number(amount) > LIMITS.MAX_PAYMENT_AMOUNT) {
+      setAmountError(MESSAGES.ERROR.PAYMENT_AMOUNT_MAX);
       return;
     }
     if (selectedIds.length === 0) return;
@@ -144,17 +143,15 @@ export function PaymentForm({
               const val = e.target.value;
               setAmount(val);
               const num = Number(val);
-              if (num > MAX_AMOUNT) {
-                setAmountError(
-                  `金額は${MAX_AMOUNT.toLocaleString()}円以下で入力してください`,
-                );
-              } else if (num > 0) {
+              if (num > LIMITS.MAX_PAYMENT_AMOUNT) {
+                setAmountError(MESSAGES.ERROR.PAYMENT_AMOUNT_MAX);
+              } else if (num >= LIMITS.MIN_PAYMENT_AMOUNT) {
                 setAmountError(null);
               }
             }}
             required
-            min={1}
-            max={MAX_AMOUNT}
+            min={LIMITS.MIN_PAYMENT_AMOUNT}
+            max={LIMITS.MAX_PAYMENT_AMOUNT}
             className={`w-full bg-white/5 border-2 rounded-2xl pl-10 pr-4 py-4 text-white text-3xl font-black placeholder-gray-800 focus:outline-none transition-all shadow-inner ${amountError ? "border-red-500/50 focus:border-red-500/50 focus:bg-red-500/5" : "border-white/5 focus:border-emerald-500/50 focus:bg-emerald-500/5"}`}
           />
         </div>
@@ -348,7 +345,7 @@ export function PaymentForm({
         className="w-full py-6 rounded-2xl text-lg font-black tracking-widest uppercase hover:scale-[1.02] active:scale-[0.98] transition-all"
         disabled={isManual && !isTotalMatching}
       >
-        支払いを追加する
+        {MESSAGES.UI.PAYMENT_ADD}
       </Button>
     </form>
   );

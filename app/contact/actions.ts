@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/utils/supabase/server";
+import { MESSAGES } from "@/lib/constants";
 
 export async function submitInquiry(formData: FormData) {
   const supabase = await createClient();
@@ -10,11 +11,11 @@ export async function submitInquiry(formData: FormData) {
 
   // バリデーション
   if (!type || !content) {
-    return { error: "必須項目が入力されていません。" };
+    return { error: MESSAGES.ERROR.INQUIRY_TYPE_REQUIRED };
   }
 
   if (content.length > 1000) {
-    return { error: "お問い合わせ内容は1000文字以内で入力してください。" };
+    return { error: MESSAGES.ERROR.INQUIRY_CONTENT_TOO_LONG };
   }
 
   // 現在のログインユーザーを取得
@@ -23,7 +24,7 @@ export async function submitInquiry(formData: FormData) {
   } = await supabase.auth.getUser();
 
   if (!user || !user.email) {
-    return { error: "ログインが必要です。" };
+    return { error: MESSAGES.ERROR.UNAUTHORIZED };
   }
 
   const email = user.email;
@@ -42,8 +43,7 @@ export async function submitInquiry(formData: FormData) {
   if (error) {
     console.error("Inquiry submission error:", error);
     return {
-      error:
-        "お問い合わせの送信に失敗しました。時間をおいて再度お試しください。",
+      error: MESSAGES.ERROR.INQUIRY_SUBMIT_FAILED,
     };
   }
 

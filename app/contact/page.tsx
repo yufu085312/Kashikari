@@ -6,6 +6,7 @@ import { submitInquiry } from "./actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
+import { MESSAGES, ROUTES } from "@/lib/constants";
 
 export default function ContactPage() {
   const router = useRouter();
@@ -25,10 +26,10 @@ export default function ContactPage() {
     const content = formData.get("content") as string;
 
     const newErrors: { type?: string; content?: string } = {};
-    if (!type) newErrors.type = "お問い合わせ種別を選択してください。";
-    if (!content) newErrors.content = "お問い合わせ内容を入力してください。";
+    if (!type) newErrors.type = MESSAGES.ERROR.INQUIRY_TYPE_REQUIRED;
+    if (!content) newErrors.content = MESSAGES.ERROR.INQUIRY_CONTENT_REQUIRED;
     else if (content.length > 1000)
-      newErrors.content = "1000文字以内で入力してください。";
+      newErrors.content = MESSAGES.ERROR.INQUIRY_CONTENT_TOO_LONG;
 
     if (Object.keys(newErrors).length > 0) {
       setValidationErrors(newErrors);
@@ -47,7 +48,7 @@ export default function ContactPage() {
         setSuccess(true);
       }
     } catch (e) {
-      setError("通信エラーが発生しました。時間をおいて再試行してください。");
+      setError(MESSAGES.ERROR.INQUIRY_NETWORK_ERROR);
     } finally {
       setIsSubmitting(false);
     }
@@ -73,16 +74,16 @@ export default function ContactPage() {
               d="M15 19l-7-7 7-7"
             />
           </svg>
-          戻る
+          {MESSAGES.UI.BACK}
         </button>
       </div>
 
       <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 sm:p-10 shadow-2xl mx-4 sm:mx-0">
         <h1 className="text-2xl font-black text-white mb-2 tracking-tight">
-          お問い合わせ
+          {MESSAGES.UI.INQUIRY_TITLE}
         </h1>
         <p className="text-gray-400 text-sm mb-8">
-          アプリに関するフィードバックや不具合の報告をお寄せください。
+          {MESSAGES.UI.INQUIRY_DESCRIPTION}
         </p>
 
         {success ? (
@@ -102,19 +103,21 @@ export default function ContactPage() {
                 />
               </svg>
             </div>
-            <h3 className="text-white font-bold mb-2">送信完了しました</h3>
+            <h3 className="text-white font-bold mb-2">
+              {MESSAGES.UI.INQUIRY_SUBMITTED_TITLE}
+            </h3>
             <p className="text-gray-400 text-sm mb-6">
-              貴重なご意見ありがとうございます。今後のサービス改善に役立てさせていただきます。
+              {MESSAGES.UI.INQUIRY_SUBMITTED_MSG}
             </p>
-            <Button onClick={() => router.push("/")} className="w-full">
-              ホームへ戻る
+            <Button onClick={() => router.push(ROUTES.HOME)} className="w-full">
+              {MESSAGES.UI.BACK_TO_HOME}
             </Button>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-6" noValidate>
             <div className="space-y-1.5">
               <label className="block text-sm font-medium text-gray-300 ml-1">
-                お問い合わせ種別 (必須)
+                {MESSAGES.UI.INQUIRY_TYPE_LABEL}
               </label>
               <div className="relative">
                 <select
@@ -124,22 +127,22 @@ export default function ContactPage() {
                   className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white appearance-none focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all duration-200"
                 >
                   <option value="" disabled className="text-gray-500">
-                    選択してください
+                    {MESSAGES.UI.INQUIRY_TYPE_PLACEHOLDER}
                   </option>
                   <option value="機能要望" className="bg-gray-900 text-white">
-                    機能のご要望
+                    {MESSAGES.UI.INQUIRY_TYPE_REQUEST}
                   </option>
                   <option value="不具合報告" className="bg-gray-900 text-white">
-                    不具合のご報告
+                    {MESSAGES.UI.INQUIRY_TYPE_BUG}
                   </option>
                   <option
                     value="アカウントに関するお問い合わせ"
                     className="bg-gray-900 text-white"
                   >
-                    アカウントに関する内容
+                    {MESSAGES.UI.INQUIRY_TYPE_ACCOUNT}
                   </option>
                   <option value="その他" className="bg-gray-900 text-white">
-                    その他のお問い合わせ
+                    {MESSAGES.UI.INQUIRY_TYPE_OTHER}
                   </option>
                 </select>
                 <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-gray-400">
@@ -168,9 +171,11 @@ export default function ContactPage() {
             <div className="space-y-1.5">
               <div className="flex justify-between items-baseline mx-1">
                 <label className="block text-sm font-medium text-gray-300">
-                  お問い合わせ内容 (必須)
+                  {MESSAGES.UI.INQUIRY_CONTENT_LABEL}
                 </label>
-                <span className="text-xs text-gray-500">1000文字まで</span>
+                <span className="text-xs text-gray-500">
+                  {MESSAGES.UI.INQUIRY_CONTENT_CHAR_LIMIT}
+                </span>
               </div>
               <textarea
                 name="content"
@@ -178,7 +183,7 @@ export default function ContactPage() {
                 maxLength={1000}
                 rows={5}
                 className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all duration-200 resize-none"
-                placeholder="詳細をご記入ください"
+                placeholder={MESSAGES.UI.INQUIRY_CONTENT_PLACEHOLDER}
               />
               {validationErrors.content && (
                 <p className="text-red-400 text-xs mt-1 ml-1 animate-fade-in">
@@ -190,7 +195,7 @@ export default function ContactPage() {
             {error && <p className="text-red-400 text-sm mt-2">{error}</p>}
 
             <Button type="submit" className="w-full" disabled={isSubmitting}>
-              {isSubmitting ? "送信中..." : "送信する"}
+              {isSubmitting ? MESSAGES.UI.SENDING : MESSAGES.UI.SEND}
             </Button>
           </form>
         )}

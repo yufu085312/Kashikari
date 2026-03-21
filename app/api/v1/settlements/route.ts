@@ -2,6 +2,7 @@ export const runtime = "edge";
 import { NextRequest, NextResponse } from "next/server";
 import { settleDebt } from "@/lib/usecases/settleDebt";
 import { createClient } from "@/utils/supabase/server";
+import { MESSAGES } from "@/lib/constants";
 
 function ok<T>(data: T) {
   return NextResponse.json({ data, error: null });
@@ -16,7 +17,7 @@ export async function POST(req: NextRequest) {
     const {
       data: { user },
     } = await supabase.auth.getUser();
-    if (!user) return err("Unauthorized", 401);
+    if (!user) return err(MESSAGES.ERROR.UNAUTHORIZED, 401);
 
     const { groupId, fromUserId, toUserId, amount } = await req.json();
     if (!groupId || !fromUserId || !toUserId || !amount) {

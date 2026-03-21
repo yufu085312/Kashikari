@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { api } from "@/lib/api/client";
 import { GlassCard } from "@/components/ui/glass-card";
 import { useAlert } from "@/components/providers/alert-provider";
+import { MESSAGES } from "@/lib/constants";
 
 interface BalanceListProps {
   balances: Balance[];
@@ -21,11 +22,11 @@ export function BalanceList({ balances, groupId, onSettle }: BalanceListProps) {
   const handleSettle = async (balance: Balance) => {
     const key = `${balance.fromUserId}-${balance.toUserId}`;
     const isConfirmed = await confirm({
-      title: "精算の実行",
+      title: MESSAGES.UI.SETTLEMENT_EXECUTE,
       message: `${balance.fromUserName} から ${balance.toUserName} へ ${balance.amount.toLocaleString()}円の支払いを記録し、貸し借りを解消しますか？`,
       type: "info",
-      confirmText: "精算する",
-      cancelText: "戻る",
+      confirmText: MESSAGES.UI.SETTLE,
+      cancelText: MESSAGES.UI.BACK,
     });
 
     if (!isConfirmed) return;
@@ -42,7 +43,7 @@ export function BalanceList({ balances, groupId, onSettle }: BalanceListProps) {
     } catch (e) {
       await alert({
         title: "エラー",
-        message: "精算に失敗しました",
+        message: MESSAGES.ERROR.SETTLEMENT_FAILED,
         type: "error",
       });
     } finally {
@@ -125,7 +126,7 @@ export function BalanceList({ balances, groupId, onSettle }: BalanceListProps) {
                 loading={loading === key}
                 onClick={() => handleSettle(balance)}
               >
-                精算
+                {MESSAGES.UI.SETTLE}
               </Button>
             </div>
           </GlassCard>

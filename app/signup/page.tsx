@@ -7,6 +7,7 @@ import Link from "next/link";
 import { signup } from "../login/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { ROUTES, LIMITS, MESSAGES, METADATA } from "@/lib/constants";
 
 export default function SignupPage({
   searchParams,
@@ -40,26 +41,26 @@ export default function SignupPage({
     } = {};
 
     // 必須チェック
-    if (!name) newErrors.name = "表示名を入力してください";
-    if (!search_id) newErrors.search_id = "検索IDを入力してください";
+    if (!name) newErrors.name = MESSAGES.ERROR.NAME_REQUIRED;
+    if (!search_id) newErrors.search_id = MESSAGES.ERROR.SEARCH_ID_REQUIRED;
 
     if (!email) {
-      newErrors.email = "メールアドレスを入力してください";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      newErrors.email = "正しいメールアドレスの形式で入力してください";
+      newErrors.email = MESSAGES.ERROR.EMAIL_REQUIRED;
+    } else if (!LIMITS.EMAIL_PATTERN.test(email)) {
+      newErrors.email = MESSAGES.ERROR.EMAIL_INVALID;
     }
 
-    if (!password) newErrors.password = "パスワードを入力してください";
+    if (!password) newErrors.password = MESSAGES.ERROR.PASSWORD_REQUIRED;
 
     // フォーマット・文字数チェック
-    if (name && name.length > 20)
-      newErrors.name = "表示名は20文字以内で入力してください";
-    if (search_id && search_id.length > 20)
-      newErrors.search_id = "検索IDは20文字以内で入力してください";
-    if (search_id && !/^[a-zA-Z0-9_]+$/.test(search_id))
-      newErrors.search_id = "検索IDは半角英数字と_のみ使用できます";
-    if (password && password.length < 6)
-      newErrors.password = "パスワードは6文字以上で入力してください";
+    if (name && name.length > LIMITS.MAX_NAME_LENGTH)
+      newErrors.name = MESSAGES.ERROR.NAME_TOO_LONG;
+    if (search_id && search_id.length > LIMITS.MAX_SEARCH_ID_LENGTH)
+      newErrors.search_id = MESSAGES.ERROR.SEARCH_ID_TOO_LONG;
+    if (search_id && !LIMITS.SEARCH_ID_PATTERN.test(search_id))
+      newErrors.search_id = MESSAGES.ERROR.SEARCH_ID_INVALID;
+    if (password && password.length < LIMITS.MIN_PASSWORD_LENGTH)
+      newErrors.password = MESSAGES.ERROR.PASSWORD_TOO_SHORT;
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -170,16 +171,16 @@ export default function SignupPage({
           </svg>
         </div>
         <h1 className="text-3xl font-black text-white tracking-tighter mb-1">
-          Kashikari
+          {METADATA.SHORT_NAME}
         </h1>
         <p className="text-gray-400 text-xs font-medium tracking-wide">
-          スマートな割り勘、カンタンな貸し借り管理。
+          {MESSAGES.UI.APP_TAGLINE}
         </p>
       </div>
 
       <div className="w-full max-w-sm p-6 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl animate-slide-up">
         <h2 className="text-lg font-bold text-white mb-6 text-center">
-          新規アカウント作成
+          {MESSAGES.UI.CREATE_ACCOUNT}
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-6" noValidate>
@@ -189,27 +190,27 @@ export default function SignupPage({
           <Input
             name="name"
             type="text"
-            label="表示名 (最大20文字)"
+            label={`${MESSAGES.UI.NAME_LABEL} (最大${LIMITS.MAX_NAME_LENGTH}文字)`}
             placeholder="田中 太郎"
             autoComplete="name"
             required
-            maxLength={20}
+            maxLength={LIMITS.MAX_NAME_LENGTH}
             error={errors.name}
           />
           <Input
             name="search_id"
             type="text"
-            label="検索ID (半角英数字/最大20文字)"
-            placeholder="tanaka_123"
+            label={`${MESSAGES.UI.SEARCH_ID_LABEL} (半角英数字/最大${LIMITS.MAX_SEARCH_ID_LENGTH}文字)`}
+            placeholder={MESSAGES.UI.SEARCH_ID_EXAMPLE}
             autoComplete="username"
             required
-            maxLength={20}
+            maxLength={LIMITS.MAX_SEARCH_ID_LENGTH}
             error={errors.search_id}
           />
           <Input
             name="email"
             type="email"
-            label="メールアドレス"
+            label={MESSAGES.UI.EMAIL_LABEL}
             placeholder="you@example.com"
             autoComplete="email"
             required
@@ -218,11 +219,11 @@ export default function SignupPage({
           <Input
             name="password"
             type="password"
-            label="パスワード (6文字以上)"
+            label={`${MESSAGES.UI.PASSWORD_LABEL} (${LIMITS.MIN_PASSWORD_LENGTH}文字以上)`}
             placeholder="••••••••"
             autoComplete="new-password"
             required
-            minLength={6}
+            minLength={LIMITS.MIN_PASSWORD_LENGTH}
             error={errors.password}
           />
 
@@ -236,29 +237,29 @@ export default function SignupPage({
             size="lg"
             disabled={isPending}
           >
-            {isPending ? "登録処理中..." : "登録して始める"}
+            {isPending ? MESSAGES.UI.SIGNING_UP : MESSAGES.UI.SIGNUP}
           </Button>
         </form>
 
         <div className="mt-6 flex flex-col items-center gap-4 text-sm text-gray-400">
           <Link
-            href={`/login${params.next ? `?next=${encodeURIComponent(params.next)}` : ""}`}
+            href={`${ROUTES.LOGIN}${params.next ? `?next=${encodeURIComponent(params.next)}` : ""}`}
             className="hover:text-brand-300 transition-colors"
           >
-            すでにアカウントをお持ちの方はこちら
+            {MESSAGES.UI.ALREADY_HAVE_ACCOUNT_PROMPT}
           </Link>
           <div className="flex items-center gap-4 text-xs text-gray-500 mt-2">
             <Link
-              href="/terms"
+              href={ROUTES.TERMS}
               className="hover:text-gray-300 transition-colors"
             >
-              利用規約
+              {MESSAGES.UI.TERMS_LABEL}
             </Link>
             <Link
-              href="/privacy"
+              href={ROUTES.PRIVACY}
               className="hover:text-gray-300 transition-colors"
             >
-              プライバシーポリシー
+              {MESSAGES.UI.PRIVACY_POLICY_LABEL}
             </Link>
           </div>
         </div>
