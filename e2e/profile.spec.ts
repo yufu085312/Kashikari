@@ -83,4 +83,30 @@ test.describe('Profile Management', () => {
     await page.click('button:has-text("' + MESSAGES.UI.SAVE + '")');
     await expect(page.getByText(MESSAGES.ERROR.SEARCH_ID_INVALID)).toBeVisible();
   });
+
+  test('パスワードを変更できること', async ({ page }) => {
+    const newPassword = 'newPassword123';
+
+    await page.click('button[title="' + MESSAGES.UI.SETTINGS_LABEL + '"]');
+    await page.click('text=' + MESSAGES.UI.CHANGE_PASSWORD_TITLE);
+
+    // 新しいパスワードを入力
+    await page.fill('input[name="password"]', newPassword);
+    await page.fill('input[name="confirm_password"]', newPassword);
+    
+    await page.click('button:has-text("' + MESSAGES.UI.SAVE + '")');
+
+    // 成功メッセージの確認
+    await expect(page.getByText(MESSAGES.UI.PASSWORD_UPDATE_SUCCESS)).toBeVisible();
+    await page.waitForSelector('text=' + MESSAGES.UI.CHANGE_PASSWORD_TITLE, { state: 'hidden', timeout: 5000 });
+
+    // 【重要】テスト環境を壊さないよう、パスワードを元に戻しておく
+    const originalPassword = process.env.E2E_USER_PASSWORD || 'password123';
+    await page.click('button[title="' + MESSAGES.UI.SETTINGS_LABEL + '"]');
+    await page.click('text=' + MESSAGES.UI.CHANGE_PASSWORD_TITLE);
+    await page.fill('input[name="password"]', originalPassword);
+    await page.fill('input[name="confirm_password"]', originalPassword);
+    await page.click('button:has-text("' + MESSAGES.UI.SAVE + '")');
+    await expect(page.getByText(MESSAGES.UI.PASSWORD_UPDATE_SUCCESS)).toBeVisible();
+  });
 });

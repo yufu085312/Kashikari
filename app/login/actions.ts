@@ -276,3 +276,38 @@ export async function updateProfile(formData: FormData) {
   revalidatePath(ROUTES.HOME, "layout");
   return { success: true };
 }
+
+export async function updatePassword(formData: FormData) {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { error: MESSAGES.ERROR.UNAUTHORIZED };
+  }
+
+  const password = formData.get("password") as string;
+  const confirmPassword = formData.get("confirm_password") as string;
+
+  // バリデーション
+  if (!password) return { error: MESSAGES.ERROR.PASSWORD_REQUIRED };
+  if (password.length < LIMITS.MIN_PASSWORD_LENGTH)
+    return { error: MESSAGES.ERROR.PASSWORD_TOO_SHORT };
+
+  if (password !== confirmPassword) {
+    return { error: MESSAGES.ERROR.PASSWORD_MISMATCH };
+  }
+
+  // パスワードの更新
+  const { error } = await supabase.auth.updateUser({
+    password: password,
+  });
+
+  if (error) {
+    return { error: MESSAGES.ERROR.PASSWORD_UPDATE_FAILED };
+  }
+
+  return { success: true };
+}
