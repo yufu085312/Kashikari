@@ -95,6 +95,7 @@ export async function signup(formData: FormData) {
         name,
         search_id,
       },
+      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/auth/confirm?next=${encodeURIComponent(next)}`,
     },
   })
 
