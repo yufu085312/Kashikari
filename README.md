@@ -80,6 +80,7 @@ docker compose exec app npm run check:all
 | `npm run format:check` | Prettier によるフォーマット確認（ファイル変更なし） |
 | `npm run format:write` | Prettier によるフォーマット自動修正 |
 | `npm test` | Vitest によるユニット・統合テスト実行 |
+| `npm run test:e2e` | Playwright による E2E テスト実行 |
 
 ```bash
 # リントチェック
@@ -91,6 +92,9 @@ docker compose exec app npm run format:check
 # フォーマット自動修正
 docker compose exec app npm run format:write
 
-# テスト実行
+# ユニット・統合テスト実行
 docker compose exec app npm test
+
+# E2E テスト実行
+docker compose exec app npm run test:e2e
 ```
