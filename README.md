@@ -61,3 +61,19 @@
    npm run down
    ```
    ※ `docker compose down` と `npx supabase stop` を実行します。
+
+## 🧹 コードの品質管理 (Lint & Format)
+
+開発中コードの品質を維持するため、Dockerコンテナ内で以下のコマンドを実行できます。
+
+**リントチェック (ESLint)**:
+```bash
+docker compose exec app npm run lint
+```
+※ 静的解析を行い、エラーや警告を表示します。
+
+**フォーマット実行 (Prettier)**:
+```bash
+docker compose exec app npx prettier --write "app/**/*.{ts,tsx}" "components/**/*.{ts,tsx}" "lib/**/*.{ts,tsx}" "utils/**/*.{ts,tsx}"
+```
+※ 対象ディレクトリの TypeScript / React ファイルを自動フォーマット（コード整形）します。

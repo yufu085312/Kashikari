@@ -1,36 +1,41 @@
-export const runtime = 'edge';
-import { createClient } from '@/utils/supabase/server'
-import { getGroupById } from '@/lib/repositories/groupRepository'
-import { getBalances } from '@/lib/usecases/getBalances'
-import { getPaymentsByGroupId } from '@/lib/repositories/paymentRepository'
-import { GroupDetailClient } from '@/components/groups/group-detail-client'
-import { redirect } from 'next/navigation'
+export const runtime = "edge";
+import { createClient } from "@/utils/supabase/server";
+import { getGroupById } from "@/lib/repositories/groupRepository";
+import { getBalances } from "@/lib/usecases/getBalances";
+import { getPaymentsByGroupId } from "@/lib/repositories/paymentRepository";
+import { GroupDetailClient } from "@/components/groups/group-detail-client";
+import { redirect } from "next/navigation";
 
-export default async function GroupDetailPage(props: { params: Promise<{ groupId: string }> }) {
-  const { groupId } = await props.params
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/login')
+export default async function GroupDetailPage(props: {
+  params: Promise<{ groupId: string }>;
+}) {
+  const { groupId } = await props.params;
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
 
   try {
-    const group = await getGroupById(groupId)
-    const isMember = group.members.some(m => m.id === user.id)
-    
+    const group = await getGroupById(groupId);
+    const isMember = group.members.some((m) => m.id === user.id);
+
     if (!isMember) {
       // メンバー外なら招待ページにリダイレクト
-      redirect(`/groups/${groupId}/invite`)
+      redirect(`/groups/${groupId}/invite`);
     }
 
-    const { getSettlementsByGroupId } = await import('@/lib/repositories/settlementRepository')
+    const { getSettlementsByGroupId } =
+      await import("@/lib/repositories/settlementRepository");
     const [balances, payments, settlements] = await Promise.all([
       getBalances(groupId),
       getPaymentsByGroupId(groupId),
-      getSettlementsByGroupId(groupId)
-    ])
+      getSettlementsByGroupId(groupId),
+    ]);
 
     return (
       <div>
-        <GroupDetailClient 
+        <GroupDetailClient
           groupId={groupId}
           userId={user.id}
           initialGroupName={group.name}
@@ -41,9 +46,9 @@ export default async function GroupDetailPage(props: { params: Promise<{ groupId
           initialSettlements={settlements}
         />
       </div>
-    )
+    );
   } catch {
     // グループが存在しない場合など
-    redirect('/')
+    redirect("/");
   }
 }

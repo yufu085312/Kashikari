@@ -1,71 +1,91 @@
-'use client'
+"use client";
 
-import { use, useState, useTransition, useEffect } from 'react'
-import { verifySignupOtp, resendSignupOtp } from '@/app/login/actions'
-import { Button } from '@/components/ui/button'
+import { use, useState, useTransition, useEffect } from "react";
+import { verifySignupOtp, resendSignupOtp } from "@/app/login/actions";
+import { Button } from "@/components/ui/button";
 
 export default function VerifyOtpPage({
   searchParams,
 }: {
-  searchParams: Promise<{ email?: string; next?: string; error?: string; message?: string }>
+  searchParams: Promise<{
+    email?: string;
+    next?: string;
+    error?: string;
+    message?: string;
+  }>;
 }) {
-  const params = use(searchParams)
-  const email = params.email || ''
-  const next = params.next || '/'
-  const serverError = params.error
-  const serverMessage = params.message
+  const params = use(searchParams);
+  const email = params.email || "";
+  const next = params.next || "/";
+  const serverError = params.error;
+  const serverMessage = params.message;
 
-  const [token, setToken] = useState('')
-  const [error, setError] = useState('')
-  const [isPending, startTransition] = useTransition()
-  const [isResending, startResend] = useTransition()
-  const [countdown, setCountdown] = useState(45) // 再送信までのカウントダウン
+  const [token, setToken] = useState("");
+  const [error, setError] = useState("");
+  const [isPending, startTransition] = useTransition();
+  const [isResending, startResend] = useTransition();
+  const [countdown, setCountdown] = useState(45); // 再送信までのカウントダウン
 
   useEffect(() => {
-    if (countdown <= 0) return
-    const timer = setTimeout(() => setCountdown(c => c - 1), 1000)
-    return () => clearTimeout(timer)
-  }, [countdown])
+    if (countdown <= 0) return;
+    const timer = setTimeout(() => setCountdown((c) => c - 1), 1000);
+    return () => clearTimeout(timer);
+  }, [countdown]);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
+    e.preventDefault();
     if (token.length < 6) {
-      setError('確認コードを正しく入力してください')
-      return
+      setError("確認コードを正しく入力してください");
+      return;
     }
-    setError('')
-    const formData = new FormData()
-    formData.append('email', email)
-    formData.append('token', token)
-    formData.append('next', next)
-    
+    setError("");
+    const formData = new FormData();
+    formData.append("email", email);
+    formData.append("token", token);
+    formData.append("next", next);
+
     startTransition(() => {
-      verifySignupOtp(formData)
-    })
-  }
+      verifySignupOtp(formData);
+    });
+  };
 
   const handleResend = () => {
-    const formData = new FormData()
-    formData.append('email', email)
-    formData.append('next', next)
-    setCountdown(45) // 再送信後にカウントダウンリセット
+    const formData = new FormData();
+    formData.append("email", email);
+    formData.append("next", next);
+    setCountdown(45); // 再送信後にカウントダウンリセット
     startResend(() => {
-      resendSignupOtp(formData)
-    })
-  }
+      resendSignupOtp(formData);
+    });
+  };
 
   return (
     <div className="flex flex-col items-center justify-center py-12 sm:py-20 animate-fade-in text-white">
       <div className="w-full max-w-md p-10 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl text-center shadow-emerald-500/10 border-emerald-500/20">
         <div className="w-20 h-20 bg-emerald-500/10 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-emerald-500/20 shadow-lg shadow-emerald-500/10">
-          <svg className="w-10 h-10 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 21a11.955 11.955 0 01-9.618-7.016m19.236 0h-19.236" />
+          <svg
+            className="w-10 h-10 text-emerald-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={1.5}
+              d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 21a11.955 11.955 0 01-9.618-7.016m19.236 0h-19.236"
+            />
           </svg>
         </div>
-        
-        <h1 className="text-3xl font-black tracking-tight mb-4 text-white">確認コードを入力</h1>
+
+        <h1 className="text-3xl font-black tracking-tight mb-4 text-white">
+          確認コードを入力
+        </h1>
         <p className="text-gray-400 font-medium mb-8 leading-relaxed">
-          <span className="text-emerald-400 font-bold">{email}</span> 宛てに届いた<br />確認コードを入力してください。
+          <span className="text-emerald-400 font-bold">{email}</span>{" "}
+          宛てに届いた
+          <br />
+          確認コードを入力してください。
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -74,7 +94,9 @@ export default function VerifyOtpPage({
               type="text"
               name="token"
               value={token}
-              onChange={(e) => setToken(e.target.value.replace(/\D/g, '').slice(0, 8))}
+              onChange={(e) =>
+                setToken(e.target.value.replace(/\D/g, "").slice(0, 8))
+              }
               placeholder="00000000"
               className="w-full h-20 text-center text-4xl font-mono tracking-[0.2em] bg-white/5 border border-white/10 rounded-2xl focus:border-emerald-500/50 focus:ring-4 focus:ring-emerald-500/10 transition-all outline-none placeholder:text-white/10 text-white"
               autoFocus
@@ -95,8 +117,12 @@ export default function VerifyOtpPage({
             </div>
           )}
 
-          <Button type="submit" className="w-full h-14 text-lg font-bold" disabled={isPending || token.length < 6}>
-            {isPending ? '認証中...' : '認証する'}
+          <Button
+            type="submit"
+            className="w-full h-14 text-lg font-bold"
+            disabled={isPending || token.length < 6}
+          >
+            {isPending ? "認証中..." : "認証する"}
           </Button>
         </form>
 
@@ -111,13 +137,13 @@ export default function VerifyOtpPage({
             className="text-emerald-400 hover:text-emerald-300 text-sm font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isResending
-              ? '送信中...'
+              ? "送信中..."
               : countdown > 0
-              ? `再送信できるまで ${countdown}秒`
-              : 'コードを再送信する'}
+                ? `再送信できるまで ${countdown}秒`
+                : "コードを再送信する"}
           </button>
         </div>
       </div>
     </div>
-  )
+  );
 }

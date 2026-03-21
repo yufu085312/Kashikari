@@ -1,39 +1,45 @@
-export const runtime = 'edge';
-import { createClient } from '@/utils/supabase/server'
-import { getGroupById, addMemberToGroup } from '@/lib/repositories/groupRepository'
-import { redirect } from 'next/navigation'
-import { Button } from '@/components/ui/button'
-import { revalidatePath } from 'next/cache'
+export const runtime = "edge";
+import { createClient } from "@/utils/supabase/server";
+import {
+  getGroupById,
+  addMemberToGroup,
+} from "@/lib/repositories/groupRepository";
+import { redirect } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { revalidatePath } from "next/cache";
 // Next.js の redirect() はエラーを投げることで動作するため、
 // try-catch で誤ってキャッチしないように判定関数を用意します。
-const isRedirectError = (error: any) => error?.digest?.startsWith('NEXT_REDIRECT')
-import { joinGroupAction } from './actions'
+const isRedirectError = (error: any) =>
+  error?.digest?.startsWith("NEXT_REDIRECT");
+import { joinGroupAction } from "./actions";
 
-export default async function InvitePage(props: { 
-  params: Promise<{ groupId: string }>,
-  searchParams: Promise<{ error?: string }>
+export default async function InvitePage(props: {
+  params: Promise<{ groupId: string }>;
+  searchParams: Promise<{ error?: string }>;
 }) {
-  const { groupId } = await props.params
-  const { error: serverError } = await props.searchParams
+  const { groupId } = await props.params;
+  const { error: serverError } = await props.searchParams;
 
   try {
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
     if (!user) {
-      const nextPath = `/groups/${groupId}/invite`
-      redirect(`/login?next=${encodeURIComponent(nextPath)}`)
+      const nextPath = `/groups/${groupId}/invite`;
+      redirect(`/login?next=${encodeURIComponent(nextPath)}`);
     }
 
-    const group = await getGroupById(groupId)
-    const isMember = group.members.some(m => m.id === user.id)
+    const group = await getGroupById(groupId);
+    const isMember = group.members.some((m) => m.id === user.id);
 
     if (isMember) {
       // すでにメンバーならグループへ
-      redirect(`/groups/${groupId}`)
+      redirect(`/groups/${groupId}`);
     }
 
-    const joinGroup = joinGroupAction.bind(null, groupId)
+    const joinGroup = joinGroupAction.bind(null, groupId);
 
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
@@ -43,7 +49,7 @@ export default async function InvitePage(props: {
           </div>
           <h1 className="text-2xl font-bold text-white mb-2">{group.name}</h1>
           <p className="text-gray-400 mb-8">このグループへ招待されています！</p>
-          
+
           {serverError && (
             <div className="bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3 text-sm text-red-400 mb-6 animate-fade-in">
               {serverError}
@@ -57,14 +63,14 @@ export default async function InvitePage(props: {
           </form>
         </div>
       </div>
-    )
+    );
   } catch (error: any) {
-    if (isRedirectError(error)) throw error
-    console.error('Invite page error:', error)
-    
+    if (isRedirectError(error)) throw error;
+    console.error("Invite page error:", error);
+
     // エラー詳細をURLに含める（デバッグ用）
-    const detail = error.message || String(error)
-    const message = encodeURIComponent(`エラー: ${detail}`)
-    redirect(`/?error=${message}`)
+    const detail = error.message || String(error);
+    const message = encodeURIComponent(`エラー: ${detail}`);
+    redirect(`/?error=${message}`);
   }
 }
