@@ -62,8 +62,9 @@ export default async function InvitePage(props: {
     if (isRedirectError(error)) throw error
     console.error('Invite page error:', error)
     
-    // エラー時はログイン画面へ戻し、メッセージを表示
-    const message = encodeURIComponent('グループ情報の取得に失敗しました。再度お試しください。')
-    redirect(`/login?error=${message}`)
+    // エラー詳細をURLに含める（デバッグ用）
+    const detail = error.message || String(error)
+    const message = encodeURIComponent(`エラー: ${detail}`)
+    redirect(`/?error=${message}`)
   }
 }

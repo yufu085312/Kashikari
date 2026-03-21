@@ -26,9 +26,10 @@ export async function getGroupById(groupId: string): Promise<Group & { members: 
     .from('groups')
     .select('*')
     .eq('id', groupId)
-    .single()
-
+    .maybeSingle()
+ 
   if (error) throw new Error(error.message)
+  if (!group) throw new Error('グループが見つからないか、アクセス権限がありません')
 
   const { data: memberRows, error: memberError } = await supabase
     .from('group_members')
