@@ -37,7 +37,9 @@ export async function getGroupById(groupId: string): Promise<Group & { members: 
 
   if (memberError) throw new Error(memberError.message)
 
-  const members: User[] = (memberRows || []).map((row: GroupMember & { user: User }) => row.user)
+  const members: User[] = (memberRows || [])
+    .filter((row: any) => row.user !== null) // user情報が一時的に欠けている場合を除外
+    .map((row: any) => row.user as User)
 
   return { ...group, members }
 }

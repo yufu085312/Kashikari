@@ -58,10 +58,12 @@ export default async function InvitePage(props: {
         </div>
       </div>
     )
-  } catch (error) {
+  } catch (error: any) {
     if (isRedirectError(error)) throw error
     console.error('Invite page error:', error)
-    // 致命的なエラー時はトップに戻す（RLS起因などの可能性があるため）
-    redirect('/')
+    
+    // エラー時はログイン画面へ戻し、メッセージを表示
+    const message = encodeURIComponent('グループ情報の取得に失敗しました。再度お試しください。')
+    redirect(`/login?error=${message}`)
   }
 }
