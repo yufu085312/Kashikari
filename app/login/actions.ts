@@ -21,27 +21,17 @@ export async function login(formData: FormData) {
     redirect(`/login?error=${encodeURIComponent('パスワードを入力してください')}${next !== '/' ? `&next=${encodeURIComponent(next)}` : ''}`)
   }
 
-  // ① メールアドレスの存在チェック
-  const { data: userExists } = await supabase
-    .from('users')
-    .select('id')
-    .eq('email', email)
-    .single()
-
-  if (!userExists) {
-    redirect(`/login?error=${encodeURIComponent('メールアドレスが登録されていません')}${next !== '/' ? `&next=${encodeURIComponent(next)}` : ''}`)
-  }
-
-  // ② パスワード認証
+  // パスワード認証
   const { error } = await supabase.auth.signInWithPassword({
     email,
     password,
   })
 
   if (error) {
-    // メールアドレスは存在していることが判明しているため、ここでのエラーはパスワード相違
-    redirect(`/login?error=${encodeURIComponent('パスワードが正しくありません')}${next !== '/' ? `&next=${encodeURIComponent(next)}` : ''}`)
+    // セキュリティのため、メッセージを統一します
+    redirect(`/login?error=${encodeURIComponent('メールアドレスまたはパスワードが正しくありません')}${next !== '/' ? `&next=${encodeURIComponent(next)}` : ''}`)
   }
+
 
   revalidatePath('/', 'layout')
   redirect(next)
