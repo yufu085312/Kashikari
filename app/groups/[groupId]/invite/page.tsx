@@ -5,6 +5,10 @@ import { redirect } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { revalidatePath } from 'next/cache'
 
+// Next.js の redirect() はエラーを投げることで動作するため、
+// try-catch で誤ってキャッチしないように判定関数を用意します。
+const isRedirectError = (error: any) => error?.digest?.startsWith('NEXT_REDIRECT')
+
 export default async function InvitePage(props: { 
   params: Promise<{ groupId: string }>,
   searchParams: Promise<{ error?: string }>
@@ -39,6 +43,7 @@ export default async function InvitePage(props: {
         revalidatePath(`/groups/${groupId}`)
         redirect(`/groups/${groupId}`)
       } catch (error) {
+        if (isRedirectError(error)) throw error
         console.error('Failed to join group:', error)
         const message = error instanceof Error ? error.message : '参加に失敗しました'
         redirect(`/groups/${groupId}/invite?error=${encodeURIComponent(message)}`)
@@ -68,7 +73,9 @@ export default async function InvitePage(props: {
         </div>
       </div>
     )
-  } catch {
+  } catch (error) {
+    if (isRedirectError(error)) throw error
+    console.error('Invite page error:', error)
     redirect('/')
   }
 }
