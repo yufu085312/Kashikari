@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/utils/supabase/server'
-import { headers } from 'next/headers'
+import { headers, cookies } from 'next/headers'
 
 export async function login(formData: FormData) {
   const supabase = await createClient()
@@ -46,6 +46,17 @@ export async function signup(formData: FormData) {
   const email = formData.get('email') as string
   const password = formData.get('password') as string
   const next = (formData.get('next') as string) || '/'
+
+  // 招待URLなどの遷移先がある場合、Cookieに保存（メール確認後の復元用）
+  if (next && next !== '/') {
+    (await cookies()).set('pending_redirect', next, {
+      maxAge: 60 * 10, // 10分間有効
+      path: '/',
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+    })
+  }
 
   if (!name && !search_id && !email && !password) {
     redirect(`/signup?error=${encodeURIComponent('すべての項目を入力してください')}${next !== '/' ? `&next=${encodeURIComponent(next)}` : ''}`)

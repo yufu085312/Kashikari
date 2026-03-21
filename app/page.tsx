@@ -2,7 +2,10 @@ import { createClient } from '@/utils/supabase/server'
 import { getGroupsByUserId } from '@/lib/repositories/groupRepository'
 import { HomePageClient } from '@/components/home/home-client'
 import { redirect } from 'next/navigation'
+import { cookies } from 'next/headers'
 import { GlassCard } from '@/components/ui/glass-card'
+
+const isRedirectError = (error: any) => error?.digest?.startsWith('NEXT_REDIRECT')
 
 export const runtime = 'edge';
 
@@ -14,6 +17,14 @@ export default async function HomePage() {
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     if (authError || !user) {
       redirect('/login')
+    }
+
+    // メール確認後のトップページ遷移時に、Cookieに残っている遷移先があればそこへ飛ばす
+    const cookieStore = await cookies()
+    const pendingRedirect = cookieStore.get('pending_redirect')?.value
+    if (pendingRedirect) {
+      cookieStore.delete('pending_redirect')
+      redirect(pendingRedirect)
     }
 
     // グループ取得
@@ -32,6 +43,7 @@ export default async function HomePage() {
       <HomePageClient initialGroups={groups} userName={userName} searchId={searchId} />
     )
   } catch (e: any) {
+    if (isRedirectError(e)) throw e
     console.error('HomePage Error:', e)
     return (
       <div className="flex flex-col items-center justify-center min-h-[50vh] animate-fade-in">
