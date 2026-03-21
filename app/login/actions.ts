@@ -152,3 +152,20 @@ export async function logout() {
   await supabase.auth.signOut()
   redirect('/login')
 }
+
+export async function resendSignupOtp(formData: FormData) {
+  const supabase = await createClient()
+  const email = formData.get('email') as string
+  const next = (formData.get('next') as string) || '/'
+
+  const { error } = await supabase.auth.resend({
+    type: 'signup',
+    email,
+  })
+
+  if (error) {
+    redirect(`/signup/verify?email=${encodeURIComponent(email)}&next=${encodeURIComponent(next)}&error=${encodeURIComponent('コードの再送信に失敗しました。しばらくしてから再度お試しください。')}`)
+  }
+
+  redirect(`/signup/verify?email=${encodeURIComponent(email)}&next=${encodeURIComponent(next)}&message=${encodeURIComponent('確認コードを再送信しました。メールをご確認ください。')}`)
+}

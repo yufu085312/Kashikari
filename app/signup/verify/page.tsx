@@ -1,22 +1,24 @@
 'use client'
 
 import { use, useState, useTransition } from 'react'
-import { verifySignupOtp } from '@/app/login/actions'
+import { verifySignupOtp, resendSignupOtp } from '@/app/login/actions'
 import { Button } from '@/components/ui/button'
 
 export default function VerifyOtpPage({
   searchParams,
 }: {
-  searchParams: Promise<{ email?: string; next?: string; error?: string }>
+  searchParams: Promise<{ email?: string; next?: string; error?: string; message?: string }>
 }) {
   const params = use(searchParams)
   const email = params.email || ''
   const next = params.next || '/'
   const serverError = params.error
+  const serverMessage = params.message
 
   const [token, setToken] = useState('')
   const [error, setError] = useState('')
   const [isPending, startTransition] = useTransition()
+  const [isResending, startResend] = useTransition()
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -32,6 +34,15 @@ export default function VerifyOtpPage({
     
     startTransition(() => {
       verifySignupOtp(formData)
+    })
+  }
+
+  const handleResend = () => {
+    const formData = new FormData()
+    formData.append('email', email)
+    formData.append('next', next)
+    startResend(() => {
+      resendSignupOtp(formData)
     })
   }
 
@@ -64,6 +75,12 @@ export default function VerifyOtpPage({
             />
           </div>
 
+          {serverMessage && (
+            <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl px-4 py-3 text-sm text-emerald-400 animate-fade-in">
+              {serverMessage}
+            </div>
+          )}
+
           {(error || serverError) && (
             <div className="bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3 text-sm text-red-400 animate-fade-in">
               {error || serverError}
@@ -75,16 +92,17 @@ export default function VerifyOtpPage({
           </Button>
         </form>
 
-        <div className="mt-8 pt-6 border-t border-white/10">
-          <p className="text-sm text-gray-500 mb-2">
+        <div className="mt-8 pt-6 border-t border-white/10 space-y-3">
+          <p className="text-sm text-gray-500">
             メールが届かない場合は、迷惑メールフォルダを確認してください。
           </p>
-          <button 
+          <button
             type="button"
-            onClick={() => window.location.reload()}
-            className="text-emerald-400 hover:text-emerald-300 text-sm font-medium transition-colors"
+            onClick={handleResend}
+            disabled={isResending}
+            className="text-emerald-400 hover:text-emerald-300 text-sm font-bold transition-colors disabled:opacity-50"
           >
-            ページを再読み込みする
+            {isResending ? '送信中...' : 'コードを再送信する'}
           </button>
         </div>
       </div>
