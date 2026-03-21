@@ -9,6 +9,7 @@ import { GroupForm } from '@/components/groups/group-form'
 import { Group } from '@/types/group'
 import Link from 'next/link'
 import { logout } from '@/app/login/actions'
+import { AddToHomeScreenBanner } from '@/components/ui/add-to-home-screen-banner'
 
 interface HomePageClientProps {
   initialGroups: Group[]
@@ -37,6 +38,10 @@ export function HomePageClient({ initialGroups, userName, searchId }: HomePageCl
 
   return (
     <div className="space-y-6 sm:space-y-8 animate-fade-in pb-24 sm:pb-0">
+      {/* SP版: ホーム画面追加バナー */}
+      <div className="sm:hidden">
+        <AddToHomeScreenBanner />
+      </div>
       {/* ユーザープロフィール */}
       <section className="relative flex flex-col sm:flex-row sm:items-start justify-between sm:gap-6">
         <div className="flex-1 min-w-0 pr-10 sm:pr-0">
