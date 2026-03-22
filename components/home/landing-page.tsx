@@ -291,7 +291,7 @@ export function LandingPage() {
         <div className="flex justify-center">
           <Link
             href={ROUTES.LOGIN}
-            className="group relative inline-flex items-center justify-center px-10 py-5 font-bold text-white transition-all duration-300 bg-white text-emerald-950 rounded-full hover:scale-105 active:scale-95 text-lg shadow-[0_0_30px_rgba(255,255,255,0.2)]"
+            className="group relative inline-flex items-center justify-center px-10 py-5 font-bold transition-all duration-300 bg-white text-emerald-950 rounded-full hover:scale-105 active:scale-95 text-lg shadow-[0_0_30px_rgba(255,255,255,0.2)]"
           >
             今すぐ無料で始める
             <svg
