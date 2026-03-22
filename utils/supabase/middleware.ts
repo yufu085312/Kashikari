@@ -41,6 +41,7 @@ export async function updateSession(request: NextRequest) {
 
   // 誰でも（または認証直後でも）アクセス可能なページ
   const isPublicRoute =
+    pathname === "/" ||
     pathname === "/privacy" ||
     pathname === "/terms" ||
     pathname === "/signup/complete" ||
