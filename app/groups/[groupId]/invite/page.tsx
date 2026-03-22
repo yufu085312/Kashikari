@@ -12,6 +12,51 @@ import { revalidatePath } from "next/cache";
 const isRedirectError = (error: any) =>
   error?.digest?.startsWith("NEXT_REDIRECT");
 import { joinGroupAction } from "./actions";
+import type { Metadata } from "next";
+import { METADATA } from "@/lib/constants";
+
+export async function generateMetadata(props: {
+  params: Promise<{ groupId: string }>;
+}): Promise<Metadata> {
+  const { groupId } = await props.params;
+  try {
+    const group = await getGroupById(groupId);
+    const title = `グループ「${group.name}」への招待 | ${METADATA.SHORT_NAME}`;
+    const description = `グループ「${group.name}」への招待が届いています。参加して割り勘・貸し借りを簡単に管理しましょう。`;
+
+    return {
+      title,
+      description,
+      openGraph: {
+        title,
+        description,
+        type: "website",
+      },
+      twitter: {
+        card: "summary_large_image",
+        title,
+        description,
+      },
+    };
+  } catch (error) {
+    const fallbackTitle = `グループ招待 | ${METADATA.SHORT_NAME}`;
+    const fallbackDesc = "グループへの招待が届いています。";
+    return {
+      title: fallbackTitle,
+      description: fallbackDesc,
+      openGraph: {
+        title: fallbackTitle,
+        description: fallbackDesc,
+        type: "website",
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: fallbackTitle,
+        description: fallbackDesc,
+      },
+    };
+  }
+}
 
 export default async function InvitePage(props: {
   params: Promise<{ groupId: string }>;
