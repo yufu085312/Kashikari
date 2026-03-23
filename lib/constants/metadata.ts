@@ -1,5 +1,5 @@
 export const METADATA = {
-  TITLE: "割り勘・貸し借り管理アプリ Kashikari",
+  TITLE: "Kashikari | 割り勘・貸し借り管理アプリ",
   SHORT_NAME: "Kashikari",
   DESCRIPTION:
     "割り勘も貸し借りも、これ1つで簡単管理。誰がいくら借りてるか、一目でわかる割り勘・貸し借り管理アプリ。",
