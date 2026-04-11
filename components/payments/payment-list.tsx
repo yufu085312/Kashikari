@@ -94,13 +94,13 @@ export function PaymentList({
                   {payment.payer?.name}
                 </span>
                 <span className="text-[10px] text-gray-500 font-medium tracking-tight">
-                  が支払い
+                  {MESSAGES.UI.PAYMENT_PAID_BY_SUFFIX}
                 </span>
               </div>
               <p className="text-xl font-black text-white leading-none mt-1">
                 {payment.amount.toLocaleString()}
                 <span className="text-xs ml-1 text-gray-400 font-normal">
-                  円
+                  {MESSAGES.UI.CURRENCY_JPY}
                 </span>
               </p>
 
@@ -144,7 +144,7 @@ export function PaymentList({
               title={
                 isLocked(payment.created_at)
                   ? MESSAGES.ERROR.PAYMENT_LOCKED_DELETE_SHORT
-                  : "支払いを削除"
+                  : MESSAGES.UI.PAYMENT_DELETE_ACTION
               }
             >
               <svg

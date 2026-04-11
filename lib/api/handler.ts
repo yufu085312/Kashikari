@@ -8,6 +8,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import { AppError } from "@/lib/errors";
+import { MESSAGES } from "@/lib/constants";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
 
 /** 成功レスポンス */
@@ -51,7 +52,7 @@ export function withAuth(
       } = await supabase.auth.getUser();
 
       if (!user) {
-        return err("ログインが必要です", 401);
+        return err(MESSAGES.ERROR.UNAUTHORIZED, 401);
       }
 
       return await handler(req, user);
@@ -89,7 +90,7 @@ export function withAuthParams<P extends Record<string, string>>(
       } = await supabase.auth.getUser();
 
       if (!user) {
-        return err("ログインが必要です", 401);
+        return err(MESSAGES.ERROR.UNAUTHORIZED, 401);
       }
 
       const params = await context.params;

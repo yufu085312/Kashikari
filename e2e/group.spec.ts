@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { MESSAGES } from '../lib/constants';
 
 // e2e用のテストユーザー情報（global-setup.ts で設定したものと一致させる）
 const TEST_EMAIL = process.env.E2E_USER_EMAIL || 'test-user@example.com';
@@ -13,13 +14,13 @@ test.describe('Group Management Flow', () => {
     await expect(page).toHaveURL('http://localhost:3000/');
     
     // 2. ヘッダーやユーザー名の表示確認
-    await expect(page.getByText('割り勘・貸し借り管理アプリ')).toBeVisible();
+    await expect(page.getByText(MESSAGES.UI.APP_TAGLINE)).toBeVisible();
     
     // 3. グループ作成モーダルの表示
     // "新しいグループを作成" ボタンを探してクリック
     // 注意: ホーム画面には複数ボタンがあるかもしれないので、テキストで検索
     // デスクトップ用とモバイル用のFABがあるため、最初のもの（または明示的なもの）をクリック
-    const createButton = page.locator('button', { hasText: '新しいグループ' }).first();
+    const createButton = page.locator('button', { hasText: MESSAGES.UI.NEW_GROUP_LABEL }).first();
     await createButton.click();
     
     // 4. グループ名の入力と作成
@@ -29,11 +30,11 @@ test.describe('Group Management Flow', () => {
     
     // // モーダル内の input を取得
     // Group Form の input placeholder 
-    const nameInput = page.getByPlaceholder('例：沖縄旅行、渋谷飲み会');
+    const nameInput = page.getByPlaceholder(MESSAGES.UI.GROUP_NAME_EXAMPLE);
     await nameInput.fill(groupName);
     
     // 作成するボタンをクリック
-    const submitButton = page.getByRole('button', { name: 'グループを作成' }).last(); // Modal title may also match 'button', use exact or last
+    const submitButton = page.getByRole('button', { name: MESSAGES.UI.GROUP_CREATE }).last(); // Modal title may also match 'button', use exact or last
     await submitButton.click();
     
     // 5. グループ詳細画面への遷移確認

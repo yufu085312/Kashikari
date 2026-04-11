@@ -26,6 +26,7 @@ export const MESSAGES = {
     SETTLEMENT_FAILED: "精算に失敗しました",
     DELETE_FAILED: "削除に失敗しました",
     CANCEL_FAILED: "キャンセルに失敗しました",
+    JOIN_FAILED: "参加に失敗しました",
     PAYMENT_LOCKED_DELETE:
       "この支払いはすでに精算が済んでいる履歴に含まれているため、削除できません。\n修正したい場合は、先に「精算」タブから対象の精算（↩︎）を取り消してください。",
     PAYMENT_LOCKED_DELETE_SHORT:
@@ -74,6 +75,14 @@ export const MESSAGES = {
     PAYMENT_AMOUNT_REQUIRED: "金額は必須です",
     PAYMENT_AMOUNT_INVALID: "金額は整数で入力してください",
     PAYMENT_PARTICIPANT_REQUIRED: "参加者を1名以上選択してください",
+    SETTLEMENT_SELF_FORBIDDEN: "自分自身への精算はできません",
+    PAYMENT_SHARE_MISMATCH: "参加者の負担合計が支払い金額と一致しません",
+    GROUP_INVITE_NOT_FOUND: "見つからない検索IDが入力されています",
+    UNEXPECTED_SYSTEM_ERROR: "システムエラーが発生しました",
+    NOT_GROUP_MEMBER: "このグループのメンバーではありません",
+    VALIDATION_ERROR: "入力内容に誤りがあります",
+    TOTAL_SHARE_LABEL: "負担合計",
+    PAYMENT_AMOUNT_LABEL: "支払い金額",
   },
   UI: {
     APP_TAGLINE: "割り勘・貸し借り管理アプリ",
@@ -201,5 +210,169 @@ export const MESSAGES = {
       "このリンクを開いた人は誰でもグループに参加できます。",
     ROLE_CREATOR: "作成者",
     NAME_PLACEHOLDER: "田中 太郎",
+    INVITE_PAGE_PROMPT: "このグループへ招待されています！",
+    INVITE_JOIN_BUTTON: "グループに参加する",
+    INVITE_META_TITLE_1: "グループ「",
+    INVITE_META_TITLE_2: "」への招待 | ",
+    INVITE_META_DESC_1: "グループ「",
+    INVITE_META_DESC_2:
+      "」への招待が届いています。参加して割り勘・貸し借りを簡単に管理しましょう。",
+    INVITE_META_FALLBACK_TITLE: "グループ招待 | ",
+    INVITE_META_FALLBACK_DESC: "グループへの招待が届いています。",
+
+    // OTP Verify
+    VERIFY_OTP_TITLE: "確認コードを入力",
+    VERIFY_OTP_DESC_1: "宛てに届いた",
+    VERIFY_OTP_DESC_2: "確認コードを入力してください。",
+    VERIFY_OTP_SPAM_CHECK:
+      "メールが届かない場合は、迷惑メールフォルダを確認してください。",
+    VERIFY_OTP_COOLDOWN_PREFIX: "再送信できるまで ",
+    VERIFY_OTP_COOLDOWN_SUFFIX: "秒",
+
+    // 第2弾で追加
+    PAYMENT_LABEL_AMOUNT: "金額",
+    PAYMENT_WHO_PAID: "誰が払った？",
+    PAYMENT_WHO_BORROWS: "負担するメンバー",
+    PAYMENT_SPLIT_AUTO: "自動割り勘",
+    PAYMENT_SPLIT_MANUAL: "手動入力",
+    PAYMENT_ENTER_AMOUNT: "金額を入力",
+    PAYMENT_MANUAL_TOTAL: "入力合計: ¥",
+    PAYMENT_AMOUNT_MATCH: "金額が一致しています ✓",
+    PAYMENT_AMOUNT_SHORT: "不足: ¥",
+    PAYMENT_AMOUNT_MISMATCH_ERROR: "合計金額が一致しません（現在: ¥",
+
+    SETTLEMENT_EMPTY_HISTORY: "精算履歴はまだありません",
+    CURRENCY_JPY: "円",
+    PAYMENT_PAID_BY_SUFFIX: "が支払い",
+    PAYMENT_DELETE_ACTION: "支払いを削除",
+
+    BALANCE_SETTLE_CONFIRM_1: " から ",
+    BALANCE_SETTLE_CONFIRM_2: " へ ",
+    BALANCE_SETTLE_CONFIRM_3: "円の支払いを記録し、貸し借りを解消しますか？",
+
+    FORGOT_PASSWORD_DESC_1: "登録したメールアドレスを入力してください。",
+    FORGOT_PASSWORD_DESC_2: "再設定用のリンクをお送りします。",
+
+    SIGNUP_ALPHANUMERIC: "半角英数字",
+    SIGNUP_MAX: "最大",
+    SIGNUP_CHARS: "文字",
+
+    HEADING_INTRODUCTION: "1. はじめに",
+    HEADING_SERVICE_PROV: "2. サービスの提供",
+    HEADING_ACCOUNT_MGMT: "3. アカウント管理",
+
+    // PWA & Components
+    ADD_IOS_INSTRUCTION: "「ホーム画面に追加」でアプリとして使えます",
+    ADD_ANDROID_INSTRUCTION: "アプリとしてインストールするとより快適に使えます",
+
+    // UI labels for payments & components
+    PAYMENT_MEMO_LABEL: "メモ（任意）",
+    PAYMENT_MEMO_PLACEHOLDER: "例：焼肉ランチ",
+    SHARE_ICON_LABEL: "共有ボタン",
+    MEMBER_COUNT_UNIT: "名",
+  },
+  LANDING: {
+    HERO_SUBTITLE: "もう精算で揉めない。\nスマートな割り勘管理",
+    HERO_DESC:
+      "誰が誰にいくら払えばいいか、アプリが自動で最小決済ルートを計算。\n直感的な操作で、グループ旅行や飲み会の精算をノンストレスに。",
+    CTA_FREE: "無料ではじめる",
+    FEATURES_TITLE: "なぜ Kashikari なのか？",
+    FEATURES_SUBTITLE: "お金のやり取りにおける煩わしさを、すべて解決します。",
+    FEATURE_1_TITLE: "URLで簡単招待",
+    FEATURE_1_DESC:
+      "アプリのインストールは不要。発行された招待リンクをLINEやSlack等で共有するだけで、すぐにグループへ参加できます。",
+    FEATURE_2_TITLE: "自動で最小決済",
+    FEATURE_2_DESC:
+      "複雑に絡み合った貸し借りも、アプリが自動で「誰が誰にいくら払えば最も少ない手順で精算できるか」を計算し、提案します。",
+    FEATURE_3_TITLE: "直感的な操作性",
+    FEATURE_3_DESC:
+      "迷わないシンプルなUI設計。立て替えの入力から精算完了まで、メモアプリを使うような感覚で誰でもすぐに使いこなせます。",
+    USECASES_TITLE: "こんなシーンで大活躍",
+    USECASES_SUBTITLE: "あらゆるグループのお金のやり取りをサポート",
+    USECASE_1_TITLE: "グループ旅行",
+    USECASE_1_DESC:
+      "「レンタカー代はAさん」「ホテル代はBさん」など、複数人での立て替えも最後にまとめて一発精算。",
+    USECASE_2_TITLE: "飲み会・合コン",
+    USECASE_2_DESC:
+      "「遅れてきた人」「多めに払う人」など、割り勘の割合が複雑なケースでも簡単に入力できます。",
+    USECASE_3_TITLE: "同棲・ルームシェア",
+    USECASE_3_DESC:
+      "毎月の家賃や光熱費、日用品の買い物など、継続的な生活費の折半もグループ内で履歴を残せます。",
+    STEPS_TITLE: "使い方はたったの3ステップ",
+    STEP_1_TITLE: "グループを作る",
+    STEP_1_DESC: "グループを作成して、URLをLINE等でメンバーにシェアします。",
+    STEP_2_TITLE: "支払いを記録",
+    STEP_2_DESC: "「誰が」「何のために」「いくら」立て替えたかを追加します。",
+    STEP_3_TITLE: "自動で精算",
+    STEP_3_DESC:
+      "立替状況に基づき、誰にいくら送金すればよいかアプリが教えてくれます。",
+    FAQ_TITLE: "よくある質問",
+    FAQ_1_Q: "利用に料金はかかりますか？",
+    FAQ_1_A:
+      "本サービスはすべて無料でご利用いただけます。料金が発生することはございません。",
+    FAQ_2_Q: "スマホアプリはありますか？インストールは必要ですか？",
+    FAQ_2_A:
+      "現在はブラウザ版のみの提供となっており、アプリのインストールは不要です。共有された招待リンクをタップするだけですぐにご利用いただけます。なお、スマホアプリ版（iOS / Android）は今後リリース予定です。",
+    FAQ_3_Q: "会員登録なしでも使えますか？",
+    FAQ_3_A:
+      "セキュリティの観点から、未登録（ログイン前）の状態ではグループの閲覧や支払いの記録は一切できません。安全のため、無料の会員登録をお願いしております。",
+    BOTTOM_CTA_TITLE: "さあ、面倒な\n精算から\n解放されましょう。",
+    BOTTOM_CTA_DESC:
+      "数秒でアカウントを作成して、最初のグループを作りましょう。",
+    BOTTOM_CTA_BTN: "今すぐ無料で始める",
+    FOOTER_RIGHTS: "Kashikari App. All rights reserved.",
+  },
+  POLICY: {
+    PRIVACY_1_TITLE: "1. 個人情報の収集範囲",
+    PRIVACY_1_DESC: "本サービスでは、以下の情報を収集する場合があります。",
+    PRIVACY_1_ITEM_1: "メールアドレス（認証および連絡のため）",
+    PRIVACY_1_ITEM_2: "表示名（アプリ内でのユーザー識別のため）",
+    PRIVACY_1_ITEM_3: "アプリ内での利用状況（機能改善のためのログデータ）",
+    PRIVACY_2_TITLE: "2. 利用目的",
+    PRIVACY_2_DESC: "収集した情報は、以下の目的で利用されます。",
+    PRIVACY_2_ITEM_1: "本サービスの提供、運営、維持",
+    PRIVACY_2_ITEM_2: "本サービスに関する通知やお問い合わせへの対応",
+    PRIVACY_2_ITEM_3: "サービスの改善、新機能の開発",
+    PRIVACY_2_ITEM_4: "不正利用の防止、安全性の確保",
+    PRIVACY_3_TITLE: "3. 外部サービスの利用について",
+    PRIVACY_3_DESC:
+      "本サービスでは、機能提供のために以下の外部サービスを利用しています。これらのサービスにおける情報の取り扱いは、各提供者のプライバシーポリシー等によります。",
+    PRIVACY_3_ITEM_1_NAME: "Supabase (Supabase Auth)",
+    PRIVACY_3_ITEM_1_DESC: "ユーザー認証、アカウント管理",
+    PRIVACY_3_ITEM_2_NAME: "Firebase Hosting (Google Cloud)",
+    PRIVACY_3_ITEM_2_DESC: "サービスのホスティング、インフラストラクチャ",
+    PRIVACY_4_TITLE: "4. 情報の第三者提供",
+    PRIVACY_4_DESC:
+      "法令に基づく場合を除き、ユーザーの同意を得ることなく、収集した情報を第三者に提供することはありません。",
+    PRIVACY_5_TITLE: "5. 情報の管理・保護",
+    PRIVACY_5_DESC:
+      "当方は、ユーザーの情報の漏洩、紛失、破壊、改ざんを防止するため、適切な安全管理措置を講じます。認証情報の管理には業界標準のセキュリティを採用した Supabase 等を利用しています。",
+    PRIVACY_6_TITLE: "6. ポリシーの変更",
+    PRIVACY_6_DESC:
+      "本ポリシーの内容は、必要に応じて変更することがあります。重要な変更がある場合には、本サービス内において通知いたします。変更後のポリシーは、本ページに掲載した時点から有効となります。",
+    PRIVACY_UPDATED: "最終更新日：2024年3月21日",
+
+    TERMS_1_TITLE: "1. はじめに",
+    TERMS_1_DESC:
+      "この利用規約（以下「本規約」）は、Kashikari（以下「本サービス」）の利用条件を定めるものです。本サービスを利用するすべてのユーザーは、本規約に同意したものとみなされます。",
+    TERMS_2_TITLE: "2. サービスの提供",
+    TERMS_2_DESC:
+      "本サービスは、ユーザー間の割り勘や貸し借りの記録を管理するためのツールを提供します。本サービスは、ユーザー間の金銭のやり取りを直接仲介するものではなく、あくまで記録の補助を目的としています。",
+    TERMS_3_TITLE: "3. アカウント管理",
+    TERMS_3_DESC:
+      "ユーザーは、自身の責任においてアカウント情報（メールアドレス、パスワード）を適切に管理するものとします。アカウント情報の漏洩や第三者による不正使用等によって生じた損害について、当方は一切の責任を負いません。",
+    TERMS_4_TITLE: "4. 禁止事項",
+    TERMS_4_ITEM_1: "法令または公序良俗に反する行為",
+    TERMS_4_ITEM_2: "虚偽の情報を登録する行為",
+    TERMS_4_ITEM_3: "他のユーザーに対する嫌がらせや誹謗中傷",
+    TERMS_4_ITEM_4: "本サービスの運営を妨害する行為",
+    TERMS_4_ITEM_5: "その他、当方が不適切と判断する行為",
+    TERMS_5_TITLE: "5. 免責事項",
+    TERMS_5_DESC:
+      "本サービスの利用に起因してユーザー間に生じた紛争や損害について、当方は何ら責任を負わないものとします。金銭の精算や返済に関しては、当事者間で誠実に対応してください。また、システム障害等によるデータ損失についても保証いたしません。",
+    TERMS_6_TITLE: "6. 規約の変更",
+    TERMS_6_DESC:
+      "当方は、必要に応じて本規約を変更することがあります。変更後の規約は本ページに掲載した時点から効力を生じるものとし、ユーザーは変更後も継続して利用することで、変更に同意したものとみなされます。",
+    TERMS_UPDATED: "制定日：2024年3月21日",
   },
 } as const;

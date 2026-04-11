@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Group } from "@/types/group";
+import { MESSAGES } from "@/lib/constants";
 
 interface GroupCardProps {
   group: Group;
@@ -27,7 +28,8 @@ export function GroupCard({ group }: GroupCardProps) {
             </h3>
             {group.members && (
               <p className="text-sm text-gray-400 mt-0.5">
-                {group.members.length}人のメンバー
+                {group.members.length}
+                {MESSAGES.UI.MEMBER_COUNT_SUFFIX}
               </p>
             )}
           </div>

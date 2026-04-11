@@ -34,7 +34,7 @@ export function SettlementList({ settlements, onDelete }: SettlementListProps) {
       onDelete?.();
     } catch (e) {
       await alert({
-        title: "エラー",
+        title: MESSAGES.UI.ERROR_TITLE,
         message: MESSAGES.ERROR.CANCEL_FAILED,
         type: "error",
       });
@@ -59,7 +59,9 @@ export function SettlementList({ settlements, onDelete }: SettlementListProps) {
             d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
           />
         </svg>
-        <p className="text-sm font-medium">精算履歴はまだありません</p>
+        <p className="text-sm font-medium">
+          {MESSAGES.UI.SETTLEMENT_EMPTY_HISTORY}
+        </p>
       </GlassCard>
     );
   }
@@ -94,7 +96,7 @@ export function SettlementList({ settlements, onDelete }: SettlementListProps) {
               <p className="text-xl font-black text-brand-500 leading-none mt-1">
                 {s.amount.toLocaleString()}
                 <span className="text-xs ml-1 text-gray-400 font-normal">
-                  円
+                  {MESSAGES.UI.CURRENCY_JPY}
                 </span>
               </p>
               <p className="text-[10px] text-gray-500 mt-3 font-medium opacity-50">

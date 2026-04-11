@@ -181,7 +181,7 @@ export function GroupDetailClient({
       title: MESSAGES.UI.GROUP_DELETE,
       message: MESSAGES.UI.CONFIRM_DELETE_GROUP,
       type: "danger",
-      confirmText: "削除する",
+      confirmText: MESSAGES.UI.DELETE_EXECUTE,
       cancelText: MESSAGES.UI.BACK,
     });
 
@@ -225,7 +225,7 @@ export function GroupDetailClient({
                   d="M15 19l-7-7 7-7"
                 />
               </svg>
-              戻る
+              {MESSAGES.UI.BACK}
             </Link>
             <div className="flex items-center gap-3">
               <h1 className="text-xl sm:text-2xl font-black text-white break-all tracking-tight leading-tight">
@@ -286,7 +286,8 @@ export function GroupDetailClient({
                 d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
               />
             </svg>
-            メンバー {initialMembers.length}名
+            {MESSAGES.UI.MEMBER_LIST} {initialMembers.length}
+            {MESSAGES.UI.MEMBER_COUNT_UNIT}
           </button>
         </div>
       </section>
@@ -409,7 +410,7 @@ export function GroupDetailClient({
                 size="sm"
                 className="rounded-xl"
               >
-                追加
+                {MESSAGES.UI.ADD}
               </Button>
             </div>
             {addMemberError && (

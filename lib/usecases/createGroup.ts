@@ -2,6 +2,7 @@ import { createClient } from "@/utils/supabase/server";
 import { createGroup as repoCreateGroup } from "@/lib/repositories/groupRepository";
 import { Group } from "@/types/group";
 import { NotFoundError } from "@/lib/errors";
+import { MESSAGES } from "@/lib/constants";
 
 export interface CreateGroupInput {
   name: string;
@@ -30,7 +31,7 @@ export async function createGroup(
 
     if (error) throw new Error(error.message);
     if (users.length !== validSearchIds.length) {
-      throw new NotFoundError(`見つからない検索IDが入力されています`);
+      throw new NotFoundError(MESSAGES.ERROR.GROUP_INVITE_NOT_FOUND);
     }
 
     users.forEach((u) => {

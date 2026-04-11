@@ -23,7 +23,7 @@ export function BalanceList({ balances, groupId, onSettle }: BalanceListProps) {
     const key = `${balance.fromUserId}-${balance.toUserId}`;
     const isConfirmed = await confirm({
       title: MESSAGES.UI.SETTLEMENT_EXECUTE,
-      message: `${balance.fromUserName} から ${balance.toUserName} へ ${balance.amount.toLocaleString()}円の支払いを記録し、貸し借りを解消しますか？`,
+      message: `${balance.fromUserName}${MESSAGES.UI.BALANCE_SETTLE_CONFIRM_1}${balance.toUserName}${MESSAGES.UI.BALANCE_SETTLE_CONFIRM_2}${balance.amount.toLocaleString()}${MESSAGES.UI.BALANCE_SETTLE_CONFIRM_3}`,
       type: "info",
       confirmText: MESSAGES.UI.SETTLE,
       cancelText: MESSAGES.UI.BACK,
@@ -117,9 +117,7 @@ export function BalanceList({ balances, groupId, onSettle }: BalanceListProps) {
                     {MESSAGES.UI.BALANCE_LABEL}
                   </span>
                   {balance.amount.toLocaleString()}
-                  <span className="text-xs ml-1 font-normal opacity-50 text-white">
-                    円
-                  </span>
+                  {MESSAGES.UI.CURRENCY_JPY}
                 </p>
               </div>
 

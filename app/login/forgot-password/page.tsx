@@ -94,9 +94,9 @@ export default function ForgotPasswordPage() {
         ) : (
           <form onSubmit={handleSubmit} className="space-y-6">
             <p className="text-sm text-gray-400 text-center mb-2">
-              登録したメールアドレスを入力してください。
+              {MESSAGES.UI.FORGOT_PASSWORD_DESC_1}
               <br />
-              再設定用のリンクをお送りします。
+              {MESSAGES.UI.FORGOT_PASSWORD_DESC_2}
             </p>
             <Input
               name="email"

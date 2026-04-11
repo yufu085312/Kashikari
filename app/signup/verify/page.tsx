@@ -80,13 +80,13 @@ export default function VerifyOtpPage({
         </div>
 
         <h1 className="text-3xl font-black tracking-tight mb-4 text-white">
-          確認コードを入力
+          {MESSAGES.UI.VERIFY_OTP_TITLE}
         </h1>
         <p className="text-gray-400 font-medium mb-8 leading-relaxed">
           <span className="text-emerald-400 font-bold">{email}</span>{" "}
-          宛てに届いた
+          {MESSAGES.UI.VERIFY_OTP_DESC_1}
           <br />
-          確認コードを入力してください。
+          {MESSAGES.UI.VERIFY_OTP_DESC_2}
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -129,7 +129,7 @@ export default function VerifyOtpPage({
 
         <div className="mt-8 pt-6 border-t border-white/10 space-y-3">
           <p className="text-sm text-gray-500">
-            メールが届かない場合は、迷惑メールフォルダを確認してください。
+            {MESSAGES.UI.VERIFY_OTP_SPAM_CHECK}
           </p>
           <Button
             type="button"
@@ -140,7 +140,7 @@ export default function VerifyOtpPage({
             {isResending
               ? MESSAGES.UI.SENDING
               : countdown > 0
-                ? `再送信できるまで ${countdown}秒`
+                ? `${MESSAGES.UI.VERIFY_OTP_COOLDOWN_PREFIX}${countdown}${MESSAGES.UI.VERIFY_OTP_COOLDOWN_SUFFIX}`
                 : MESSAGES.UI.RESEND_OTP}
           </Button>
         </div>

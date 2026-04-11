@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { MESSAGES } from '../lib/constants';
 
 // auth.spec.ts はログイン確認用のテストのため、storageState を使用しない（リセットする）
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -18,14 +19,14 @@ test.describe('Authentication Flow', () => {
     await page.click('button[type="submit"]');
     
     // エラーメッセージが表示されるか
-    await expect(page.getByText('メールアドレスを入力してください')).toBeVisible();
-    await expect(page.getByText('パスワードを入力してください')).toBeVisible();
+    await expect(page.getByText(MESSAGES.ERROR.EMAIL_REQUIRED)).toBeVisible();
+    await expect(page.getByText(MESSAGES.ERROR.PASSWORD_REQUIRED)).toBeVisible();
     
     // 不正なメール形式
     await page.fill('input[name="email"]', 'invalid-email');
     await page.fill('input[name="password"]', 'password123');
     await page.click('button[type="submit"]');
     
-    await expect(page.getByText('正しいメールアドレスの形式で入力してください')).toBeVisible();
+    await expect(page.getByText(MESSAGES.ERROR.EMAIL_INVALID)).toBeVisible();
   });
 });

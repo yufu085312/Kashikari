@@ -86,7 +86,7 @@ export function PaymentForm({
 
     if (isManual && !isTotalMatching) {
       setError(
-        `合計金額が一致しません（現在: ¥${manualTotal.toLocaleString()}）`,
+        `${MESSAGES.UI.PAYMENT_AMOUNT_MISMATCH_ERROR}${manualTotal.toLocaleString()}）`,
       );
       return;
     }
@@ -128,7 +128,7 @@ export function PaymentForm({
       {/* 金額 */}
       <div className="flex flex-col gap-1.5 animate-slide-up">
         <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">
-          金額
+          {MESSAGES.UI.PAYMENT_LABEL_AMOUNT}
         </label>
         <div className="relative group">
           <span className="absolute left-4 top-1/2 -translate-y-1/2 text-emerald-500 text-2xl font-black group-focus-within:scale-110 transition-transform">
@@ -168,7 +168,7 @@ export function PaymentForm({
         style={{ animationDelay: "0.1s" }}
       >
         <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">
-          誰が払った？
+          {MESSAGES.UI.PAYMENT_WHO_PAID}
         </label>
         <div className="flex flex-wrap gap-2">
           {members.map((member) => (
@@ -195,7 +195,7 @@ export function PaymentForm({
       >
         <div className="flex items-center justify-between">
           <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">
-            負担するメンバー
+            {MESSAGES.UI.PAYMENT_WHO_BORROWS}
           </label>
           <div className="flex bg-white/5 p-1 rounded-lg border border-white/5">
             <button
@@ -203,14 +203,14 @@ export function PaymentForm({
               onClick={() => setIsManual(false)}
               className={`px-3 py-1 text-[10px] font-black rounded-md transition-all ${!isManual ? "bg-white/10 text-white shadow-sm" : "text-gray-600"}`}
             >
-              自動割り勘
+              {MESSAGES.UI.PAYMENT_SPLIT_AUTO}
             </button>
             <button
               type="button"
               onClick={() => setIsManual(true)}
               className={`px-3 py-1 text-[10px] font-black rounded-md transition-all ${isManual ? "bg-white/10 text-white shadow-sm" : "text-gray-600"}`}
             >
-              手動入力
+              {MESSAGES.UI.PAYMENT_SPLIT_MANUAL}
             </button>
           </div>
         </div>
@@ -280,7 +280,7 @@ export function PaymentForm({
                     </span>
                     <input
                       type="number"
-                      placeholder="金額を入力"
+                      placeholder={MESSAGES.UI.PAYMENT_ENTER_AMOUNT}
                       value={manualAmounts[member.id] || ""}
                       onChange={(e) =>
                         handleManualAmountChange(member.id, e.target.value)
@@ -303,14 +303,15 @@ export function PaymentForm({
             }`}
           >
             <span className="text-[10px] font-bold text-gray-500 uppercase">
-              入力合計: ¥{manualTotal.toLocaleString()}
+              {MESSAGES.UI.PAYMENT_MANUAL_TOTAL}
+              {manualTotal.toLocaleString()}
             </span>
             <span
               className={`text-[10px] font-bold uppercase ${isTotalMatching ? "text-emerald-500" : "text-red-500"}`}
             >
               {isTotalMatching
-                ? "金額が一致しています ✓"
-                : `不足: ¥${(Number(amount) - manualTotal).toLocaleString()}`}
+                ? MESSAGES.UI.PAYMENT_AMOUNT_MATCH
+                : `${MESSAGES.UI.PAYMENT_AMOUNT_SHORT}${(Number(amount) - manualTotal).toLocaleString()}`}
             </span>
           </div>
         )}
@@ -322,10 +323,10 @@ export function PaymentForm({
         style={{ animationDelay: "0.3s" }}
       >
         <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">
-          メモ（任意）
+          {MESSAGES.UI.PAYMENT_MEMO_LABEL}
         </label>
         <input
-          placeholder="例：焼肉ランチ"
+          placeholder={MESSAGES.UI.PAYMENT_MEMO_PLACEHOLDER}
           value={memo}
           onChange={(e) => setMemo(e.target.value)}
           className="w-full bg-white/5 border border-white/5 rounded-xl px-4 py-3 text-white font-medium placeholder-gray-700 focus:outline-none focus:border-white/20 transition-all outline-none"

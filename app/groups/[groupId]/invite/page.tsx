@@ -13,7 +13,7 @@ const isRedirectError = (error: any) =>
   error?.digest?.startsWith("NEXT_REDIRECT");
 import { joinGroupAction } from "./actions";
 import type { Metadata } from "next";
-import { METADATA } from "@/lib/constants";
+import { METADATA, MESSAGES } from "@/lib/constants";
 
 export async function generateMetadata(props: {
   params: Promise<{ groupId: string }>;
@@ -21,8 +21,8 @@ export async function generateMetadata(props: {
   const { groupId } = await props.params;
   try {
     const group = await getGroupById(groupId);
-    const title = `グループ「${group.name}」への招待 | ${METADATA.SHORT_NAME}`;
-    const description = `グループ「${group.name}」への招待が届いています。参加して割り勘・貸し借りを簡単に管理しましょう。`;
+    const title = `${MESSAGES.UI.INVITE_META_TITLE_1}${group.name}${MESSAGES.UI.INVITE_META_TITLE_2}${METADATA.SHORT_NAME}`;
+    const description = `${MESSAGES.UI.INVITE_META_DESC_1}${group.name}${MESSAGES.UI.INVITE_META_DESC_2}`;
 
     return {
       title,
@@ -39,8 +39,8 @@ export async function generateMetadata(props: {
       },
     };
   } catch (error) {
-    const fallbackTitle = `グループ招待 | ${METADATA.SHORT_NAME}`;
-    const fallbackDesc = "グループへの招待が届いています。";
+    const fallbackTitle = `${MESSAGES.UI.INVITE_META_FALLBACK_TITLE}${METADATA.SHORT_NAME}`;
+    const fallbackDesc = MESSAGES.UI.INVITE_META_FALLBACK_DESC;
     return {
       title: fallbackTitle,
       description: fallbackDesc,
@@ -93,7 +93,7 @@ export default async function InvitePage(props: {
             👋
           </div>
           <h1 className="text-2xl font-bold text-white mb-2">{group.name}</h1>
-          <p className="text-gray-400 mb-8">このグループへ招待されています！</p>
+          <p className="text-gray-400 mb-8">{MESSAGES.UI.INVITE_PAGE_PROMPT}</p>
 
           {serverError && (
             <div className="bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3 text-sm text-red-400 mb-6 animate-fade-in">
@@ -103,7 +103,7 @@ export default async function InvitePage(props: {
 
           <form action={joinGroup}>
             <Button type="submit" size="lg" className="w-full">
-              グループに参加する
+              {MESSAGES.UI.INVITE_JOIN_BUTTON}
             </Button>
           </form>
         </div>
@@ -113,9 +113,10 @@ export default async function InvitePage(props: {
     if (isRedirectError(error)) throw error;
     console.error("Invite page error:", error);
 
-    // エラー詳細をURLに含める（デバッグ用）
     const detail = error.message || String(error);
-    const message = encodeURIComponent(`エラー: ${detail}`);
+    const message = encodeURIComponent(
+      `${MESSAGES.ERROR.GENERAL_ERROR_PREFIX}${detail}`,
+    );
     redirect(`/?error=${message}`);
   }
 }

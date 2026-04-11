@@ -34,76 +34,69 @@ export default function PrivacyPage() {
         <div className="space-y-10 text-gray-300 leading-relaxed text-sm sm:text-base">
           <section>
             <h2 className="text-xl font-bold text-white mb-4">
-              1. 個人情報の収集範囲
+              {MESSAGES.POLICY.PRIVACY_1_TITLE}
             </h2>
-            <p>本サービスでは、以下の情報を収集する場合があります。</p>
+            <p>{MESSAGES.POLICY.PRIVACY_1_DESC}</p>
             <ul className="list-disc list-inside space-y-2 mt-2 ml-2">
-              <li>メールアドレス（認証および連絡のため）</li>
-              <li>表示名（アプリ内でのユーザー識別のあため）</li>
-              <li>アプリ内での利用状況（機能改善のためのログデータ）</li>
-            </ul>
-          </section>
-
-          <section>
-            <h2 className="text-xl font-bold text-white mb-4">2. 利用目的</h2>
-            <p>収集した情報は、以下の目的で利用されます。</p>
-            <ul className="list-disc list-inside space-y-2 mt-2 ml-2">
-              <li>本サービスの提供、運営、維持</li>
-              <li>本サービスに関する通知やお問い合わせへの対応</li>
-              <li>サービスの改善、新機能の開発</li>
-              <li>不正利用の防止、安全性の確保</li>
+              <li>{MESSAGES.POLICY.PRIVACY_1_ITEM_1}</li>
+              <li>{MESSAGES.POLICY.PRIVACY_1_ITEM_2}</li>
+              <li>{MESSAGES.POLICY.PRIVACY_1_ITEM_3}</li>
             </ul>
           </section>
 
           <section>
             <h2 className="text-xl font-bold text-white mb-4">
-              3. 外部サービスの利用について
+              {MESSAGES.POLICY.PRIVACY_2_TITLE}
             </h2>
-            <p>
-              本サービスでは、機能提供のために以下の外部サービスを利用しています。これらのサービスにおける情報の取り扱いは、各提供者のプライバシーポリシー等によります。
-            </p>
+            <p>{MESSAGES.POLICY.PRIVACY_2_DESC}</p>
+            <ul className="list-disc list-inside space-y-2 mt-2 ml-2">
+              <li>{MESSAGES.POLICY.PRIVACY_2_ITEM_1}</li>
+              <li>{MESSAGES.POLICY.PRIVACY_2_ITEM_2}</li>
+              <li>{MESSAGES.POLICY.PRIVACY_2_ITEM_3}</li>
+              <li>{MESSAGES.POLICY.PRIVACY_2_ITEM_4}</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-bold text-white mb-4">
+              {MESSAGES.POLICY.PRIVACY_3_TITLE}
+            </h2>
+            <p>{MESSAGES.POLICY.PRIVACY_3_DESC}</p>
             <ul className="list-disc list-inside space-y-2 mt-2 ml-2">
               <li>
-                <strong>Supabase (Supabase Auth)</strong>:
-                ユーザー認証、アカウント管理
+                <strong>{MESSAGES.POLICY.PRIVACY_3_ITEM_1_NAME}</strong>:
+                {MESSAGES.POLICY.PRIVACY_3_ITEM_1_DESC}
               </li>
               <li>
-                <strong>Firebase Hosting (Google Cloud)</strong>:
-                サービスのホスティング、インフラストラクチャ
+                <strong>{MESSAGES.POLICY.PRIVACY_3_ITEM_2_NAME}</strong>:
+                {MESSAGES.POLICY.PRIVACY_3_ITEM_2_DESC}
               </li>
             </ul>
           </section>
 
           <section>
             <h2 className="text-xl font-bold text-white mb-4">
-              4. 情報の第三者提供
+              {MESSAGES.POLICY.PRIVACY_4_TITLE}
             </h2>
-            <p>
-              法令に基づく場合を除き、ユーザーの同意を得ることなく、収集した情報を第三者に提供することはありません。
-            </p>
+            <p>{MESSAGES.POLICY.PRIVACY_4_DESC}</p>
           </section>
 
           <section>
             <h2 className="text-xl font-bold text-white mb-4">
-              5. 情報の管理・保護
+              {MESSAGES.POLICY.PRIVACY_5_TITLE}
             </h2>
-            <p>
-              当方は、ユーザーの情報の漏洩、紛失、破壊、改ざんを防止するため、適切な安全管理措置を講じます。認証情報の管理には業界標準のセキュリティを採用した
-              Supabase 等を利用しています。
-            </p>
+            <p>{MESSAGES.POLICY.PRIVACY_5_DESC}</p>
           </section>
 
           <section>
             <h2 className="text-xl font-bold text-white mb-4">
-              6. ポリシーの変更
+              {MESSAGES.POLICY.PRIVACY_6_TITLE}
             </h2>
-            <p>
-              本ポリシーの内容は、必要に応じて変更することがあります。重要な変更がある場合には、本サービス内において通知いたします。変更後のポリシーは、本ページに掲載した時点から有効となります。
-            </p>
+            <p>{MESSAGES.POLICY.PRIVACY_6_DESC}</p>
           </section>
 
           <div className="pt-8 border-t border-white/10 text-gray-500 text-xs text-right">
-            最終更新日：2024年3月21日
+            {MESSAGES.POLICY.PRIVACY_UPDATED}
           </div>
         </div>
       </div>

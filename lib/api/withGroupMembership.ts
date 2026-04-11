@@ -6,6 +6,7 @@
  */
 import { createClient } from "@/utils/supabase/server";
 import { ForbiddenError } from "@/lib/errors";
+import { MESSAGES } from "@/lib/constants";
 
 /**
  * userId が groupId のメンバーかどうかを検証する。
@@ -25,6 +26,6 @@ export async function verifyGroupMembership(
 
   if (error) throw error;
   if (!data) {
-    throw new ForbiddenError("このグループのメンバーではありません");
+    throw new ForbiddenError(MESSAGES.ERROR.NOT_GROUP_MEMBER);
   }
 }
