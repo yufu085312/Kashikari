@@ -1,10 +1,11 @@
 import { insertSettlement } from "@/lib/repositories/settlementRepository";
-import { CreateSettlementInput, Settlement } from "@/types/balance";
+import { CreateSettlementSchemaInput } from "@/lib/schemas/settlement";
+import { Settlement } from "@/lib/domain/models/settlement";
 import { ValidationError } from "@/lib/errors";
 import { MESSAGES } from "@/lib/constants";
 
 export async function settleDebt(
-  input: CreateSettlementInput,
+  input: CreateSettlementSchemaInput,
 ): Promise<Settlement> {
   const { fromUserId, toUserId, amount } = input;
 

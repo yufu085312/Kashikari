@@ -6,7 +6,7 @@ import { GlassCard } from "@/components/ui/glass-card";
 import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/ui/modal";
 import { GroupForm } from "@/components/groups/group-form";
-import { Group } from "@/types/group";
+import { Group } from "@/lib/domain/models/group";
 import Link from "next/link";
 import { AddToHomeScreenBanner } from "@/components/ui/add-to-home-screen-banner";
 import { MESSAGES } from "@/lib/constants";

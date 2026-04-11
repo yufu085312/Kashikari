@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Group } from "@/types/group";
+import { Group } from "@/lib/domain/models/group";
 import { MESSAGES } from "@/lib/constants";
 
 interface GroupCardProps {

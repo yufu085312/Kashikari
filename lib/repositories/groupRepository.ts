@@ -1,6 +1,6 @@
 import { createClient } from "@/utils/supabase/server";
-import { Group } from "@/types/group";
-import { User } from "@/types/user";
+import { Group } from "@/lib/domain/models/group";
+import { User } from "@/lib/domain/models/user";
 import { NotFoundError, DatabaseError } from "@/lib/errors";
 import { MESSAGES } from "@/lib/constants";
 

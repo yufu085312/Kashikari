@@ -1,7 +1,7 @@
 "use client";
 
 import { useOptimistic, useTransition, useState } from "react";
-import { Balance } from "@/types/balance";
+import { Balance } from "@/lib/domain/models/balance";
 import { Button } from "@/components/ui/button";
 import { createSettlementAction } from "@/app/actions/settlement";
 import { GlassCard } from "@/components/ui/glass-card";

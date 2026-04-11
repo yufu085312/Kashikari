@@ -3,9 +3,10 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Payment } from "@/types/payment";
-import { Balance, Settlement } from "@/types/balance";
-import { User } from "@/types/user";
+import { Payment } from "@/lib/domain/models/payment";
+import { Balance } from "@/lib/domain/models/balance";
+import { Settlement } from "@/lib/domain/models/settlement";
+import { User } from "@/lib/domain/models/user";
 import { BalanceList } from "@/components/balances/balance-list";
 import { PaymentForm } from "@/components/payments/payment-form";
 import { PaymentList } from "@/components/payments/payment-list";

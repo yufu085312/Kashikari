@@ -1,7 +1,7 @@
 "use client";
 
 import { useOptimistic, useTransition, useState } from "react";
-import { Settlement } from "@/types/balance";
+import { Settlement } from "@/lib/domain/models/settlement";
 import { formatDate } from "@/utils/format";
 import { deleteSettlementAction } from "@/app/actions/settlement";
 import { GlassCard } from "@/components/ui/glass-card";

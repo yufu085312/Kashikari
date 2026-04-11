@@ -1,9 +1,10 @@
 import { createClient } from "@/utils/supabase/server";
-import { Payment, CreatePaymentInput } from "@/types/payment";
+import { Payment } from "@/lib/domain/models/payment";
+import { CreatePaymentSchemaInput } from "@/lib/schemas/payment";
 import { NotFoundError, DatabaseError } from "@/lib/errors";
 
 export async function insertPayment(
-  input: CreatePaymentInput,
+  input: CreatePaymentSchemaInput,
 ): Promise<Payment> {
   const supabase = await createClient();
   const { groupId, payerId, amount, participants, memo } = input;

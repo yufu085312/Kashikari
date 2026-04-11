@@ -1,10 +1,11 @@
 import { createClient } from "@/utils/supabase/server";
-import { Settlement, CreateSettlementInput } from "@/types/balance";
+import { Settlement } from "@/lib/domain/models/settlement";
+import { CreateSettlementSchemaInput } from "@/lib/schemas/settlement";
 import { NotFoundError, DatabaseError } from "@/lib/errors";
 import { MESSAGES } from "@/lib/constants";
 
 export async function insertSettlement(
-  input: CreateSettlementInput,
+  input: CreateSettlementSchemaInput,
 ): Promise<Settlement> {
   const supabase = await createClient();
   const { groupId, fromUserId, toUserId, amount } = input;

@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { User } from "@/types/user";
-import { Balance } from "@/types/balance";
+import { User } from "@/lib/domain/models/user";
+import { Balance } from "@/lib/domain/models/balance";
 import { Modal } from "@/components/ui/modal";
 import { Button } from "@/components/ui/button";
 import { removeMemberAction } from "@/app/actions/group";

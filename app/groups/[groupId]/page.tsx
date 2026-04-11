@@ -1,16 +1,17 @@
 export const runtime = "edge";
 import { createClient } from "@/utils/supabase/server";
 import { getGroupById } from "@/lib/repositories/groupRepository";
-import { getBalances } from "@/lib/usecases/getBalances";
+import { fetchGroupBalances } from "@/lib/usecases/getBalances";
 import { getPaymentsByGroupId } from "@/lib/repositories/paymentRepository";
 import { GroupDetailClient } from "@/components/groups/group-detail-client";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
-import { Group } from "@/types/group";
-import { User } from "@/types/user";
-import { Balance } from "@/types/balance";
-import { Payment } from "@/types/payment";
-import { Settlement } from "@/types/balance";
+import { Group } from "@/lib/domain/models/group";
+import { User } from "@/lib/domain/models/user";
+import { Balance } from "@/lib/domain/models/balance";
+import { Payment } from "@/lib/domain/models/payment";
+import { Settlement } from "@/lib/domain/models/settlement";
+import { getSettlementsByGroupId } from "@/lib/repositories/settlementRepository";
 
 export default async function GroupDetailPage(props: {
   params: Promise<{ groupId: string }>;
@@ -30,10 +31,8 @@ export default async function GroupDetailPage(props: {
   }
 
   // データ取得を開始（await しないことでストリーミングを可能にする）
-  const balancesPromise = getBalances(groupId);
+  const balancesPromise = fetchGroupBalances(groupId);
   const paymentsPromise = getPaymentsByGroupId(groupId);
-  const { getSettlementsByGroupId } =
-    await import("@/lib/repositories/settlementRepository");
   const settlementsPromise = getSettlementsByGroupId(groupId);
 
   return (

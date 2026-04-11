@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition, useEffect, useMemo } from "react";
-import { User } from "@/types/user";
+import { User } from "@/lib/domain/models/user";
 import { Button } from "@/components/ui/button";
 import { calcEvenSplit } from "@/utils/format";
 import { MESSAGES } from "@/lib/constants";

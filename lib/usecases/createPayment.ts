@@ -1,10 +1,11 @@
 import { insertPayment } from "@/lib/repositories/paymentRepository";
-import { CreatePaymentInput, Payment } from "@/types/payment";
+import { CreatePaymentSchemaInput } from "@/lib/schemas/payment";
+import { Payment } from "@/lib/domain/models/payment";
 import { ValidationError } from "@/lib/errors";
 import { MESSAGES } from "@/lib/constants";
 
 export async function createPayment(
-  input: CreatePaymentInput,
+  input: CreatePaymentSchemaInput,
 ): Promise<Payment> {
   const { amount, participants } = input;
 

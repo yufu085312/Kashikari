@@ -1,6 +1,6 @@
 import { createGroup as repoCreateGroup } from "@/lib/repositories/groupRepository";
 import { findUsersBySearchIds } from "@/lib/repositories/userRepository";
-import { Group } from "@/types/group";
+import { Group } from "@/lib/domain/models/group";
 import { NotFoundError } from "@/lib/errors";
 import { MESSAGES } from "@/lib/constants";
 

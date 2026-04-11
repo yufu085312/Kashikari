@@ -1,7 +1,7 @@
 "use client";
 
 import { useOptimistic, useTransition, useState } from "react";
-import { Payment } from "@/types/payment";
+import { Payment } from "@/lib/domain/models/payment";
 import { formatDate } from "@/utils/format";
 import { deletePaymentAction } from "@/app/actions/payment";
 import { GlassCard } from "@/components/ui/glass-card";
@@ -29,7 +29,7 @@ export function PaymentList({
     (state, idToRemove: string) => state.filter((p) => p.id !== idToRemove),
   );
 
-  const isLocked = (createdAt: string | undefined) => {
+  const isLocked = (createdAt: string | undefined | null) => {
     if (!latestSettlementAt || !createdAt) return false;
     return new Date(createdAt) <= new Date(latestSettlementAt);
   };
