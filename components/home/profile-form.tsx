@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MESSAGES, LIMITS } from "@/lib/constants";
-import { updateProfile } from "@/app/login/actions";
+import { updateProfile } from "@/app/settings/actions";
 
 interface ProfileFormProps {
   initialName: string;

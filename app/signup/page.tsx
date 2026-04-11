@@ -5,7 +5,7 @@ export const runtime = "edge";
 import { use, useState, useTransition } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { signup } from "../login/actions";
+import { signup } from "@/app/signup/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ROUTES, LIMITS, MESSAGES, METADATA } from "@/lib/constants";

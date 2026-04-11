@@ -1,4 +1,5 @@
 import { User } from './user'
+import { CreatePaymentSchemaInput } from '@/lib/schemas/payment'
 
 export interface PaymentParticipant {
   id?: string
@@ -19,10 +20,4 @@ export interface Payment {
   participants?: PaymentParticipant[]
 }
 
-export interface CreatePaymentInput {
-  groupId: string
-  payerId: string
-  amount: number
-  participants: { userId: string; share: number }[]
-  memo?: string
-}
+export type CreatePaymentInput = CreatePaymentSchemaInput;

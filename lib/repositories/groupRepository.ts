@@ -1,7 +1,7 @@
 import { createClient } from "@/utils/supabase/server";
-import { Group, GroupMember } from "@/types/group";
+import { Group } from "@/types/group";
 import { User } from "@/types/user";
-import { NotFoundError } from "@/lib/errors";
+import { NotFoundError, DatabaseError } from "@/lib/errors";
 import { MESSAGES } from "@/lib/constants";
 
 export async function createGroup(
@@ -15,7 +15,7 @@ export async function createGroup(
     .select()
     .single();
 
-  if (error) throw new Error(error.message);
+  if (error) throw new DatabaseError(error.message);
 
   // メンバーを追加
   const members = userIds.map((userId) => ({
@@ -25,7 +25,7 @@ export async function createGroup(
   const { error: memberError } = await supabase
     .from("group_members")
     .insert(members);
-  if (memberError) throw new Error(memberError.message);
+  if (memberError) throw new DatabaseError(memberError.message);
 
   return group;
 }
@@ -44,7 +44,7 @@ export async function getGroupById(
     .eq("id", groupId)
     .maybeSingle();
 
-  if (error) throw new Error(error.message);
+  if (error) throw new DatabaseError(error.message);
   if (!group)
     throw new NotFoundError(MESSAGES.ERROR.GROUP_NOT_FOUND_OR_FORBIDDEN);
 
@@ -53,7 +53,7 @@ export async function getGroupById(
     .select("*, user:users(*)")
     .eq("group_id", groupId);
 
-  if (memberError) throw new Error(memberError.message);
+  if (memberError) throw new DatabaseError(memberError.message);
 
   const members: User[] = (memberRows || [])
     .filter((row: GroupMemberRow) => row.user !== null)
@@ -73,7 +73,7 @@ export async function getGroupsByUserId(userId: string): Promise<Group[]> {
     .select("group:groups(*, members:group_members(user_id))")
     .eq("user_id", userId);
 
-  if (error) throw new Error(error.message);
+  if (error) throw new DatabaseError(error.message);
 
   return (data || [])
     .filter((row: GroupRow) => row.group !== null)
@@ -89,7 +89,7 @@ export async function addMemberToGroup(
     .from("group_members")
     .insert({ group_id: groupId, user_id: userId });
 
-  if (error) throw new Error(error.message);
+  if (error) throw new DatabaseError(error.message);
 }
 
 export async function removeMemberFromGroup(
@@ -103,7 +103,7 @@ export async function removeMemberFromGroup(
     .eq("group_id", groupId)
     .eq("user_id", userId);
 
-  if (error) throw new Error(error.message);
+  if (error) throw new DatabaseError(error.message);
 }
 
 export async function deleteGroup(groupId: string): Promise<void> {
@@ -113,7 +113,7 @@ export async function deleteGroup(groupId: string): Promise<void> {
     .delete({ count: "exact" })
     .eq("id", groupId);
 
-  if (error) throw new Error(error.message);
+  if (error) throw new DatabaseError(error.message);
   if (count === 0)
     throw new NotFoundError(MESSAGES.ERROR.GROUP_DELETE_FORBIDDEN);
 }

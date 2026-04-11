@@ -20,3 +20,6 @@ export const createPaymentSchema = z.object({
     .min(1, MESSAGES.ERROR.PAYMENT_PARTICIPANT_REQUIRED),
   memo: z.string().optional(),
 });
+
+/** 支払い作成入力型（スキーマから推論） */
+export type CreatePaymentSchemaInput = z.infer<typeof createPaymentSchema>;

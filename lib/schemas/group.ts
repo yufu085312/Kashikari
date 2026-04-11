@@ -10,6 +10,9 @@ export const createGroupSchema = z.object({
   memberSearchIds: z.array(z.string()).optional().default([]),
 });
 
+/** グループ作成入力型（スキーマから推論） */
+export type CreateGroupSchemaInput = z.infer<typeof createGroupSchema>;
+
 /** メンバー追加スキーマ */
 export const addMemberSchema = z.object({
   searchId: z
@@ -17,3 +20,6 @@ export const addMemberSchema = z.object({
     .min(1, MESSAGES.ERROR.SEARCH_ID_REQUIRED)
     .transform((v) => v.trim()),
 });
+
+/** メンバー追加入力型（スキーマから推論） */
+export type AddMemberSchemaInput = z.infer<typeof addMemberSchema>;

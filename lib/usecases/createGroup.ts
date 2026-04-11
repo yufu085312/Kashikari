@@ -1,5 +1,5 @@
-import { createClient } from "@/utils/supabase/server";
 import { createGroup as repoCreateGroup } from "@/lib/repositories/groupRepository";
+import { findUsersBySearchIds } from "@/lib/repositories/userRepository";
 import { Group } from "@/types/group";
 import { NotFoundError } from "@/lib/errors";
 import { MESSAGES } from "@/lib/constants";
@@ -14,7 +14,6 @@ export async function createGroup(
   input: CreateGroupInput,
 ): Promise<Group & { userIds: string[] }> {
   const { name, creatorId, memberSearchIds = [] } = input;
-  const supabase = await createClient();
 
   const userIds: string[] = [creatorId];
 
@@ -24,12 +23,7 @@ export async function createGroup(
     .filter((s) => s !== "");
 
   if (validSearchIds.length > 0) {
-    const { data: users, error } = await supabase
-      .from("users")
-      .select("id, search_id")
-      .in("search_id", validSearchIds);
-
-    if (error) throw new Error(error.message);
+    const users = await findUsersBySearchIds(validSearchIds);
     if (users.length !== validSearchIds.length) {
       throw new NotFoundError(MESSAGES.ERROR.GROUP_INVITE_NOT_FOUND);
     }

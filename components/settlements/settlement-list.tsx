@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Settlement } from "@/types/balance";
-import { formatCurrency, formatDate } from "@/utils/format";
+import { formatDate } from "@/utils/format";
 import { api } from "@/lib/api/client";
 import { GlassCard } from "@/components/ui/glass-card";
 import { useAlert } from "@/components/providers/alert-provider";
@@ -32,7 +32,7 @@ export function SettlementList({ settlements, onDelete }: SettlementListProps) {
     try {
       await api.deleteSettlement(id);
       onDelete?.();
-    } catch (e) {
+    } catch {
       await alert({
         title: MESSAGES.UI.ERROR_TITLE,
         message: MESSAGES.ERROR.CANCEL_FAILED,

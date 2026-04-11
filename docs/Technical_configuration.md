@@ -23,8 +23,8 @@
 
         ↓
 
-[ Auth（将来）]
-  └ Supabase Auth
+[ Auth ]
+  └ Supabase Auth (導入済み)
 ```
 
 ---
@@ -140,7 +140,7 @@
 
 ---
 
-# 🔐 5. 認証（将来）
+# 🔐 5. 認証
 
 ## ■ 技術
 
@@ -151,13 +151,14 @@
 ## ■ フロー
 
 * JWTベース認証
-* APIで検証
+* APIで検証 (`withAuth` による一元管理)
 
 ---
 
-## ■ MVP時
+## ■ 現状
 
-* userIdを直接使用
+* Server Actions / Route Handlers でのセッション検証
+* DB側で RLS によるデータ保護適用済み
 
 ---
 
@@ -302,17 +303,14 @@ UI更新
 
 # ⚠️ 14. セキュリティ
 
-## ■ MVP
+## ■ セキュリティ対策（実装済み）
 
-* 入力バリデーション
-* SQLインジェクション対策
-
----
-
-## ■ 将来
-
-* 認証
-* RLS（Supabase）
+* 入力バリデーション（Zodによるスキーマ検証）
+* SQLインジェクション対策（Supabase ORM利用）
+* オープンリダイレクト対策
+* Security Headers (X-Frame-Options等)
+* 認証（Supabase Auth）
+* RLS（Supabase 行レベルセキュリティ）
 
 ---
 

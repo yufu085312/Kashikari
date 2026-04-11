@@ -47,7 +47,11 @@ export function GroupForm({ onSuccess }: GroupFormProps) {
         name: groupName,
         memberSearchIds: validSearchIds,
       });
-      onSuccess ? onSuccess(group.id) : router.push(`/groups/${group.id}`);
+      if (onSuccess) {
+        onSuccess(group.id);
+      } else {
+        router.push(`/groups/${group.id}`);
+      }
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
     } finally {

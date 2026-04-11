@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { User } from "@/types/user";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { api } from "@/lib/api/client";
 import { calcEvenSplit } from "@/utils/format";
@@ -35,7 +34,7 @@ export function PaymentForm({
   const [error, setError] = useState<string | null>(null);
   const [amountError, setAmountError] = useState<string | null>(null);
 
-  const MAX_AMOUNT = LIMITS.MAX_PAYMENT_AMOUNT; // 最大金額: 9,999,999円
+  // 均等割り自動計算
 
   // 均等割り自動計算
   const autoSplitAmounts = calcEvenSplit(Number(amount) || 0, selectedIds);

@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MESSAGES, LIMITS } from "@/lib/constants";
-import { updatePassword } from "@/app/login/actions";
+import { updatePassword } from "@/app/settings/actions";
 
 interface PasswordFormProps {
   onSuccess: () => void;

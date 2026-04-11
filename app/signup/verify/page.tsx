@@ -1,7 +1,7 @@
 "use client";
 
 import { use, useState, useTransition, useEffect } from "react";
-import { verifySignupOtp, resendSignupOtp } from "@/app/login/actions";
+import { verifySignupOtp, resendSignupOtp } from "@/app/signup/actions";
 import { Button } from "@/components/ui/button";
 import { MESSAGES, ROUTES } from "@/lib/constants";
 

@@ -1,16 +1,16 @@
 export const runtime = "edge";
 import { createClient } from "@/utils/supabase/server";
-import {
-  getGroupById,
-  addMemberToGroup,
-} from "@/lib/repositories/groupRepository";
+import { getGroupById } from "@/lib/repositories/groupRepository";
 import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { revalidatePath } from "next/cache";
 // Next.js の redirect() はエラーを投げることで動作するため、
 // try-catch で誤ってキャッチしないように判定関数を用意します。
-const isRedirectError = (error: any) =>
-  error?.digest?.startsWith("NEXT_REDIRECT");
+const isRedirectError = (error: unknown): boolean =>
+  typeof error === "object" &&
+  error !== null &&
+  "digest" in error &&
+  typeof (error as { digest?: unknown }).digest === "string" &&
+  (error as { digest: string }).digest.startsWith("NEXT_REDIRECT");
 import { joinGroupAction } from "./actions";
 import type { Metadata } from "next";
 import { METADATA, MESSAGES } from "@/lib/constants";
@@ -38,7 +38,7 @@ export async function generateMetadata(props: {
         description,
       },
     };
-  } catch (error) {
+  } catch {
     const fallbackTitle = `${MESSAGES.UI.INVITE_META_FALLBACK_TITLE}${METADATA.SHORT_NAME}`;
     const fallbackDesc = MESSAGES.UI.INVITE_META_FALLBACK_DESC;
     return {
@@ -109,11 +109,11 @@ export default async function InvitePage(props: {
         </div>
       </div>
     );
-  } catch (error: any) {
+  } catch (error: unknown) {
     if (isRedirectError(error)) throw error;
     console.error("Invite page error:", error);
 
-    const detail = error.message || String(error);
+    const detail = error instanceof Error ? error.message : String(error);
     const message = encodeURIComponent(
       `${MESSAGES.ERROR.GENERAL_ERROR_PREFIX}${detail}`,
     );

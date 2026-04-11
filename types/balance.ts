@@ -1,4 +1,5 @@
 import { User } from './user'
+import { CreateSettlementSchemaInput } from '@/lib/schemas/settlement'
 
 export interface Balance {
   fromUserId: string
@@ -19,9 +20,4 @@ export interface Settlement {
   to_user?: User
 }
 
-export interface CreateSettlementInput {
-  groupId: string
-  fromUserId: string
-  toUserId: string
-  amount: number
-}
+export type CreateSettlementInput = CreateSettlementSchemaInput;

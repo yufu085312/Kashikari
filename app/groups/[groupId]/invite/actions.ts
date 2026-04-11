@@ -6,8 +6,12 @@ import { addMemberToGroup } from "@/lib/repositories/groupRepository";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-const isRedirectError = (error: any) =>
-  error?.digest?.startsWith("NEXT_REDIRECT");
+const isRedirectError = (error: unknown): boolean =>
+  typeof error === "object" &&
+  error !== null &&
+  "digest" in error &&
+  typeof (error as { digest?: unknown }).digest === "string" &&
+  (error as { digest: string }).digest.startsWith("NEXT_REDIRECT");
 
 export async function joinGroupAction(groupId: string) {
   try {

@@ -62,6 +62,29 @@
    ```
    ※ `docker compose down` と `npx supabase stop` を実行します。
 
+## 💾 データベース・マイグレーション
+
+Supabase のデータベーススキーマ変更（マイグレーション）を適用・管理する方法です。
+
+### ローカル環境への適用
+
+差分となる新しいマイグレーションのみをローカルDBに適用する場合（推奨）:
+```bash
+npx supabase migration up
+```
+
+ローカルDBを完全に初期化し、全マイグレーションを再適用する場合（※テストデータ等は消去されます）:
+```bash
+npx supabase db reset
+```
+
+### 本番環境への適用
+
+本番環境（リモートの Supabase プロジェクト）へマイグレーションを反映させます。事前に `supabase link` で本番プロジェクトと紐付いている必要があります。
+```bash
+npx supabase db push
+```
+
 ## 🧹 コードの品質管理 (Lint / Format / Test)
 
 開発中コードの品質を維持するため、Dockerコンテナ内で以下のコマンドを実行できます。

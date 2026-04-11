@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { Balance } from "@/types/balance";
-import { formatCurrency } from "@/utils/format";
 import { Button } from "@/components/ui/button";
 import { api } from "@/lib/api/client";
 import { GlassCard } from "@/components/ui/glass-card";
@@ -40,7 +39,7 @@ export function BalanceList({ balances, groupId, onSettle }: BalanceListProps) {
         amount: balance.amount,
       });
       onSettle?.();
-    } catch (e) {
+    } catch {
       await alert({
         title: MESSAGES.UI.ERROR_TITLE,
         message: MESSAGES.ERROR.SETTLEMENT_FAILED,

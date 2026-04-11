@@ -51,7 +51,7 @@ export function PaymentList({
     try {
       await api.deletePayment(paymentId);
       onDelete?.();
-    } catch (e) {
+    } catch {
       await alert({
         title: MESSAGES.UI.ERROR_TITLE,
         message: MESSAGES.ERROR.DELETE_FAILED,

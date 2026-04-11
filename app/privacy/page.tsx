@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { MESSAGES, ROUTES } from "@/lib/constants";
+import { MESSAGES } from "@/lib/constants";
 
 export default function PrivacyPage() {
   return (

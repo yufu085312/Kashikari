@@ -6,14 +6,17 @@ import { MESSAGES } from "@/lib/constants";
 export function AddToHomeScreenBanner() {
   const [show, setShow] = useState(false);
   const [isIos, setIsIos] = useState(false);
-  const [isSafari, setIsSafari] = useState(false);
-  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [deferredPrompt, setDeferredPrompt] = useState<{
+    prompt: () => void;
+    userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
+  } | null>(null);
 
   useEffect(() => {
     // すでにインストール済み（スタンドアロンモード）なら表示しない
     const isStandalone =
       window.matchMedia("(display-mode: standalone)").matches ||
-      (navigator as any).standalone === true;
+      ("standalone" in navigator &&
+        (navigator as unknown as { standalone: boolean }).standalone === true);
 
     if (isStandalone) return;
 
@@ -26,13 +29,6 @@ export function AddToHomeScreenBanner() {
 
     if (ios) {
       setIsIos(true);
-      // Safari かどうかの判定 (Chromeなどは CriOS, Firefoxは FxiOS などが含まれる)
-      const safari =
-        ua.includes("Safari") &&
-        !ua.includes("CriOS") &&
-        !ua.includes("FxiOS") &&
-        !ua.includes("EdgiOS");
-      setIsSafari(safari);
       setShow(true);
       return;
     }
@@ -40,7 +36,8 @@ export function AddToHomeScreenBanner() {
     // Android / Chrome: beforeinstallprompt を捕捉
     const handler = (e: Event) => {
       e.preventDefault();
-      setDeferredPrompt(e);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      setDeferredPrompt(e as any);
       setShow(true);
     };
     window.addEventListener("beforeinstallprompt", handler);

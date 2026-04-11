@@ -8,12 +8,9 @@ import { Modal } from "@/components/ui/modal";
 import { GroupForm } from "@/components/groups/group-form";
 import { Group } from "@/types/group";
 import Link from "next/link";
-import { logout } from "@/app/login/actions";
 import { AddToHomeScreenBanner } from "@/components/ui/add-to-home-screen-banner";
-import { ROUTES, TIMEOUTS, MESSAGES, METADATA } from "@/lib/constants";
-import Image from "next/image";
-import { ProfileForm } from "./profile-form";
-import { PasswordForm } from "./password-form";
+import { MESSAGES } from "@/lib/constants";
+import { HomeHeader } from "./home-header";
 
 interface HomePageClientProps {
   initialGroups: Group[];
@@ -29,17 +26,6 @@ export function HomePageClient({
   const router = useRouter();
   const [groups] = useState<Group[]>(initialGroups);
   const [showGroupForm, setShowGroupForm] = useState(false);
-  const [copied, setCopied] = useState(false);
-
-  const [showSettings, setShowSettings] = useState(false);
-  const [showProfileForm, setShowProfileForm] = useState(false);
-  const [showPasswordForm, setShowPasswordForm] = useState(false);
-
-  const handleCopyId = () => {
-    navigator.clipboard.writeText(searchId);
-    setCopied(true);
-    setTimeout(() => setCopied(false), TIMEOUTS.COPY_FEEDBACK);
-  };
 
   const handleGroupCreated = (groupId: string) => {
     setShowGroupForm(false);
@@ -52,261 +38,13 @@ export function HomePageClient({
       <div className="sm:hidden">
         <AddToHomeScreenBanner />
       </div>
-      {/* ユーザープロフィール */}
-      <section className="relative flex flex-col sm:flex-row sm:items-start justify-between sm:gap-6">
-        <div className="flex-1 min-w-0 pr-10 sm:pr-0">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center shadow-lg shadow-black/10 flex-shrink-0 border border-white/10 overflow-hidden">
-              <Image
-                src="/icon.png"
-                alt={METADATA.SHORT_NAME}
-                width={48}
-                height={48}
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <h1 className="text-lg sm:text-2xl font-black text-white tracking-tight">
-              {MESSAGES.UI.APP_TAGLINE}
-            </h1>
-          </div>
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-2 mt-6 sm:mt-8">
-            <button
-              onClick={handleCopyId}
-              className="group flex items-center justify-center min-w-[120px] gap-1.5 text-[10px] text-gray-600 hover:text-emerald-400 transition-colors bg-white/5 px-2 py-0.5 rounded-full border border-white/5 active:scale-95"
-              title={MESSAGES.UI.COPY_ID}
-            >
-              {copied ? (
-                <>
-                  <span className="font-bold text-emerald-400">
-                    {MESSAGES.UI.ID_COPY_SUCCESS}
-                  </span>
-                  <svg
-                    className="w-3 h-3 text-emerald-400 animate-fade-in"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={3}
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
-                </>
-              ) : (
-                <>
-                  <span className="font-mono">
-                    {MESSAGES.UI.ID_LABEL}: {searchId}
-                  </span>
-                  <svg
-                    className="w-3 h-3 text-gray-500 group-hover:text-emerald-400 transition-colors"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2.5}
-                      d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"
-                    />
-                  </svg>
-                </>
-              )}
-            </button>
-            <p className="text-sm text-gray-500 font-medium">
-              {MESSAGES.UI.HELLO}、
-              <span className="text-emerald-400">{userName}</span>
-            </p>
-          </div>
-        </div>
 
-        <div className="flex flex-col sm:flex-row items-end sm:items-center gap-4">
-          <Button
-            onClick={() => setShowGroupForm(true)}
-            size="sm"
-            className="hidden sm:flex rounded-2xl w-full sm:w-auto"
-          >
-            <svg
-              className="w-4 h-4 mr-1.5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2.5}
-                d="M12 4v16m8-8H4"
-              />
-            </svg>
-            {MESSAGES.UI.NEW_GROUP_LABEL}
-          </Button>
-
-          <div className="absolute right-0 top-0 sm:relative sm:top-auto sm:right-auto">
-            <button
-              onClick={() => setShowSettings(!showSettings)}
-              className="p-2 text-gray-500 hover:text-white transition-colors rounded-full hover:bg-white/5 active:scale-95"
-              title={MESSAGES.UI.SETTINGS_LABEL}
-            >
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1.5}
-                  d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-                />
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1.5}
-                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                />
-              </svg>
-            </button>
-
-            {showSettings && (
-              <>
-                <div
-                  className="fixed inset-0 z-40"
-                  onClick={() => setShowSettings(false)}
-                />
-                <div className="absolute right-0 top-full mt-2 w-56 bg-[#0a0f1e]/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl overflow-hidden z-50 py-1 animate-fade-in origin-top-right">
-                  <button
-                    onClick={() => {
-                      setShowProfileForm(true);
-                      setShowSettings(false);
-                    }}
-                    className="w-full flex items-center gap-2 px-4 py-3 text-sm text-gray-300 hover:bg-white/5 hover:text-white transition-colors border-l-2 border-transparent hover:border-emerald-400 text-left"
-                  >
-                    <svg
-                      className="w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={1.5}
-                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                      />
-                    </svg>
-                    {MESSAGES.UI.PROFILE_EDIT_TITLE}
-                  </button>
-                  <button
-                    onClick={() => {
-                      setShowPasswordForm(true);
-                      setShowSettings(false);
-                    }}
-                    className="w-full flex items-center gap-2 px-4 py-3 text-sm text-gray-300 hover:bg-white/5 hover:text-white transition-colors border-l-2 border-transparent hover:border-emerald-400 text-left"
-                  >
-                    <svg
-                      className="w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={1.5}
-                        d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                      />
-                    </svg>
-                    {MESSAGES.UI.CHANGE_PASSWORD_TITLE}
-                  </button>
-                  <Link
-                    href={ROUTES.TERMS}
-                    className="flex items-center gap-2 px-4 py-3 text-sm text-gray-300 hover:bg-white/5 hover:text-white transition-colors border-l-2 border-transparent hover:border-emerald-400"
-                  >
-                    <svg
-                      className="w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={1.5}
-                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                      />
-                    </svg>
-                    {MESSAGES.UI.TERMS_LABEL}
-                  </Link>
-                  <Link
-                    href={ROUTES.PRIVACY}
-                    className="flex items-center gap-2 px-4 py-3 text-sm text-gray-300 hover:bg-white/5 hover:text-white transition-colors border-l-2 border-transparent hover:border-emerald-400"
-                  >
-                    <svg
-                      className="w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={1.5}
-                        d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                      />
-                    </svg>
-                    {MESSAGES.UI.PRIVACY_POLICY_LABEL}
-                  </Link>
-                  <Link
-                    href={ROUTES.CONTACT}
-                    className="flex items-center gap-2 px-4 py-3 text-sm text-gray-300 hover:bg-white/5 hover:text-white transition-colors border-l-2 border-transparent hover:border-emerald-400"
-                  >
-                    <svg
-                      className="w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={1.5}
-                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                      />
-                    </svg>
-                    {MESSAGES.UI.CONTACT_LABEL}
-                  </Link>
-                  <div className="h-px bg-white/10 my-1 mx-2"></div>
-                  <form action={logout}>
-                    <button
-                      type="submit"
-                      className="w-full flex items-center gap-2 px-4 py-3 text-sm text-red-400 hover:bg-red-500/10 transition-colors border-l-2 border-transparent hover:border-red-400"
-                    >
-                      <svg
-                        className="w-4 h-4 flex-shrink-0"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={1.5}
-                          d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                        />
-                      </svg>
-                      {MESSAGES.UI.LOGOUT_LABEL}
-                    </button>
-                  </form>
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-      </section>
+      {/* ユーザープロフィールと設定メニュー群 */}
+      <HomeHeader
+        userName={userName}
+        searchId={searchId}
+        onNewGroup={() => setShowGroupForm(true)}
+      />
 
       {/* グループ一覧 */}
       <section>
@@ -413,26 +151,6 @@ export function HomePageClient({
         title={MESSAGES.UI.GROUP_CREATE}
       >
         <GroupForm onSuccess={handleGroupCreated} />
-      </Modal>
-
-      <Modal
-        isOpen={showProfileForm}
-        onClose={() => setShowProfileForm(false)}
-        title={MESSAGES.UI.PROFILE_EDIT_TITLE}
-      >
-        <ProfileForm
-          initialName={userName}
-          initialSearchId={searchId}
-          onSuccess={() => setShowProfileForm(false)}
-        />
-      </Modal>
-
-      <Modal
-        isOpen={showPasswordForm}
-        onClose={() => setShowPasswordForm(false)}
-        title={MESSAGES.UI.CHANGE_PASSWORD_TITLE}
-      >
-        <PasswordForm onSuccess={() => setShowPasswordForm(false)} />
       </Modal>
     </div>
   );

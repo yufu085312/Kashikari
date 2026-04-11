@@ -29,9 +29,9 @@ export function AlertProvider({ children }: { children: React.ReactNode }) {
     title: "",
     message: "",
   });
-  const [resolvePromise, setResolvePromise] = useState<(value: any) => void>(
-    () => {},
-  );
+  const [resolvePromise, setResolvePromise] = useState<
+    (value: boolean) => void
+  >(() => {});
 
   const showAlert = useCallback((opts: AlertOptions): Promise<void> => {
     setOptions({ ...opts, isConfirm: false });

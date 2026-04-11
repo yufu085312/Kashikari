@@ -56,3 +56,11 @@ export class ConflictError extends AppError {
     this.name = "ConflictError";
   }
 }
+
+/** 500 — データベースエラー */
+export class DatabaseError extends AppError {
+  constructor(message: string = "データベースエラーが発生しました") {
+    super(message, 500);
+    this.name = "DatabaseError";
+  }
+}

@@ -44,7 +44,7 @@ export function handleError(e: unknown): NextResponse {
 export function withAuth(
   handler: (req: NextRequest, user: SupabaseUser) => Promise<NextResponse>,
 ) {
-  return async (req: NextRequest, context?: unknown) => {
+  return async (req: NextRequest, _context?: unknown) => {
     try {
       const supabase = await createClient();
       const {

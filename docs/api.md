@@ -5,7 +5,7 @@
 * RESTベース
 * JSON通信
 * `/api/v1/` プレフィックス
-* 認証は後付け可能な設計
+* 認証適用（Supabase Auth, withAuth等）
 
 ---
 
@@ -239,18 +239,10 @@ GET /api/v1/groups/:groupId/settlements
 
 ---
 
-# 🔐 8. 認証（将来）
-
-MVPでは👇
-
-* userIdをリクエストで渡す
-
----
-
-将来👇
+# 🔐 8. 認証
 
 * JWT（Supabase Auth）
-* middlewareで認証
+* 共通ラッパー関数（`withAuth` 等）で保護され、不正アクセスを排除。
 
 ---
 

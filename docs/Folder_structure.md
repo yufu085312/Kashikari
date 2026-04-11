@@ -94,7 +94,7 @@ kashikari/
 │   └── icons/
 │
 ├── .env.local
-├── next.config.js
+├── next.config.ts
 ├── package.json
 └── README.md
 ```

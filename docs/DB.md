@@ -87,7 +87,7 @@ create table payment_participants (
   id uuid primary key default gen_random_uuid(),
   payment_id uuid references payments(id) on delete cascade,
   user_id uuid references users(id) on delete cascade,
-  share_amount integer,
+  share_amount integer not null check (share_amount >= 0),
   created_at timestamp default now(),
   unique(payment_id, user_id)
 );
@@ -178,13 +178,9 @@ create index idx_settlements_group_id on settlements(group_id);
 
 ---
 
-# 🔐 将来対応（今は不要）
+# 🔐 将来対応
 
-あとで追加👇
-
-* auth.users連携
-* invited_users（招待機能）
-* notifications
+* notifications（通知機能）
 
 ---
 

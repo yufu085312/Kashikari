@@ -11,3 +11,8 @@ export const createSettlementSchema = z.object({
     .int(MESSAGES.ERROR.SETTLEMENT_AMOUNT_INVALID)
     .positive(MESSAGES.ERROR.SETTLEMENT_AMOUNT_POSITIVE),
 });
+
+/** 精算作成入力型（スキーマから推論） */
+export type CreateSettlementSchemaInput = z.infer<
+  typeof createSettlementSchema
+>;
