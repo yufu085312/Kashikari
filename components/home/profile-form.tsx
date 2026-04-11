@@ -1,10 +1,16 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { MESSAGES, LIMITS } from "@/lib/constants";
+import { MESSAGES } from "@/lib/constants";
 import { updateProfile } from "@/app/settings/actions";
+import {
+  updateProfileSchema,
+  UpdateProfileSchemaInput,
+} from "@/lib/schemas/user";
 
 interface ProfileFormProps {
   initialName: string;
@@ -17,45 +23,29 @@ export function ProfileForm({
   initialSearchId,
   onSuccess,
 }: ProfileFormProps) {
-  const [name, setName] = useState(initialName);
-  const [searchId, setSearchId] = useState(initialSearchId);
-  const [errors, setErrors] = useState<{ name?: string; search_id?: string }>(
-    {},
-  );
   const [isPending, startTransition] = useTransition();
   const [message, setMessage] = useState<{
     type: "success" | "error";
     text: string;
   } | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<UpdateProfileSchemaInput>({
+    resolver: zodResolver(updateProfileSchema),
+    defaultValues: {
+      name: initialName,
+      search_id: initialSearchId,
+    },
+  });
+
+  const onSubmit = (data: UpdateProfileSchemaInput) => {
     setMessage(null);
-    setErrors({});
-
-    // クライアントサイドバリデーション
-    const newErrors: { name?: string; search_id?: string } = {};
-    if (!name) newErrors.name = MESSAGES.ERROR.NAME_REQUIRED;
-    if (name.length > LIMITS.MAX_NAME_LENGTH)
-      newErrors.name = MESSAGES.ERROR.NAME_TOO_LONG;
-
-    if (!searchId) newErrors.search_id = MESSAGES.ERROR.SEARCH_ID_REQUIRED;
-    if (searchId.length > LIMITS.MAX_SEARCH_ID_LENGTH)
-      newErrors.search_id = MESSAGES.ERROR.SEARCH_ID_TOO_LONG;
-    if (!LIMITS.SEARCH_ID_PATTERN.test(searchId))
-      newErrors.search_id = MESSAGES.ERROR.SEARCH_ID_INVALID;
-
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append("name", name);
-    formData.append("search_id", searchId);
 
     startTransition(async () => {
-      const result = await updateProfile(formData);
+      const result = await updateProfile(data);
       if (result.error) {
         setMessage({ type: "error", text: result.error });
       } else {
@@ -71,22 +61,24 @@ export function ProfileForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 pt-2">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="space-y-6 pt-2"
+      noValidate
+    >
       <Input
         label={MESSAGES.UI.NAME_LABEL}
-        value={name}
-        onChange={(e) => setName(e.target.value)}
         placeholder={MESSAGES.UI.NAME_PLACEHOLDER}
-        error={errors.name}
+        {...register("name")}
+        error={errors.name?.message}
         disabled={isPending}
       />
 
       <Input
         label={MESSAGES.UI.SEARCH_ID_LABEL}
-        value={searchId}
-        onChange={(e) => setSearchId(e.target.value)}
         placeholder={MESSAGES.UI.SEARCH_ID_EXAMPLE}
-        error={errors.search_id}
+        {...register("search_id")}
+        error={errors.search_id?.message}
         disabled={isPending}
       />
 
@@ -103,8 +95,8 @@ export function ProfileForm({
       )}
 
       <div className="pt-4">
-        <Button type="submit" className="w-full" disabled={isPending}>
-          {isPending ? MESSAGES.UI.SAVING : MESSAGES.UI.SAVE}
+        <Button type="submit" loading={isPending} className="w-full">
+          {MESSAGES.UI.SAVE}
         </Button>
       </div>
     </form>

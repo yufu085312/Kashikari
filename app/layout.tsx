@@ -29,16 +29,13 @@ export const metadata: Metadata = {
   },
 };
 
-export const runtime = "edge";
-
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ja">
-      <head></head>
+    <html lang="ja" suppressHydrationWarning>
       <body
         className={`${inter.className} bg-background text-white min-h-screen selection:bg-emerald-500/30`}
       >

@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useOptimistic, useTransition, useState } from "react";
 import { Balance } from "@/types/balance";
 import { Button } from "@/components/ui/button";
-import { api } from "@/lib/api/client";
+import { createSettlementAction } from "@/app/actions/settlement";
 import { GlassCard } from "@/components/ui/glass-card";
 import { useAlert } from "@/components/providers/alert-provider";
 import { MESSAGES } from "@/lib/constants";
@@ -11,12 +11,20 @@ import { MESSAGES } from "@/lib/constants";
 interface BalanceListProps {
   balances: Balance[];
   groupId: string;
-  onSettle?: () => void;
 }
 
-export function BalanceList({ balances, groupId, onSettle }: BalanceListProps) {
+export function BalanceList({ balances, groupId }: BalanceListProps) {
   const { alert, confirm } = useAlert();
   const [loading, setLoading] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
+
+  // Optimistic UI (楽観的更新)
+  // 精算を実行した直後にローカルのBalancesリストから対象を消して完了したように見せる
+  const [optimisticBalances, removeOptimisticBalance] = useOptimistic(
+    balances,
+    (state, keyToRemove: string) =>
+      state.filter((b) => `${b.fromUserId}-${b.toUserId}` !== keyToRemove),
+  );
 
   const handleSettle = async (balance: Balance) => {
     const key = `${balance.fromUserId}-${balance.toUserId}`;
@@ -31,26 +39,29 @@ export function BalanceList({ balances, groupId, onSettle }: BalanceListProps) {
     if (!isConfirmed) return;
 
     setLoading(key);
-    try {
-      await api.createSettlement({
+    startTransition(async () => {
+      // 一瞬でUI上から精算済みにする
+      removeOptimisticBalance(key);
+
+      const { error } = await createSettlementAction({
         groupId,
         fromUserId: balance.fromUserId,
         toUserId: balance.toUserId,
         amount: balance.amount,
       });
-      onSettle?.();
-    } catch {
-      await alert({
-        title: MESSAGES.UI.ERROR_TITLE,
-        message: MESSAGES.ERROR.SETTLEMENT_FAILED,
-        type: "error",
-      });
-    } finally {
+
+      if (error) {
+        await alert({
+          title: MESSAGES.UI.ERROR_TITLE,
+          message: error,
+          type: "error",
+        });
+      }
       setLoading(null);
-    }
+    });
   };
 
-  if (balances.length === 0) {
+  if (optimisticBalances.length === 0) {
     return (
       <GlassCard className="py-12 flex flex-col items-center justify-center text-gray-500 border-dashed">
         <div className="w-16 h-16 bg-emerald-500/10 rounded-full flex items-center justify-center mb-4">
@@ -80,7 +91,7 @@ export function BalanceList({ balances, groupId, onSettle }: BalanceListProps) {
 
   return (
     <div className="flex flex-col gap-3">
-      {balances.map((balance) => {
+      {optimisticBalances.map((balance) => {
         const key = `${balance.fromUserId}-${balance.toUserId}`;
         return (
           <GlassCard
@@ -124,7 +135,7 @@ export function BalanceList({ balances, groupId, onSettle }: BalanceListProps) {
                 variant="primary"
                 size="sm"
                 className="flex-shrink-0 from-orange-500 to-red-500 shadow-orange-500/20"
-                loading={loading === key}
+                loading={loading === key || isPending}
                 onClick={() => handleSettle(balance)}
               >
                 {MESSAGES.UI.SETTLE}

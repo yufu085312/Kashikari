@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { User } from "@/types/user";
 import { Balance } from "@/types/balance";
 import { Modal } from "@/components/ui/modal";
 import { Button } from "@/components/ui/button";
-import { api } from "@/lib/api/client";
+import { removeMemberAction } from "@/app/actions/group";
 import { useAlert } from "@/components/providers/alert-provider";
 import { MESSAGES } from "@/lib/constants";
 
@@ -34,6 +34,7 @@ export function MembersModal({
   const [isRemovingMemberId, setIsRemovingMemberId] = useState<string | null>(
     null,
   );
+  const [isPending, startTransition] = useTransition();
 
   const handleRemoveMember = async (member: User) => {
     if (member.id === createdBy) return;
@@ -72,18 +73,19 @@ export function MembersModal({
     if (!isConfirmed) return;
 
     setIsRemovingMemberId(member.id);
-    try {
-      await api.removeMember(groupId, member.id);
-      onRemoveSuccess(member.id);
-    } catch {
-      await alert({
-        title: MESSAGES.UI.ERROR_TITLE,
-        message: MESSAGES.ERROR.MEMBER_REMOVE_FAILED,
-        type: "error",
-      });
-    } finally {
+    startTransition(async () => {
+      const { error } = await removeMemberAction(groupId, member.id);
+      if (error) {
+        await alert({
+          title: MESSAGES.UI.ERROR_TITLE,
+          message: error,
+          type: "error",
+        });
+      } else {
+        onRemoveSuccess(member.id);
+      }
       setIsRemovingMemberId(null);
-    }
+    });
   };
 
   return (
@@ -107,7 +109,7 @@ export function MembersModal({
               (m.id === userId && userId !== createdBy)) && (
               <button
                 onClick={() => handleRemoveMember(m)}
-                disabled={isRemovingMemberId !== null}
+                disabled={isRemovingMemberId !== null || isPending}
                 className={`ml-2 p-1.5 rounded-lg transition-all active:scale-95 ${
                   m.id === userId
                     ? "text-red-500 bg-red-500/10"

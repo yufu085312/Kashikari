@@ -18,9 +18,19 @@ async function globalSetup(config: FullConfig) {
   // 実際には e2e用のテストユーザーをSupabaseのDashboardで作成しておく必要があります
   try {
     await page.goto('/login');
+    await page.waitForLoadState('networkidle');
     await page.fill('input[name="email"]', email);
     await page.fill('input[name="password"]', password);
-    await page.click('button[type="submit"]');
+    try {
+      await page.click('button[type="submit"]', { force: true });
+    } catch (e) {
+      const errorContent = await page.evaluate(() => {
+        const portal = document.querySelector('nextjs-portal');
+        return portal ? portal.shadowRoot?.innerHTML || "Portal found but no shadowRoot" : "No portal found";
+      });
+      console.error("Next.js Error Overlay Content:", errorContent);
+      throw e;
+    }
 
     // エラーメッセージが出たら新規登録にフォールバック
     const errorMsg = page.getByText('メールアドレスまたはパスワードが正しくありません');

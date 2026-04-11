@@ -1,11 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition, useEffect, useMemo } from "react";
 import { User } from "@/types/user";
 import { Button } from "@/components/ui/button";
-import { api } from "@/lib/api/client";
 import { calcEvenSplit } from "@/utils/format";
-import { LIMITS, MESSAGES } from "@/lib/constants";
+import { MESSAGES } from "@/lib/constants";
+import { createPaymentAction } from "@/app/actions/payment";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  createPaymentSchema,
+  CreatePaymentSchemaInput,
+} from "@/lib/schemas/payment";
 
 interface PaymentFormProps {
   groupId: string;
@@ -20,38 +26,66 @@ export function PaymentForm({
   currentUserId,
   onSuccess,
 }: PaymentFormProps) {
-  const [amount, setAmount] = useState("");
-  const [payerId, setPayerId] = useState(currentUserId);
+  const [isPending, startTransition] = useTransition();
+  const [serverError, setServerError] = useState<string | null>(null);
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    reset,
+    formState: { errors },
+  } = useForm<CreatePaymentSchemaInput>({
+    resolver: zodResolver(createPaymentSchema),
+    defaultValues: {
+      groupId,
+      payerId: currentUserId,
+      amount: "" as unknown as number,
+      participants: [],
+      memo: "",
+    },
+  });
+
+  // UI用の状態（動的計算が伴うためRHFと併用）
   const [selectedIds, setSelectedIds] = useState<string[]>(
     members.map((m) => m.id),
   );
-  const [memo, setMemo] = useState("");
   const [isManual, setIsManual] = useState(false);
   const [manualAmounts, setManualAmounts] = useState<Record<string, string>>(
     {},
   );
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [amountError, setAmountError] = useState<string | null>(null);
 
-  // 均等割り自動計算
+  const amountInput = watch("amount");
+  const amount = Number(amountInput) || 0;
+  const payerId = watch("payerId");
 
-  // 均等割り自動計算
-  const autoSplitAmounts = calcEvenSplit(Number(amount) || 0, selectedIds);
-
-  // 手動入力の合計計算
-  const manualTotal = Object.values(manualAmounts).reduce(
-    (sum, val) => sum + (Number(val) || 0),
-    0,
+  // 均等割り自動計算（メモ化して参照を安定させる）
+  const autoSplitAmounts = useMemo(
+    () => calcEvenSplit(amount, selectedIds),
+    [amount, selectedIds],
   );
-  const isTotalMatching = !isManual || manualTotal === Number(amount);
+
+  // 手動入力の合計計算（メモ化）
+  const manualTotal = useMemo(
+    () =>
+      Object.values(manualAmounts).reduce(
+        (sum, val) => sum + (Number(val) || 0),
+        0,
+      ),
+    [manualAmounts],
+  );
+
+  const isTotalMatching = useMemo(
+    () => !isManual || manualTotal === amount,
+    [isManual, manualTotal, amount],
+  );
 
   const toggleMember = (userId: string) => {
     setSelectedIds((prev) => {
       const next = prev.includes(userId)
         ? prev.filter((id) => id !== userId)
         : [...prev, userId];
-      // 手動モードで選択解除されたら金額もクリア
       if (!next.includes(userId)) {
         const newManual = { ...manualAmounts };
         delete newManual[userId];
@@ -65,65 +99,71 @@ export function PaymentForm({
     setManualAmounts((prev) => ({ ...prev, [userId]: value }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setAmountError(null);
+  // 参加者情報を React Hook Form の内部状態に同期
+  useEffect(() => {
+    const participants = isManual
+      ? selectedIds.map((id) => ({
+          userId: id,
+          share: Number(manualAmounts[id]) || 0,
+        }))
+      : autoSplitAmounts.map((s) => ({ userId: s.userId, share: s.share }));
 
-    if (!amount) {
-      setAmountError(MESSAGES.ERROR.PAYMENT_AMOUNT_MIN);
-      return;
-    }
-    if (Number(amount) < LIMITS.MIN_PAYMENT_AMOUNT) {
-      setAmountError(MESSAGES.ERROR.PAYMENT_AMOUNT_MIN);
-      return;
-    }
-    if (Number(amount) > LIMITS.MAX_PAYMENT_AMOUNT) {
-      setAmountError(MESSAGES.ERROR.PAYMENT_AMOUNT_MAX);
-      return;
-    }
+    setValue("participants", participants, { shouldValidate: true });
+  }, [
+    selectedIds,
+    manualAmounts,
+    isManual,
+    amount,
+    autoSplitAmounts,
+    setValue,
+  ]);
+
+  const onSubmit = (data: CreatePaymentSchemaInput) => {
+    setServerError(null);
+
     if (selectedIds.length === 0) return;
-
     if (isManual && !isTotalMatching) {
-      setError(
+      setServerError(
         `${MESSAGES.UI.PAYMENT_AMOUNT_MISMATCH_ERROR}${manualTotal.toLocaleString()}）`,
       );
       return;
     }
 
-    setLoading(true);
-    setError(null);
+    // Participants の構築
+    const participants = isManual
+      ? selectedIds.map((id) => ({
+          userId: id,
+          share: Number(manualAmounts[id]) || 0,
+        }))
+      : autoSplitAmounts.map((s) => ({ userId: s.userId, share: s.share }));
 
-    try {
-      const participants = isManual
-        ? selectedIds.map((id) => ({
-            userId: id,
-            share: Number(manualAmounts[id]) || 0,
-          }))
-        : autoSplitAmounts.map((s) => ({ userId: s.userId, share: s.share }));
-
-      await api.createPayment({
-        groupId,
-        payerId,
-        amount: Number(amount),
+    startTransition(async () => {
+      const payload = {
+        ...data,
         participants,
-        memo: memo.trim() || undefined,
-      });
+      };
 
-      // Reset
-      setAmount("");
-      setMemo("");
+      const { error } = await createPaymentAction(payload);
+
+      if (error) {
+        setServerError(error);
+        return;
+      }
+
+      // 成功時リセット
+      reset();
       setManualAmounts({});
       setSelectedIds(members.map((m) => m.id));
       onSuccess?.();
-    } catch (e) {
-      setError(String(e));
-    } finally {
-      setLoading(false);
-    }
+    });
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-6" noValidate>
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="flex flex-col gap-6"
+      noValidate
+    >
       {/* 金額 */}
       <div className="flex flex-col gap-1.5 animate-slide-up">
         <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">
@@ -137,26 +177,17 @@ export function PaymentForm({
             type="number"
             inputMode="numeric"
             placeholder="0"
-            value={amount}
-            onChange={(e) => {
-              const val = e.target.value;
-              setAmount(val);
-              const num = Number(val);
-              if (num > LIMITS.MAX_PAYMENT_AMOUNT) {
-                setAmountError(MESSAGES.ERROR.PAYMENT_AMOUNT_MAX);
-              } else if (num >= LIMITS.MIN_PAYMENT_AMOUNT) {
-                setAmountError(null);
-              }
-            }}
-            required
-            min={LIMITS.MIN_PAYMENT_AMOUNT}
-            max={LIMITS.MAX_PAYMENT_AMOUNT}
-            className={`w-full bg-white/5 border-2 rounded-2xl pl-10 pr-4 py-4 text-white text-3xl font-black placeholder-gray-800 focus:outline-none transition-all shadow-inner ${amountError ? "border-red-500/50 focus:border-red-500/50 focus:bg-red-500/5" : "border-white/5 focus:border-emerald-500/50 focus:bg-emerald-500/5"}`}
+            {...register("amount", { valueAsNumber: true })}
+            className={`w-full bg-white/5 border-2 rounded-2xl pl-10 pr-4 py-4 text-white text-3xl font-black placeholder-gray-800 focus:outline-none transition-all shadow-inner ${
+              errors.amount
+                ? "border-red-500/50 focus:border-red-500/50 focus:bg-red-500/5"
+                : "border-white/5 focus:border-emerald-500/50 focus:bg-emerald-500/5"
+            }`}
           />
         </div>
-        {amountError && (
+        {errors.amount && (
           <p className="text-red-500 text-xs font-bold px-1 animate-fade-in">
-            {amountError}
+            {errors.amount.message}
           </p>
         )}
       </div>
@@ -174,7 +205,7 @@ export function PaymentForm({
             <button
               key={member.id}
               type="button"
-              onClick={() => setPayerId(member.id)}
+              onClick={() => setValue("payerId", member.id)}
               className={`px-4 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 ${
                 payerId === member.id
                   ? "bg-emerald-500 text-black shadow-[0_0_20px_rgba(16,185,129,0.3)]"
@@ -200,14 +231,18 @@ export function PaymentForm({
             <button
               type="button"
               onClick={() => setIsManual(false)}
-              className={`px-3 py-1 text-[10px] font-black rounded-md transition-all ${!isManual ? "bg-white/10 text-white shadow-sm" : "text-gray-600"}`}
+              className={`px-3 py-1 text-[10px] font-black rounded-md transition-all ${
+                !isManual ? "bg-white/10 text-white shadow-sm" : "text-gray-600"
+              }`}
             >
               {MESSAGES.UI.PAYMENT_SPLIT_AUTO}
             </button>
             <button
               type="button"
               onClick={() => setIsManual(true)}
-              className={`px-3 py-1 text-[10px] font-black rounded-md transition-all ${isManual ? "bg-white/10 text-white shadow-sm" : "text-gray-600"}`}
+              className={`px-3 py-1 text-[10px] font-black rounded-md transition-all ${
+                isManual ? "bg-white/10 text-white shadow-sm" : "text-gray-600"
+              }`}
             >
               {MESSAGES.UI.PAYMENT_SPLIT_MANUAL}
             </button>
@@ -265,7 +300,7 @@ export function PaymentForm({
                     </span>
                   </button>
 
-                  {!isManual && isSelected && amount && (
+                  {!isManual && isSelected && amount > 0 && (
                     <span className="text-emerald-400 font-black tabular-nums">
                       ¥{autoShare.toLocaleString()}
                     </span>
@@ -292,8 +327,13 @@ export function PaymentForm({
             );
           })}
         </div>
+        {errors.participants && (
+          <p className="text-red-500 text-xs font-bold px-1 animate-fade-in">
+            {errors.participants.message}
+          </p>
+        )}
 
-        {isManual && amount && (
+        {isManual && amount > 0 && (
           <div
             className={`flex items-center justify-between p-3 rounded-xl border-dashed border-2 ${
               isTotalMatching
@@ -310,7 +350,7 @@ export function PaymentForm({
             >
               {isTotalMatching
                 ? MESSAGES.UI.PAYMENT_AMOUNT_MATCH
-                : `${MESSAGES.UI.PAYMENT_AMOUNT_SHORT}${(Number(amount) - manualTotal).toLocaleString()}`}
+                : `${MESSAGES.UI.PAYMENT_AMOUNT_SHORT}${(amount - manualTotal).toLocaleString()}`}
             </span>
           </div>
         )}
@@ -326,22 +366,21 @@ export function PaymentForm({
         </label>
         <input
           placeholder={MESSAGES.UI.PAYMENT_MEMO_PLACEHOLDER}
-          value={memo}
-          onChange={(e) => setMemo(e.target.value)}
+          {...register("memo")}
           className="w-full bg-white/5 border border-white/5 rounded-xl px-4 py-3 text-white font-medium placeholder-gray-700 focus:outline-none focus:border-white/20 transition-all outline-none"
         />
       </div>
 
-      {error && (
+      {serverError && (
         <div className="bg-red-500/10 border border-red-500/20 rounded-2xl px-4 py-3 text-xs font-bold text-red-400 animate-shake">
-          {error}
+          {serverError}
         </div>
       )}
 
       <Button
         type="submit"
         size="lg"
-        loading={loading}
+        loading={isPending}
         className="w-full py-6 rounded-2xl text-lg font-black tracking-widest uppercase hover:scale-[1.02] active:scale-[0.98] transition-all"
         disabled={isManual && !isTotalMatching}
       >

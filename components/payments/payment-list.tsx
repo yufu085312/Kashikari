@@ -1,26 +1,33 @@
 "use client";
 
-import { useState } from "react";
+import { useOptimistic, useTransition, useState } from "react";
 import { Payment } from "@/types/payment";
 import { formatDate } from "@/utils/format";
-import { api } from "@/lib/api/client";
+import { deletePaymentAction } from "@/app/actions/payment";
 import { GlassCard } from "@/components/ui/glass-card";
 import { useAlert } from "@/components/providers/alert-provider";
 import { MESSAGES } from "@/lib/constants";
 
 interface PaymentListProps {
+  groupId: string;
   payments: Payment[];
   latestSettlementAt?: string | null;
-  onDelete?: () => void;
 }
 
 export function PaymentList({
+  groupId,
   payments,
   latestSettlementAt,
-  onDelete,
 }: PaymentListProps) {
   const { alert, confirm } = useAlert();
+  const [isPending, startTransition] = useTransition();
   const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  // Optimistic UI (楽観的更新)
+  const [optimisticPayments, removeOptimisticPayment] = useOptimistic(
+    payments,
+    (state, idToRemove: string) => state.filter((p) => p.id !== idToRemove),
+  );
 
   const isLocked = (createdAt: string | undefined) => {
     if (!latestSettlementAt || !createdAt) return false;
@@ -47,22 +54,25 @@ export function PaymentList({
     });
 
     if (!isConfirmed) return;
+
     setDeletingId(paymentId);
-    try {
-      await api.deletePayment(paymentId);
-      onDelete?.();
-    } catch {
-      await alert({
-        title: MESSAGES.UI.ERROR_TITLE,
-        message: MESSAGES.ERROR.DELETE_FAILED,
-        type: "error",
-      });
-    } finally {
+    startTransition(async () => {
+      // 一瞬でUIから消す
+      removeOptimisticPayment(paymentId);
+
+      const { error } = await deletePaymentAction(paymentId, groupId);
+      if (error) {
+        await alert({
+          title: MESSAGES.UI.ERROR_TITLE,
+          message: error,
+          type: "error",
+        });
+      }
       setDeletingId(null);
-    }
+    });
   };
 
-  if (payments.length === 0) {
+  if (optimisticPayments.length === 0) {
     return (
       <GlassCard className="py-12 flex flex-col items-center justify-center text-gray-500 border-dashed">
         <svg
@@ -85,7 +95,7 @@ export function PaymentList({
 
   return (
     <div className="flex flex-col gap-3">
-      {payments.map((payment) => (
+      {optimisticPayments.map((payment) => (
         <GlassCard key={payment.id} className="p-4">
           <div className="flex items-start justify-between gap-3">
             <div className="flex-1 min-w-0">
@@ -134,7 +144,9 @@ export function PaymentList({
             <button
               onClick={() => handleDelete(payment.id)}
               disabled={
-                deletingId === payment.id || isLocked(payment.created_at)
+                deletingId === payment.id ||
+                isPending ||
+                isLocked(payment.created_at)
               }
               className={`transition-all p-2 rounded-xl flex-shrink-0 ${
                 isLocked(payment.created_at)

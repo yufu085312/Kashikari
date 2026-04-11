@@ -1,21 +1,28 @@
 "use client";
 
-import { useState } from "react";
+import { useOptimistic, useTransition, useState } from "react";
 import { Settlement } from "@/types/balance";
 import { formatDate } from "@/utils/format";
-import { api } from "@/lib/api/client";
+import { deleteSettlementAction } from "@/app/actions/settlement";
 import { GlassCard } from "@/components/ui/glass-card";
 import { useAlert } from "@/components/providers/alert-provider";
 import { MESSAGES } from "@/lib/constants";
 
 interface SettlementListProps {
+  groupId: string;
   settlements: Settlement[];
-  onDelete?: () => void;
 }
 
-export function SettlementList({ settlements, onDelete }: SettlementListProps) {
+export function SettlementList({ groupId, settlements }: SettlementListProps) {
   const { alert, confirm } = useAlert();
+  const [isPending, startTransition] = useTransition();
   const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  // Optimistic UI (楽観的更新)
+  const [optimisticSettlements, removeOptimisticSettlement] = useOptimistic(
+    settlements,
+    (state, idToRemove: string) => state.filter((s) => s.id !== idToRemove),
+  );
 
   const handleDelete = async (id: string) => {
     const isConfirmed = await confirm({
@@ -29,21 +36,23 @@ export function SettlementList({ settlements, onDelete }: SettlementListProps) {
     if (!isConfirmed) return;
 
     setDeletingId(id);
-    try {
-      await api.deleteSettlement(id);
-      onDelete?.();
-    } catch {
-      await alert({
-        title: MESSAGES.UI.ERROR_TITLE,
-        message: MESSAGES.ERROR.CANCEL_FAILED,
-        type: "error",
-      });
-    } finally {
+    startTransition(async () => {
+      // 一瞬でUIから消去
+      removeOptimisticSettlement(id);
+
+      const { error } = await deleteSettlementAction(id, groupId);
+      if (error) {
+        await alert({
+          title: MESSAGES.UI.ERROR_TITLE,
+          message: error,
+          type: "error",
+        });
+      }
       setDeletingId(null);
-    }
+    });
   };
 
-  if (settlements.length === 0) {
+  if (optimisticSettlements.length === 0) {
     return (
       <GlassCard className="py-12 flex flex-col items-center justify-center text-gray-500 border-dashed">
         <svg
@@ -68,7 +77,7 @@ export function SettlementList({ settlements, onDelete }: SettlementListProps) {
 
   return (
     <div className="flex flex-col gap-3">
-      {settlements.map((s) => (
+      {optimisticSettlements.map((s) => (
         <GlassCard key={s.id} className="p-4">
           <div className="flex items-center justify-between gap-3">
             <div className="flex-1 min-w-0">
@@ -106,8 +115,8 @@ export function SettlementList({ settlements, onDelete }: SettlementListProps) {
 
             <button
               onClick={() => handleDelete(s.id)}
-              disabled={deletingId === s.id}
-              className="transition-all p-2 rounded-xl flex-shrink-0 text-gray-500 hover:text-blue-400 hover:bg-blue-500/10 active:scale-95"
+              disabled={deletingId === s.id || isPending}
+              className="transition-all p-2 rounded-xl flex-shrink-0 text-gray-500 hover:text-blue-400 hover:bg-blue-500/10 active:scale-95 disabled:opacity-50"
               title={MESSAGES.UI.SETTLEMENT_CANCEL}
             >
               <svg

@@ -1,11 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { useForm, useFieldArray } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { api } from "@/lib/api/client";
 import { LIMITS, MESSAGES } from "@/lib/constants";
+import { createGroupSchema, CreateGroupSchemaInput } from "@/lib/schemas/group";
+import { createGroupAction } from "@/app/actions/group";
 
 interface GroupFormProps {
   onSuccess?: (groupId: string) => void;
@@ -13,68 +16,68 @@ interface GroupFormProps {
 
 export function GroupForm({ onSuccess }: GroupFormProps) {
   const router = useRouter();
-  const [groupName, setGroupName] = useState("");
-  const [memberSearchIds, setMemberSearchIds] = useState<string[]>([""]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [nameError, setNameError] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
+  const [serverError, setServerError] = useState<string | null>(null);
 
-  const addSearchId = () => setMemberSearchIds((prev) => [...prev, ""]);
-  const removeSearchId = (i: number) =>
-    setMemberSearchIds((prev) => prev.filter((_, idx) => idx !== i));
-  const updateSearchId = (i: number, value: string) =>
-    setMemberSearchIds((prev) => prev.map((m, idx) => (idx === i ? value : m)));
+  const {
+    register,
+    handleSubmit,
+    control,
+    watch,
+    formState: { errors },
+  } = useForm<CreateGroupSchemaInput>({
+    resolver: zodResolver(createGroupSchema),
+    defaultValues: {
+      name: "",
+      memberSearchIds: [""],
+    },
+  });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setNameError(null);
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "memberSearchIds" as never, // react-hook-form の string array 判定回避用
+  });
 
-    if (!groupName.trim()) {
-      setNameError(MESSAGES.ERROR.GROUP_NAME_REQUIRED);
-      return;
-    }
-    if (groupName.length > LIMITS.MAX_GROUP_NAME_LENGTH) {
-      setNameError(MESSAGES.ERROR.GROUP_NAME_TOO_LONG);
-      return;
-    }
+  const groupName = watch("name") || "";
 
-    setLoading(true);
-    setError(null);
+  const onSubmit = (data: CreateGroupSchemaInput) => {
+    setServerError(null);
+    startTransition(async () => {
+      // 空欄の searchId は除外
+      const validSearchIds =
+        data.memberSearchIds?.filter((id) => id.trim() !== "") || [];
 
-    try {
-      const validSearchIds = memberSearchIds.filter((n) => n.trim() !== "");
-      const group = await api.createGroup({
-        name: groupName,
+      const { data: group, error } = await createGroupAction({
+        name: data.name,
         memberSearchIds: validSearchIds,
       });
-      if (onSuccess) {
-        onSuccess(group.id);
-      } else {
-        router.push(`/groups/${group.id}`);
+
+      if (error) {
+        setServerError(error);
+        return;
       }
-    } catch (e) {
-      setError(e instanceof Error ? e.message : String(e));
-    } finally {
-      setLoading(false);
-    }
+
+      if (group) {
+        if (onSuccess) {
+          onSuccess(group.id);
+        } else {
+          router.push(`/groups/${group.id}`);
+        }
+      }
+    });
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-5" noValidate>
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="flex flex-col gap-5"
+      noValidate
+    >
       <Input
         label={`${MESSAGES.UI.NAME_LABEL} (${groupName.length}/${LIMITS.MAX_GROUP_NAME_LENGTH}文字)`}
         placeholder={MESSAGES.UI.GROUP_NAME_EXAMPLE}
-        value={groupName}
-        onChange={(e) => {
-          const val = e.target.value.slice(0, LIMITS.MAX_GROUP_NAME_LENGTH);
-          setGroupName(val);
-          if (val.length > LIMITS.MAX_GROUP_NAME_LENGTH) {
-            setNameError(MESSAGES.ERROR.GROUP_NAME_TOO_LONG);
-          } else if (val.trim()) {
-            setNameError(null);
-          }
-        }}
-        error={nameError || undefined}
+        {...register("name")}
+        error={errors.name?.message}
         required
         maxLength={LIMITS.MAX_GROUP_NAME_LENGTH}
       />
@@ -84,19 +87,18 @@ export function GroupForm({ onSuccess }: GroupFormProps) {
           {MESSAGES.UI.INVITE_SEARCH_ID_LABEL}
         </label>
 
-        {memberSearchIds.map((id, i) => (
-          <div key={i} className="flex gap-2 items-start">
+        {fields.map((field, index) => (
+          <div key={field.id} className="flex gap-2 items-start">
             <div className="flex-1">
               <Input
                 placeholder={MESSAGES.UI.SEARCH_ID_EXAMPLE}
-                value={id}
-                onChange={(e) => updateSearchId(i, e.target.value)}
+                {...register(`memberSearchIds.${index}` as const)}
               />
             </div>
-            {memberSearchIds.length > 1 && (
+            {fields.length > 1 && (
               <button
                 type="button"
-                onClick={() => removeSearchId(i)}
+                onClick={() => remove(index)}
                 className="mt-2 px-3 py-2 text-gray-400 hover:text-red-400 transition-colors"
               >
                 <svg
@@ -119,7 +121,7 @@ export function GroupForm({ onSuccess }: GroupFormProps) {
 
         <button
           type="button"
-          onClick={addSearchId}
+          onClick={() => append("")}
           className="flex items-center gap-2 text-sm text-emerald-400 hover:text-emerald-300 transition-colors py-1"
         >
           <svg
@@ -139,13 +141,13 @@ export function GroupForm({ onSuccess }: GroupFormProps) {
         </button>
       </div>
 
-      {error && (
+      {serverError && (
         <div className="bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3 text-sm text-red-400">
-          {error}
+          {serverError}
         </div>
       )}
 
-      <Button type="submit" size="lg" loading={loading} className="w-full">
+      <Button type="submit" size="lg" loading={isPending} className="w-full">
         {MESSAGES.UI.GROUP_CREATE}
       </Button>
     </form>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Payment } from "@/types/payment";
@@ -14,7 +14,7 @@ import { InviteModal } from "./invite-modal";
 import { MembersModal } from "./members-modal";
 import { Modal } from "@/components/ui/modal";
 import { Button } from "@/components/ui/button";
-import { api } from "@/lib/api/client";
+import { deleteGroupAction } from "@/app/actions/group";
 import { useAlert } from "@/components/providers/alert-provider";
 import { ROUTES, MESSAGES } from "@/lib/constants";
 
@@ -44,13 +44,10 @@ export function GroupDetailClient({
   const [activeTab, setActiveTab] = useState<
     "balance" | "payment" | "settlement"
   >("balance");
-  const [payments, setPayments] = useState<Payment[]>(initialPayments);
-  const [balances, setBalances] = useState<Balance[]>(initialBalances);
-  const [settlements, setSettlements] =
-    useState<Settlement[]>(initialSettlements);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [showMembersModal, setShowMembersModal] = useState(false);
+  const [isDeleting, startDeleteTransition] = useTransition();
 
   const inviteUrl =
     typeof window !== "undefined"
@@ -59,40 +56,19 @@ export function GroupDetailClient({
 
   const handleInviteSuccess = () => {
     setShowInviteModal(false);
-    router.refresh();
   };
 
   const handleRemoveSuccess = (removedMemberId: string) => {
     if (removedMemberId === userId) {
       router.push(ROUTES.HOME);
-    } else {
-      router.refresh();
-    }
-  };
-
-  const refreshData = async () => {
-    try {
-      const [p, b, s] = await Promise.all([
-        api.getPayments(groupId),
-        api.getBalances(groupId),
-        api.getSettlements(groupId),
-      ]);
-      setPayments(p);
-      setBalances(b);
-      setSettlements(s);
-    } catch (e) {
-      console.error("Failed to refresh data:", e);
     }
   };
 
   const latestSettlementAt =
-    settlements.length > 0 ? settlements[0].created_at : null;
-
-  const [isDeleting, setIsDeleting] = useState(false);
+    initialSettlements.length > 0 ? initialSettlements[0].created_at : null;
 
   const handleDeleteGroup = async () => {
-    // 貸し借りチェック
-    const hasBalance = balances.some((b) => b.amount > 0);
+    const hasBalance = initialBalances.some((b) => b.amount > 0);
     if (hasBalance) {
       await alert({
         title: MESSAGES.UI.DELETE_NOT_REMOVABLE,
@@ -112,19 +88,18 @@ export function GroupDetailClient({
 
     if (!isConfirmed) return;
 
-    setIsDeleting(true);
-    try {
-      await api.deleteGroup(groupId);
-      router.push(ROUTES.HOME);
-    } catch {
-      await alert({
-        title: MESSAGES.UI.ERROR_TITLE,
-        message: MESSAGES.ERROR.GROUP_DELETE_FAILED,
-        type: "error",
-      });
-    } finally {
-      setIsDeleting(false);
-    }
+    startDeleteTransition(async () => {
+      try {
+        await deleteGroupAction(groupId);
+        router.push(ROUTES.HOME);
+      } catch {
+        await alert({
+          title: MESSAGES.UI.ERROR_TITLE,
+          message: MESSAGES.ERROR.GROUP_DELETE_FAILED,
+          type: "error",
+        });
+      }
+    });
   };
 
   return (
@@ -242,11 +217,7 @@ export function GroupDetailClient({
       <div className="min-h-[400px]">
         {activeTab === "balance" && (
           <div className="space-y-6 animate-slide-up">
-            <BalanceList
-              balances={balances}
-              groupId={groupId}
-              onSettle={refreshData}
-            />
+            <BalanceList balances={initialBalances} groupId={groupId} />
           </div>
         )}
 
@@ -260,9 +231,9 @@ export function GroupDetailClient({
                 <div className="h-px flex-1 bg-white/5 ml-4"></div>
               </div>
               <PaymentList
-                payments={payments}
+                groupId={groupId}
+                payments={initialPayments}
                 latestSettlementAt={latestSettlementAt}
-                onDelete={refreshData}
               />
             </section>
           </div>
@@ -278,8 +249,8 @@ export function GroupDetailClient({
                 <div className="h-px flex-1 bg-white/5 ml-4"></div>
               </div>
               <SettlementList
-                settlements={settlements}
-                onDelete={refreshData}
+                groupId={groupId}
+                settlements={initialSettlements}
               />
             </section>
           </div>
@@ -327,7 +298,7 @@ export function GroupDetailClient({
         userId={userId}
         members={initialMembers}
         createdBy={initialCreatedBy}
-        balances={balances}
+        balances={initialBalances}
         onRemoveSuccess={handleRemoveSuccess}
       />
 
@@ -343,7 +314,6 @@ export function GroupDetailClient({
           members={initialMembers}
           onSuccess={() => {
             setShowPaymentModal(false);
-            refreshData();
           }}
         />
       </Modal>

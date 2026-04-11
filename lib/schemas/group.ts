@@ -7,7 +7,7 @@ export const createGroupSchema = z.object({
     .string({ error: MESSAGES.ERROR.GROUP_NAME_REQUIRED })
     .min(1, MESSAGES.ERROR.GROUP_NAME_REQUIRED)
     .max(LIMITS.MAX_GROUP_NAME_LENGTH, MESSAGES.ERROR.GROUP_NAME_TOO_LONG),
-  memberSearchIds: z.array(z.string()).optional().default([]),
+  memberSearchIds: z.array(z.string()),
 });
 
 /** グループ作成入力型（スキーマから推論） */

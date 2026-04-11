@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Modal } from "@/components/ui/modal";
 import { Button } from "@/components/ui/button";
-import { api } from "@/lib/api/client";
+import { addMemberAction } from "@/app/actions/group";
 import { TIMEOUTS, MESSAGES } from "@/lib/constants";
 
 interface InviteModalProps {
@@ -37,9 +37,15 @@ export function InviteModal({
     setIsAddingMember(true);
     setAddMemberError(null);
     try {
-      await api.addMember(groupId, searchIdInput.trim());
-      setSearchIdInput("");
-      onSuccess();
+      const { error } = await addMemberAction(groupId, {
+        searchId: searchIdInput.trim(),
+      });
+      if (error) {
+        setAddMemberError(error);
+      } else {
+        setSearchIdInput("");
+        onSuccess();
+      }
     } catch {
       setAddMemberError(MESSAGES.ERROR.USER_NOT_FOUND);
     } finally {

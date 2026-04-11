@@ -4,7 +4,12 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/utils/supabase/server";
 import { ROUTES, LIMITS, MESSAGES } from "@/lib/constants";
 
-export async function updateProfile(formData: FormData) {
+import {
+  updateProfileSchema,
+  UpdateProfileSchemaInput,
+} from "@/lib/schemas/user";
+
+export async function updateProfile(input: UpdateProfileSchemaInput) {
   const supabase = await createClient();
 
   const {
@@ -15,19 +20,12 @@ export async function updateProfile(formData: FormData) {
     return { error: MESSAGES.ERROR.UNAUTHORIZED };
   }
 
-  const name = formData.get("name") as string;
-  const search_id = formData.get("search_id") as string;
-
-  // バリデーション
-  if (!name) return { error: MESSAGES.ERROR.NAME_REQUIRED };
-  if (name.length > LIMITS.MAX_NAME_LENGTH)
-    return { error: MESSAGES.ERROR.NAME_TOO_LONG };
-
-  if (!search_id) return { error: MESSAGES.ERROR.SEARCH_ID_REQUIRED };
-  if (search_id.length > LIMITS.MAX_SEARCH_ID_LENGTH)
-    return { error: MESSAGES.ERROR.SEARCH_ID_TOO_LONG };
-  if (!LIMITS.SEARCH_ID_PATTERN.test(search_id))
-    return { error: MESSAGES.ERROR.SEARCH_ID_INVALID };
+  // Zodによる検証
+  const parsed = updateProfileSchema.safeParse(input);
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message || "Invalid input" };
+  }
+  const { name, search_id } = parsed.data;
 
   // 現在のデータを取得して比較
   const { data: currentUser } = await supabase
