@@ -1,49 +1,48 @@
 export const runtime = "edge";
-import { NextRequest, NextResponse } from "next/server";
+
 import { addMemberToGroup } from "@/lib/repositories/groupRepository";
 import { createClient } from "@/utils/supabase/server";
+import { withAuthParams, ok } from "@/lib/api/handler";
+import { verifyGroupMembership } from "@/lib/api/withGroupMembership";
+import { addMemberSchema } from "@/lib/schemas";
+import { ValidationError, NotFoundError, ConflictError } from "@/lib/errors";
 import { MESSAGES } from "@/lib/constants";
 
-function ok<T>(data: T) {
-  return NextResponse.json({ data, error: null });
-}
-function err(message: string, status = 400) {
-  return NextResponse.json({ data: null, error: { message } }, { status });
-}
+export const POST = withAuthParams<{ groupId: string }>(
+  async (req, user, { groupId }) => {
+    // メンバーシップ検証
+    await verifyGroupMembership(groupId, user.id);
 
-export async function POST(
-  req: NextRequest,
-  { params }: { params: Promise<{ groupId: string }> },
-) {
-  try {
+    const body = await req.json();
+    const result = addMemberSchema.safeParse(body);
+
+    if (!result.success) {
+      throw new ValidationError(result.error.issues[0].message);
+    }
+
+    const { searchId } = result.data;
+
     const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) return err(MESSAGES.ERROR.UNAUTHORIZED, 401);
-
-    const { groupId } = await params;
-    const { searchId } = await req.json();
-    if (!searchId) return err(MESSAGES.ERROR.SEARCH_ID_REQUIRED);
-
     const { data: targetUser, error } = await supabase
       .from("users")
       .select("id")
-      .eq("search_id", searchId.trim())
+      .eq("search_id", searchId)
       .single();
 
     if (error || !targetUser) {
-      return err(MESSAGES.ERROR.USER_NOT_FOUND, 404);
+      throw new NotFoundError(MESSAGES.ERROR.USER_NOT_FOUND);
     }
 
-    await addMemberToGroup(groupId, targetUser.id);
-    return ok({ success: true });
-  } catch (e: unknown) {
-    const errorMsg = e instanceof Error ? e.message : String(e);
-    // Unique制約エラーなどのハンドリング
-    if (errorMsg.includes("unique constraint")) {
-      return err(MESSAGES.ERROR.USER_ALREADY_MEMBER, 400);
+    try {
+      await addMemberToGroup(groupId, targetUser.id);
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : String(e);
+      if (msg.includes("unique constraint")) {
+        throw new ConflictError(MESSAGES.ERROR.USER_ALREADY_MEMBER);
+      }
+      throw e;
     }
-    return err(errorMsg, 500);
-  }
-}
+
+    return ok({ success: true });
+  },
+);

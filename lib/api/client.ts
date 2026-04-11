@@ -1,4 +1,6 @@
 import { API_PATHS } from "../constants";
+import type { Payment } from "@/types/payment";
+import type { Settlement } from "@/types/balance";
 
 const BASE_URL = API_PATHS.BASE_V1;
 
@@ -61,7 +63,7 @@ export const api = {
       body: JSON.stringify(body),
     }),
   getPayments: (groupId: string) =>
-    request<unknown[]>(`/groups/${groupId}/payments`),
+    request<Payment[]>(`/groups/${groupId}/payments`),
   deletePayment: (paymentId: string) =>
     request<void>(`/payments/${paymentId}`, { method: "DELETE" }),
 
@@ -89,7 +91,7 @@ export const api = {
       body: JSON.stringify(body),
     }),
   getSettlements: (groupId: string) =>
-    request<any[]>(`/groups/${groupId}/settlements`),
+    request<Settlement[]>(`/groups/${groupId}/settlements`),
   deleteSettlement: (settlementId: string) =>
     request<void>(`/settlements/${settlementId}`, { method: "DELETE" }),
 };

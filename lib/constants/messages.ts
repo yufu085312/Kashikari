@@ -64,6 +64,16 @@ export const MESSAGES = {
       "精算が完了していない貸し借りがあるため、このメンバーを削除できません。",
     MEMBER_LEAVE_SETTLEMENT_PENDING:
       "精算が完了していない貸し借りがあるため、退会できません。",
+    GROUP_NOT_FOUND_OR_FORBIDDEN:
+      "グループが見つからないか、アクセス権限がありません",
+    GROUP_DELETE_FORBIDDEN:
+      "グループを削除する権限がないか、グループが見つかりません",
+    SETTLEMENT_AMOUNT_REQUIRED: "精算金額は必須です",
+    SETTLEMENT_AMOUNT_INVALID: "精算金額は整数で入力してください",
+    SETTLEMENT_AMOUNT_POSITIVE: "精算金額は0より大きい値を入力してください",
+    PAYMENT_AMOUNT_REQUIRED: "金額は必須です",
+    PAYMENT_AMOUNT_INVALID: "金額は整数で入力してください",
+    PAYMENT_PARTICIPANT_REQUIRED: "参加者を1名以上選択してください",
   },
   UI: {
     APP_TAGLINE: "割り勘・貸し借り管理アプリ",
@@ -170,5 +180,26 @@ export const MESSAGES = {
     LEAVE_GROUP: "グループを退会",
     CONFIRM_LEAVE_GROUP: "このグループを退会しますか？",
     LEAVE: "退会",
+    DELETE_NOT_REMOVABLE: "削除できません",
+    DELETE_LABEL: "削除",
+    CANCEL_LABEL: "キャンセル",
+    ERROR_TITLE: "エラー",
+    PAYMENT_EMPTY: "まだ支払いがありません",
+    BALANCE_ALL_SETTLED: "全員精算済み！",
+    BALANCE_NO_DEBT: "貸し借りはありません 🎉",
+    BALANCE_LABEL: "残高",
+    LEAVE_NOT_REMOVABLE: "退会できません",
+    DELETE_EXECUTE: "削除する",
+    MEMBER_INVITE_LABEL: "メンバー招待",
+    TAB_BALANCES: "貸し借り",
+    TAB_HISTORY: "履歴",
+    HISTORY_PAYMENTS: "支払い履歴",
+    HISTORY_SETTLEMENTS: "直近の精算",
+    INVITE_METHOD_SEARCH_ID: "検索IDで追加",
+    INVITE_METHOD_LINK: "招待リンクを共有",
+    INVITE_LINK_DESCRIPTION:
+      "このリンクを開いた人は誰でもグループに参加できます。",
+    ROLE_CREATOR: "作成者",
+    NAME_PLACEHOLDER: "田中 太郎",
   },
 } as const;

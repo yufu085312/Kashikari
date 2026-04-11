@@ -1,6 +1,8 @@
 import { createClient } from "@/utils/supabase/server";
 import { Group, GroupMember } from "@/types/group";
 import { User } from "@/types/user";
+import { NotFoundError } from "@/lib/errors";
+import { MESSAGES } from "@/lib/constants";
 
 export async function createGroup(
   name: string,
@@ -28,6 +30,10 @@ export async function createGroup(
   return group;
 }
 
+interface GroupMemberRow {
+  user: User | null;
+}
+
 export async function getGroupById(
   groupId: string,
 ): Promise<Group & { members: User[] }> {
@@ -40,7 +46,7 @@ export async function getGroupById(
 
   if (error) throw new Error(error.message);
   if (!group)
-    throw new Error("グループが見つからないか、アクセス権限がありません");
+    throw new NotFoundError(MESSAGES.ERROR.GROUP_NOT_FOUND_OR_FORBIDDEN);
 
   const { data: memberRows, error: memberError } = await supabase
     .from("group_members")
@@ -50,24 +56,28 @@ export async function getGroupById(
   if (memberError) throw new Error(memberError.message);
 
   const members: User[] = (memberRows || [])
-    .filter((row: any) => row.user !== null) // user情報が一時的に欠けている場合を除外
-    .map((row: any) => row.user as User);
+    .filter((row: GroupMemberRow) => row.user !== null)
+    .map((row: GroupMemberRow) => row.user as User);
 
   return { ...group, members };
+}
+
+interface GroupRow {
+  group: unknown | null;
 }
 
 export async function getGroupsByUserId(userId: string): Promise<Group[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("group_members")
-    .select("group:groups(*)")
+    .select("group:groups(*, members:group_members(user_id))")
     .eq("user_id", userId);
 
   if (error) throw new Error(error.message);
 
   return (data || [])
-    .filter((row: { group: unknown | null }) => row.group !== null)
-    .map((row: { group: unknown | null }) => row.group as Group);
+    .filter((row: GroupRow) => row.group !== null)
+    .map((row: GroupRow) => row.group as Group);
 }
 
 export async function addMemberToGroup(
@@ -105,5 +115,5 @@ export async function deleteGroup(groupId: string): Promise<void> {
 
   if (error) throw new Error(error.message);
   if (count === 0)
-    throw new Error("グループを削除する権限がないか、グループが見つかりません");
+    throw new NotFoundError(MESSAGES.ERROR.GROUP_DELETE_FORBIDDEN);
 }

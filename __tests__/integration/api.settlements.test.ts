@@ -11,6 +11,11 @@ vi.mock("@/lib/usecases/settleDebt", () => ({
   settleDebt: vi.fn(),
 }));
 
+// メンバーシップ検証をモック化
+vi.mock("@/lib/api/withGroupMembership", () => ({
+  verifyGroupMembership: vi.fn().mockResolvedValue(undefined),
+}));
+
 import { createClient } from "@/utils/supabase/server";
 import { settleDebt } from "@/lib/usecases/settleDebt";
 import { POST } from "@/app/api/v1/settlements/route";
@@ -19,7 +24,12 @@ import { MESSAGES } from "@/lib/constants";
 const mockCreateClient = vi.mocked(createClient);
 const mockSettleDebt = vi.mocked(settleDebt);
 
-function makeAuthenticatedSupabase(userId = "user-1") {
+// テスト用の有効な UUID
+const GROUP_ID = "00000000-0000-4000-8000-000000000001";
+const USER_ID_1 = "00000000-0000-4000-8000-000000000010";
+const USER_ID_2 = "00000000-0000-4000-8000-000000000020";
+
+function makeAuthenticatedSupabase(userId = USER_ID_1) {
   return {
     auth: {
       getUser: vi.fn().mockResolvedValue({
@@ -55,46 +65,46 @@ describe("POST /api/v1/settlements", () => {
   it("未認証の場合、401 を返す", async () => {
     mockCreateClient.mockResolvedValue(makeUnauthenticatedSupabase() as never);
     const req = makeRequest({
-      groupId: "g-1",
-      fromUserId: "u-1",
-      toUserId: "u-2",
+      groupId: GROUP_ID,
+      fromUserId: USER_ID_1,
+      toUserId: USER_ID_2,
       amount: 500,
     });
     const res = await POST(req);
     const json = await res.json();
 
     expect(res.status).toBe(401);
-    expect(json.error.message).toBe(MESSAGES.ERROR.UNAUTHORIZED);
+    expect(json.error.message).toBe("ログインが必要です");
   });
 
   it("必須パラメータが不足している場合、400 を返す", async () => {
     mockCreateClient.mockResolvedValue(makeAuthenticatedSupabase() as never);
 
     // groupId のみで fromUserId などが欠如
-    const req = makeRequest({ groupId: "g-1" });
+    const req = makeRequest({ groupId: GROUP_ID });
     const res = await POST(req);
     const json = await res.json();
 
     expect(res.status).toBe(400);
-    expect(json.error.message).toContain("required");
+    expect(json.error.message).toBeTruthy();
   });
 
   it("正常なリクエストの場合、精算結果を返す", async () => {
     mockCreateClient.mockResolvedValue(makeAuthenticatedSupabase() as never);
     const mockSettlement = {
-      id: "s-1",
-      group_id: "g-1",
-      from_user_id: "u-1",
-      to_user_id: "u-2",
+      id: "00000000-0000-4000-8000-000000000099",
+      group_id: GROUP_ID,
+      from_user_id: USER_ID_1,
+      to_user_id: USER_ID_2,
       amount: 500,
       created_at: "2024-01-01T00:00:00",
     };
     mockSettleDebt.mockResolvedValue(mockSettlement as never);
 
     const req = makeRequest({
-      groupId: "g-1",
-      fromUserId: "u-1",
-      toUserId: "u-2",
+      groupId: GROUP_ID,
+      fromUserId: USER_ID_1,
+      toUserId: USER_ID_2,
       amount: 500,
     });
     const res = await POST(req);
@@ -110,9 +120,9 @@ describe("POST /api/v1/settlements", () => {
     mockSettleDebt.mockRejectedValue(new Error("DB error"));
 
     const req = makeRequest({
-      groupId: "g-1",
-      fromUserId: "u-1",
-      toUserId: "u-2",
+      groupId: GROUP_ID,
+      fromUserId: USER_ID_1,
+      toUserId: USER_ID_2,
       amount: 500,
     });
     const res = await POST(req);

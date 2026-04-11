@@ -31,7 +31,7 @@ export function PaymentList({
     const payment = payments.find((p) => p.id === paymentId);
     if (payment && isLocked(payment.created_at)) {
       await alert({
-        title: "削除できません",
+        title: MESSAGES.UI.DELETE_NOT_REMOVABLE,
         message: MESSAGES.ERROR.PAYMENT_LOCKED_DELETE,
         type: "warn",
       });
@@ -42,8 +42,8 @@ export function PaymentList({
       title: MESSAGES.UI.GROUP_DELETE,
       message: MESSAGES.UI.CONFIRM_DELETE_PAYMENT,
       type: "danger",
-      confirmText: "削除",
-      cancelText: "キャンセル",
+      confirmText: MESSAGES.UI.DELETE_LABEL,
+      cancelText: MESSAGES.UI.CANCEL_LABEL,
     });
 
     if (!isConfirmed) return;
@@ -53,7 +53,7 @@ export function PaymentList({
       onDelete?.();
     } catch (e) {
       await alert({
-        title: "エラー",
+        title: MESSAGES.UI.ERROR_TITLE,
         message: MESSAGES.ERROR.DELETE_FAILED,
         type: "error",
       });
@@ -78,7 +78,7 @@ export function PaymentList({
             d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
           />
         </svg>
-        <p className="text-sm font-medium">まだ支払いがありません</p>
+        <p className="text-sm font-medium">{MESSAGES.UI.PAYMENT_EMPTY}</p>
       </GlassCard>
     );
   }

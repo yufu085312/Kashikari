@@ -1,46 +1,27 @@
 export const runtime = "edge";
-import { NextRequest, NextResponse } from "next/server";
+
 import { createClient } from "@/utils/supabase/server";
+import { withAuthParams, ok } from "@/lib/api/handler";
+import { verifyGroupMembership } from "@/lib/api/withGroupMembership";
+import { NotFoundError } from "@/lib/errors";
 
-function ok<T>(data: T) {
-  return NextResponse.json({ data, error: null });
-}
-function err(message: string, status = 400) {
-  return NextResponse.json({ data: null, error: { message } }, { status });
-}
-
-export async function DELETE(
-  req: NextRequest,
-  { params }: { params: Promise<{ paymentId: string }> },
-) {
-  try {
+export const DELETE = withAuthParams<{ paymentId: string }>(
+  async (_req, user, { paymentId }) => {
     const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) return err("Unauthorized", 401);
 
-    const { paymentId } = await params;
-    if (!paymentId) return err("paymentId is required");
-
-    // 権限チェック: 支払いが属するグループのメンバーかどうか
+    // 支払いが属するグループを取得
     const { data: payment, error: fetchError } = await supabase
       .from("payments")
       .select("group_id")
       .eq("id", paymentId)
       .single();
 
-    if (fetchError || !payment) return err("Payment not found", 404);
+    if (fetchError || !payment) {
+      throw new NotFoundError("Payment not found");
+    }
 
-    const { data: membership, error: memberError } = await supabase
-      .from("group_members")
-      .select("id")
-      .eq("group_id", payment.group_id)
-      .eq("user_id", user.id)
-      .single();
-
-    if (memberError || !membership)
-      return err("Unauthorized: You are not a member of this group", 403);
+    // メンバーシップ検証
+    await verifyGroupMembership(payment.group_id, user.id);
 
     // 削除実行
     const { error } = await supabase
@@ -48,11 +29,8 @@ export async function DELETE(
       .delete()
       .eq("id", paymentId);
 
-    if (error) return err(error.message, 500);
+    if (error) throw new Error(error.message);
 
     return ok({ success: true });
-  } catch (e: unknown) {
-    const errorMsg = e instanceof Error ? e.message : String(e);
-    return err(errorMsg, 500);
-  }
-}
+  },
+);

@@ -42,7 +42,7 @@ export function BalanceList({ balances, groupId, onSettle }: BalanceListProps) {
       onSettle?.();
     } catch (e) {
       await alert({
-        title: "エラー",
+        title: MESSAGES.UI.ERROR_TITLE,
         message: MESSAGES.ERROR.SETTLEMENT_FAILED,
         type: "error",
       });
@@ -69,8 +69,12 @@ export function BalanceList({ balances, groupId, onSettle }: BalanceListProps) {
             />
           </svg>
         </div>
-        <p className="text-white font-bold">全員精算済み！</p>
-        <p className="text-xs text-gray-500 mt-1">貸し借りはありません 🎉</p>
+        <p className="text-white font-bold">
+          {MESSAGES.UI.BALANCE_ALL_SETTLED}
+        </p>
+        <p className="text-xs text-gray-500 mt-1">
+          {MESSAGES.UI.BALANCE_NO_DEBT}
+        </p>
       </GlassCard>
     );
   }
@@ -110,7 +114,7 @@ export function BalanceList({ balances, groupId, onSettle }: BalanceListProps) {
                 </div>
                 <p className="text-2xl font-black text-orange-400 leading-tight">
                   <span className="text-xs mr-1 font-medium opacity-60 text-white">
-                    残高
+                    {MESSAGES.UI.BALANCE_LABEL}
                   </span>
                   {balance.amount.toLocaleString()}
                   <span className="text-xs ml-1 font-normal opacity-50 text-white">

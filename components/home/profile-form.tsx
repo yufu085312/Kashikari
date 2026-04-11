@@ -76,7 +76,7 @@ export function ProfileForm({
         label={MESSAGES.UI.NAME_LABEL}
         value={name}
         onChange={(e) => setName(e.target.value)}
-        placeholder="田中 太郎"
+        placeholder={MESSAGES.UI.NAME_PLACEHOLDER}
         error={errors.name}
         disabled={isPending}
       />

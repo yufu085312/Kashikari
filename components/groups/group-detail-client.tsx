@@ -97,7 +97,10 @@ export function GroupDetailClient({
     );
     if (hasBalance) {
       await alert({
-        title: member.id === userId ? "退会できません" : "削除できません",
+        title:
+          member.id === userId
+            ? MESSAGES.UI.LEAVE_NOT_REMOVABLE
+            : MESSAGES.UI.DELETE_NOT_REMOVABLE,
         message:
           member.id === userId
             ? MESSAGES.ERROR.MEMBER_LEAVE_SETTLEMENT_PENDING
@@ -133,7 +136,7 @@ export function GroupDetailClient({
       }
     } catch (e) {
       await alert({
-        title: "エラー",
+        title: MESSAGES.UI.ERROR_TITLE,
         message: MESSAGES.ERROR.MEMBER_REMOVE_FAILED,
         type: "error",
       });
@@ -149,7 +152,7 @@ export function GroupDetailClient({
         api.getBalances(groupId),
         api.getSettlements(groupId),
       ]);
-      setPayments(p as Payment[]);
+      setPayments(p);
       setBalances(b);
       setSettlements(s);
     } catch (e) {
@@ -167,7 +170,7 @@ export function GroupDetailClient({
     const hasBalance = balances.some((b) => b.amount > 0);
     if (hasBalance) {
       await alert({
-        title: "削除できません",
+        title: MESSAGES.UI.DELETE_NOT_REMOVABLE,
         message: MESSAGES.ERROR.GROUP_DELETE_SETTLEMENT_PENDING,
         type: "warn",
       });
@@ -190,7 +193,7 @@ export function GroupDetailClient({
       router.push(ROUTES.HOME);
     } catch (e) {
       await alert({
-        title: "エラー",
+        title: MESSAGES.UI.ERROR_TITLE,
         message: MESSAGES.ERROR.GROUP_DELETE_FAILED,
         type: "error",
       });
@@ -259,7 +262,7 @@ export function GroupDetailClient({
               onClick={() => setShowInviteModal(true)}
               className="rounded-2xl flex-shrink-0 whitespace-nowrap"
             >
-              メンバー招待
+              {MESSAGES.UI.MEMBER_INVITE_LABEL}
             </Button>
           </div>
         </div>
@@ -301,9 +304,9 @@ export function GroupDetailClient({
             }`}
           >
             {tab === "balance"
-              ? "貸し借り"
+              ? MESSAGES.UI.TAB_BALANCES
               : tab === "payment"
-                ? "履歴"
+                ? MESSAGES.UI.TAB_HISTORY
                 : MESSAGES.UI.SETTLEMENT_EXECUTE.replace("の実行", "")}
           </button>
         ))}
@@ -326,7 +329,7 @@ export function GroupDetailClient({
             <section>
               <div className="flex items-center justify-between mb-4 px-1">
                 <h2 className="text-xs font-black text-gray-500 uppercase tracking-widest">
-                  支払い履歴
+                  {MESSAGES.UI.HISTORY_PAYMENTS}
                 </h2>
                 <div className="h-px flex-1 bg-white/5 ml-4"></div>
               </div>
@@ -344,7 +347,7 @@ export function GroupDetailClient({
             <section>
               <div className="flex items-center justify-between mb-4 px-1">
                 <h2 className="text-xs font-black text-gray-500 uppercase tracking-widest">
-                  直近の精算
+                  {MESSAGES.UI.HISTORY_SETTLEMENTS}
                 </h2>
                 <div className="h-px flex-1 bg-white/5 ml-4"></div>
               </div>
@@ -390,7 +393,7 @@ export function GroupDetailClient({
         <div className="space-y-6">
           <div className="space-y-3">
             <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">
-              検索IDで追加
+              {MESSAGES.UI.INVITE_METHOD_SEARCH_ID}
             </label>
             <div className="flex gap-2">
               <input
@@ -420,7 +423,7 @@ export function GroupDetailClient({
 
           <div className="space-y-3">
             <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">
-              招待リンクを共有
+              {MESSAGES.UI.INVITE_METHOD_LINK}
             </label>
             <div className="flex gap-2">
               <input
@@ -439,7 +442,7 @@ export function GroupDetailClient({
               </Button>
             </div>
             <p className="text-[10px] text-gray-500">
-              このリンクを開いた人は誰でもグループに参加できます。
+              {MESSAGES.UI.INVITE_LINK_DESCRIPTION}
             </p>
           </div>
         </div>
@@ -464,7 +467,7 @@ export function GroupDetailClient({
               </div>
               {m.id === initialCreatedBy && (
                 <span className="shrink-0 ml-2 text-[10px] font-bold text-brand-400 bg-brand-500/10 px-2.5 py-1 rounded-full border border-brand-500/20">
-                  作成者
+                  {MESSAGES.UI.ROLE_CREATOR}
                 </span>
               )}
 

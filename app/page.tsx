@@ -8,8 +8,10 @@ import { GlassCard } from "@/components/ui/glass-card";
 import Link from "next/link";
 import { ROUTES, MESSAGES } from "@/lib/constants";
 
-const isRedirectError = (error: any) =>
-  error?.digest?.startsWith("NEXT_REDIRECT");
+const isRedirectError = (error: unknown): boolean => {
+  const e = error as { digest?: string };
+  return typeof e?.digest === "string" && e.digest.startsWith("NEXT_REDIRECT");
+};
 
 export const runtime = "edge";
 
@@ -66,8 +68,11 @@ export default async function HomePage(props: {
     let groups = [];
     try {
       groups = await getGroupsByUserId(user.id);
-    } catch (ge: any) {
-      console.error("Group Fetch Error:", ge.message);
+    } catch (ge: unknown) {
+      console.error(
+        "Group Fetch Error:",
+        ge instanceof Error ? ge.message : ge,
+      );
       throw ge;
     }
 
@@ -103,7 +108,7 @@ export default async function HomePage(props: {
         />
       </div>
     );
-  } catch (e: any) {
+  } catch (e: unknown) {
     if (isRedirectError(e)) throw e;
     console.error("HomePage Error:", e);
     return (

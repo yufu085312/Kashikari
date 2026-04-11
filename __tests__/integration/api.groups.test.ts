@@ -126,7 +126,7 @@ describe("GET /api/v1/groups", () => {
   it("未認証の場合、401 を返す", async () => {
     mockCreateClient.mockResolvedValue(makeUnauthenticatedSupabase() as never);
     const req = new NextRequest("http://localhost/api/v1/groups");
-    const res = await GET();
+    const res = await GET(req);
     const json = await res.json();
 
     expect(res.status).toBe(401);
@@ -138,7 +138,8 @@ describe("GET /api/v1/groups", () => {
     const mockGroups = [{ id: "g-1", name: "グループA" }];
     mockGetGroupsByUserId.mockResolvedValue(mockGroups as never);
 
-    const res = await GET();
+    const req = new NextRequest("http://localhost/api/v1/groups");
+    const res = await GET(req);
     const json = await res.json();
 
     expect(res.status).toBe(200);
