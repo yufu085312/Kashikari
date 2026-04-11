@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, useCallback } from "react";
 import { Modal } from "@/components/ui/modal";
 import { Button } from "@/components/ui/button";
+import { MESSAGES } from "@/lib/constants";
 
 type AlertType = "info" | "warn" | "error" | "success" | "danger";
 
@@ -28,9 +29,9 @@ export function AlertProvider({ children }: { children: React.ReactNode }) {
     title: "",
     message: "",
   });
-  const [resolvePromise, setResolvePromise] = useState<(value: any) => void>(
-    () => {},
-  );
+  const [resolvePromise, setResolvePromise] = useState<
+    (value: boolean) => void
+  >(() => {});
 
   const showAlert = useCallback((opts: AlertOptions): Promise<void> => {
     setOptions({ ...opts, isConfirm: false });
@@ -153,7 +154,7 @@ export function AlertProvider({ children }: { children: React.ReactNode }) {
                 onClick={() => handleClose(false)}
                 className="w-full sm:flex-1 py-3"
               >
-                {options.cancelText || "キャンセル"}
+                {options.cancelText || MESSAGES.UI.CANCEL_LABEL}
               </Button>
             )}
             <Button

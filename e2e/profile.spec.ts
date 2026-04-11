@@ -42,7 +42,7 @@ test.describe('Profile Management', () => {
     await page.waitForSelector('text=' + MESSAGES.UI.PROFILE_EDIT_TITLE, { state: 'hidden', timeout: 5000 });
 
     // TOPページの挨拶が更新されているか
-    await expect(page.getByText('こんにちは、')).toContainText(newName);
+    await expect(page.getByText(MESSAGES.UI.HELLO + '、')).toContainText(newName);
   });
 
   test('検索IDを変更できること', async ({ page }) => {

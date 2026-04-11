@@ -1,18 +1,22 @@
 import { insertPayment } from "@/lib/repositories/paymentRepository";
-import { CreatePaymentInput, Payment } from "@/types/payment";
+import { CreatePaymentSchemaInput } from "@/lib/schemas/payment";
+import { Payment } from "@/lib/domain/models/payment";
+import { ValidationError } from "@/lib/errors";
+import { MESSAGES } from "@/lib/constants";
 
 export async function createPayment(
-  input: CreatePaymentInput,
+  input: CreatePaymentSchemaInput,
 ): Promise<Payment> {
   const { amount, participants } = input;
 
   // バリデーション
-  if (amount <= 0) throw new Error("金額は0より大きい値を入力してください");
+  if (amount <= 0) throw new ValidationError(MESSAGES.ERROR.PAYMENT_AMOUNT_MIN);
 
   const totalShare = participants.reduce((sum, p) => sum + p.share, 0);
   if (totalShare !== amount) {
-    throw new Error(
-      `参加者の負担合計(${totalShare})が支払い金額(${amount})と一致しません`,
+    throw new ValidationError(
+      MESSAGES.ERROR.PAYMENT_SHARE_MISMATCH +
+        ` (${MESSAGES.ERROR.TOTAL_SHARE_LABEL}: ${totalShare}, ${MESSAGES.ERROR.PAYMENT_AMOUNT_LABEL}: ${amount})`,
     );
   }
 

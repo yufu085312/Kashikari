@@ -17,18 +17,18 @@ test.describe('Member Management', () => {
     await page.waitForURL('**/groups/*');
     await expect(page.locator('h1')).toContainText(groupName);
 
-    // メンバーリストを表示 (非厳密なテキスト一致でボタンを取得)
-    await page.getByRole('button', { name: /メンバー.*名/ }).click();
+    // メンバーリストを表示 (定数をもとに検索: 参加メンバー ◯名)
+    await page.getByRole('button', { name: new RegExp(MESSAGES.UI.MEMBER_LIST + '.*' + MESSAGES.UI.MEMBER_COUNT_UNIT) }).click();
     
     // モーダルタイトル確認 (h2等のヘッディングを考慮)
     await expect(page.getByRole('heading', { name: MESSAGES.UI.MEMBER_LIST })).toBeVisible();
 
     // 作成者バッジがあることを確認
-    await expect(page.getByText('作成者')).toBeVisible();
+    await expect(page.getByText(MESSAGES.UI.ROLE_CREATOR)).toBeVisible();
 
     // 作成者の削除ボタン（ゴミ箱アイコンなど）が存在しないことを確認
     // 条件: 自分が作成者の場合、自分自身の行に削除ボタンは出ないはず
-    const memberRow = page.locator('div.flex.items-center.justify-between').filter({ hasText: '作成者' });
+    const memberRow = page.locator('div.flex.items-center.justify-between').filter({ hasText: MESSAGES.UI.ROLE_CREATOR });
     await expect(memberRow.locator('button[title="' + MESSAGES.UI.REMOVE + '"]')).not.toBeVisible();
   });
 });

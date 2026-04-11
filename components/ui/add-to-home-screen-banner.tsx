@@ -6,14 +6,17 @@ import { MESSAGES } from "@/lib/constants";
 export function AddToHomeScreenBanner() {
   const [show, setShow] = useState(false);
   const [isIos, setIsIos] = useState(false);
-  const [isSafari, setIsSafari] = useState(false);
-  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [deferredPrompt, setDeferredPrompt] = useState<{
+    prompt: () => void;
+    userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
+  } | null>(null);
 
   useEffect(() => {
     // すでにインストール済み（スタンドアロンモード）なら表示しない
     const isStandalone =
       window.matchMedia("(display-mode: standalone)").matches ||
-      (navigator as any).standalone === true;
+      ("standalone" in navigator &&
+        (navigator as unknown as { standalone: boolean }).standalone === true);
 
     if (isStandalone) return;
 
@@ -26,13 +29,6 @@ export function AddToHomeScreenBanner() {
 
     if (ios) {
       setIsIos(true);
-      // Safari かどうかの判定 (Chromeなどは CriOS, Firefoxは FxiOS などが含まれる)
-      const safari =
-        ua.includes("Safari") &&
-        !ua.includes("CriOS") &&
-        !ua.includes("FxiOS") &&
-        !ua.includes("EdgiOS");
-      setIsSafari(safari);
       setShow(true);
       return;
     }
@@ -40,7 +36,8 @@ export function AddToHomeScreenBanner() {
     // Android / Chrome: beforeinstallprompt を捕捉
     const handler = (e: Event) => {
       e.preventDefault();
-      setDeferredPrompt(e);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      setDeferredPrompt(e as any);
       setShow(true);
     };
     window.addEventListener("beforeinstallprompt", handler);
@@ -90,7 +87,7 @@ export function AddToHomeScreenBanner() {
           </p>
           {isIos ? (
             <p className="text-xs text-gray-400 mt-1 leading-relaxed">
-              共有ボタン
+              {MESSAGES.UI.SHARE_ICON_LABEL}
               <svg
                 className="inline w-3.5 h-3.5 mx-0.5 -mt-0.5 text-gray-400"
                 fill="none"
@@ -104,11 +101,11 @@ export function AddToHomeScreenBanner() {
                   d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"
                 />
               </svg>
-              →「ホーム画面に追加」でアプリとして使えます
+              →{MESSAGES.UI.ADD_IOS_INSTRUCTION}
             </p>
           ) : (
             <p className="text-xs text-gray-400 mt-1">
-              アプリとしてインストールするとより快適に使えます
+              {MESSAGES.UI.ADD_ANDROID_INSTRUCTION}
             </p>
           )}
         </div>

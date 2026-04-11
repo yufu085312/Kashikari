@@ -5,7 +5,7 @@ export const runtime = "edge";
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { sendResetPasswordEmail } from "../actions";
+import { sendResetPasswordEmail } from "./actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ROUTES, LIMITS, MESSAGES, METADATA } from "@/lib/constants";
@@ -30,11 +30,9 @@ export default function ForgotPasswordPage() {
       return;
     }
 
-    const formData = new FormData();
-    formData.append("email", email);
-
+    setError(null);
     startTransition(async () => {
-      const result = await sendResetPasswordEmail(formData);
+      const result = await sendResetPasswordEmail({ email });
       if (result.error) {
         setError(result.error);
       } else {
@@ -94,9 +92,9 @@ export default function ForgotPasswordPage() {
         ) : (
           <form onSubmit={handleSubmit} className="space-y-6">
             <p className="text-sm text-gray-400 text-center mb-2">
-              登録したメールアドレスを入力してください。
+              {MESSAGES.UI.FORGOT_PASSWORD_DESC_1}
               <br />
-              再設定用のリンクをお送りします。
+              {MESSAGES.UI.FORGOT_PASSWORD_DESC_2}
             </p>
             <Input
               name="email"

@@ -1,21 +1,31 @@
-import { NextResponse } from "next/server";
 export const runtime = "edge";
+
+import { NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
+
+/**
+ * リダイレクト先パスを安全に検証する。
+ * 相対パス（"/"始まり）のみ許可し、外部URL・プロトコル相対URL("//evil.com")を排除する。
+ */
+function sanitizeRedirectPath(path: string | null): string {
+  if (!path || !path.startsWith("/") || path.startsWith("//")) {
+    return "/";
+  }
+  return path;
+}
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
-  // next is the path to redirect to after exchanging the code
-  const next = searchParams.get("next") ?? "/";
+  const next = sanitizeRedirectPath(searchParams.get("next"));
 
   if (code) {
     const supabase = await createClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
-      const forwardedHost = request.headers.get("x-forwarded-host"); // original origin before load balancer
+      const forwardedHost = request.headers.get("x-forwarded-host");
       const isLocalEnv = process.env.NODE_ENV === "development";
       if (isLocalEnv) {
-        // we can be sure that origin is the right address in local dev
         return NextResponse.redirect(`${origin}${next}`);
       } else if (forwardedHost) {
         return NextResponse.redirect(`https://${forwardedHost}${next}`);
@@ -25,6 +35,5 @@ export async function GET(request: Request) {
     }
   }
 
-  // return the user to an error page with instructions
   return NextResponse.redirect(`${origin}/login?error=Authentication failed`);
 }

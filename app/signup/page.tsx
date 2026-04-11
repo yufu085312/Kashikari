@@ -5,7 +5,7 @@ export const runtime = "edge";
 import { use, useState, useTransition } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { signup } from "../login/actions";
+import { signup } from "@/app/signup/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ROUTES, LIMITS, MESSAGES, METADATA } from "@/lib/constants";
@@ -70,7 +70,13 @@ export default function SignupPage({
 
     setErrors({});
     startTransition(() => {
-      signup(formData);
+      signup({
+        name,
+        search_id,
+        email,
+        password,
+        next: params.next,
+      });
     });
   };
 
@@ -106,8 +112,8 @@ export default function SignupPage({
           <Input
             name="name"
             type="text"
-            label={`${MESSAGES.UI.NAME_LABEL} (最大${LIMITS.MAX_NAME_LENGTH}文字)`}
-            placeholder="田中 太郎"
+            label={`${MESSAGES.UI.NAME_LABEL} (${MESSAGES.UI.SIGNUP_MAX}${LIMITS.MAX_NAME_LENGTH}${MESSAGES.UI.SIGNUP_CHARS})`}
+            placeholder={MESSAGES.UI.NAME_PLACEHOLDER}
             autoComplete="name"
             required
             maxLength={LIMITS.MAX_NAME_LENGTH}
@@ -116,7 +122,7 @@ export default function SignupPage({
           <Input
             name="search_id"
             type="text"
-            label={`${MESSAGES.UI.SEARCH_ID_LABEL} (半角英数字/最大${LIMITS.MAX_SEARCH_ID_LENGTH}文字)`}
+            label={`${MESSAGES.UI.SEARCH_ID_LABEL} (${MESSAGES.UI.SIGNUP_ALPHANUMERIC}/${MESSAGES.UI.SIGNUP_MAX}${LIMITS.MAX_SEARCH_ID_LENGTH}${MESSAGES.UI.SIGNUP_CHARS})`}
             placeholder={MESSAGES.UI.SEARCH_ID_EXAMPLE}
             autoComplete="username"
             required
@@ -135,7 +141,7 @@ export default function SignupPage({
           <Input
             name="password"
             type="password"
-            label={`${MESSAGES.UI.PASSWORD_LABEL} (${LIMITS.MIN_PASSWORD_LENGTH}文字以上)`}
+            label={`${MESSAGES.UI.PASSWORD_LABEL} (${LIMITS.MIN_PASSWORD_LENGTH}${MESSAGES.UI.SIGNUP_CHARS}以上)`}
             placeholder="••••••••"
             autoComplete="new-password"
             required

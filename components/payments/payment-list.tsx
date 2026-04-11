@@ -1,28 +1,35 @@
 "use client";
 
-import { useState } from "react";
-import { Payment } from "@/types/payment";
+import { useOptimistic, useTransition, useState } from "react";
+import { Payment } from "@/lib/domain/models/payment";
 import { formatDate } from "@/utils/format";
-import { api } from "@/lib/api/client";
+import { deletePaymentAction } from "@/app/actions/payment";
 import { GlassCard } from "@/components/ui/glass-card";
 import { useAlert } from "@/components/providers/alert-provider";
 import { MESSAGES } from "@/lib/constants";
 
 interface PaymentListProps {
+  groupId: string;
   payments: Payment[];
   latestSettlementAt?: string | null;
-  onDelete?: () => void;
 }
 
 export function PaymentList({
+  groupId,
   payments,
   latestSettlementAt,
-  onDelete,
 }: PaymentListProps) {
   const { alert, confirm } = useAlert();
+  const [isPending, startTransition] = useTransition();
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  const isLocked = (createdAt: string | undefined) => {
+  // Optimistic UI (楽観的更新)
+  const [optimisticPayments, removeOptimisticPayment] = useOptimistic(
+    payments,
+    (state, idToRemove: string) => state.filter((p) => p.id !== idToRemove),
+  );
+
+  const isLocked = (createdAt: string | undefined | null) => {
     if (!latestSettlementAt || !createdAt) return false;
     return new Date(createdAt) <= new Date(latestSettlementAt);
   };
@@ -31,7 +38,7 @@ export function PaymentList({
     const payment = payments.find((p) => p.id === paymentId);
     if (payment && isLocked(payment.created_at)) {
       await alert({
-        title: "削除できません",
+        title: MESSAGES.UI.DELETE_NOT_REMOVABLE,
         message: MESSAGES.ERROR.PAYMENT_LOCKED_DELETE,
         type: "warn",
       });
@@ -42,27 +49,30 @@ export function PaymentList({
       title: MESSAGES.UI.GROUP_DELETE,
       message: MESSAGES.UI.CONFIRM_DELETE_PAYMENT,
       type: "danger",
-      confirmText: "削除",
-      cancelText: "キャンセル",
+      confirmText: MESSAGES.UI.DELETE_EXECUTE,
+      cancelText: MESSAGES.UI.BACK,
     });
 
     if (!isConfirmed) return;
+
     setDeletingId(paymentId);
-    try {
-      await api.deletePayment(paymentId);
-      onDelete?.();
-    } catch (e) {
-      await alert({
-        title: "エラー",
-        message: MESSAGES.ERROR.DELETE_FAILED,
-        type: "error",
-      });
-    } finally {
+    startTransition(async () => {
+      // 一瞬でUIから消す
+      removeOptimisticPayment(paymentId);
+
+      const { error } = await deletePaymentAction({ paymentId, groupId });
+      if (error) {
+        await alert({
+          title: MESSAGES.UI.ERROR_TITLE,
+          message: error,
+          type: "error",
+        });
+      }
       setDeletingId(null);
-    }
+    });
   };
 
-  if (payments.length === 0) {
+  if (optimisticPayments.length === 0) {
     return (
       <GlassCard className="py-12 flex flex-col items-center justify-center text-gray-500 border-dashed">
         <svg
@@ -78,14 +88,14 @@ export function PaymentList({
             d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
           />
         </svg>
-        <p className="text-sm font-medium">まだ支払いがありません</p>
+        <p className="text-sm font-medium">{MESSAGES.UI.PAYMENT_EMPTY}</p>
       </GlassCard>
     );
   }
 
   return (
     <div className="flex flex-col gap-3">
-      {payments.map((payment) => (
+      {optimisticPayments.map((payment) => (
         <GlassCard key={payment.id} className="p-4">
           <div className="flex items-start justify-between gap-3">
             <div className="flex-1 min-w-0">
@@ -94,13 +104,13 @@ export function PaymentList({
                   {payment.payer?.name}
                 </span>
                 <span className="text-[10px] text-gray-500 font-medium tracking-tight">
-                  が支払い
+                  {MESSAGES.UI.PAYMENT_PAID_BY_SUFFIX}
                 </span>
               </div>
               <p className="text-xl font-black text-white leading-none mt-1">
                 {payment.amount.toLocaleString()}
                 <span className="text-xs ml-1 text-gray-400 font-normal">
-                  円
+                  {MESSAGES.UI.CURRENCY_JPY}
                 </span>
               </p>
 
@@ -134,7 +144,9 @@ export function PaymentList({
             <button
               onClick={() => handleDelete(payment.id)}
               disabled={
-                deletingId === payment.id || isLocked(payment.created_at)
+                deletingId === payment.id ||
+                isPending ||
+                isLocked(payment.created_at)
               }
               className={`transition-all p-2 rounded-xl flex-shrink-0 ${
                 isLocked(payment.created_at)
@@ -144,7 +156,7 @@ export function PaymentList({
               title={
                 isLocked(payment.created_at)
                   ? MESSAGES.ERROR.PAYMENT_LOCKED_DELETE_SHORT
-                  : "支払いを削除"
+                  : MESSAGES.UI.PAYMENT_DELETE_ACTION
               }
             >
               <svg

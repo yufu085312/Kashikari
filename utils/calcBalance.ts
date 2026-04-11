@@ -1,6 +1,7 @@
-import { Payment } from "@/types/payment";
-import { Settlement, Balance } from "@/types/balance";
-import { User } from "@/types/user";
+import { Payment } from "@/lib/domain/models/payment";
+import { Settlement } from "@/lib/domain/models/settlement";
+import { Balance } from "@/lib/domain/models/balance";
+import { User } from "@/lib/domain/models/user";
 
 /**
  * 残高計算ロジック（コア）

@@ -1,6 +1,8 @@
 import { createClient } from "@/utils/supabase/server";
-import { Group, GroupMember } from "@/types/group";
-import { User } from "@/types/user";
+import { Group } from "@/lib/domain/models/group";
+import { User } from "@/lib/domain/models/user";
+import { NotFoundError, DatabaseError } from "@/lib/errors";
+import { MESSAGES } from "@/lib/constants";
 
 export async function createGroup(
   name: string,
@@ -13,7 +15,7 @@ export async function createGroup(
     .select()
     .single();
 
-  if (error) throw new Error(error.message);
+  if (error) throw new DatabaseError(error.message);
 
   // メンバーを追加
   const members = userIds.map((userId) => ({
@@ -23,9 +25,13 @@ export async function createGroup(
   const { error: memberError } = await supabase
     .from("group_members")
     .insert(members);
-  if (memberError) throw new Error(memberError.message);
+  if (memberError) throw new DatabaseError(memberError.message);
 
   return group;
+}
+
+interface GroupMemberRow {
+  user: User | null;
 }
 
 export async function getGroupById(
@@ -38,36 +44,40 @@ export async function getGroupById(
     .eq("id", groupId)
     .maybeSingle();
 
-  if (error) throw new Error(error.message);
+  if (error) throw new DatabaseError(error.message);
   if (!group)
-    throw new Error("グループが見つからないか、アクセス権限がありません");
+    throw new NotFoundError(MESSAGES.ERROR.GROUP_NOT_FOUND_OR_FORBIDDEN);
 
   const { data: memberRows, error: memberError } = await supabase
     .from("group_members")
     .select("*, user:users(*)")
     .eq("group_id", groupId);
 
-  if (memberError) throw new Error(memberError.message);
+  if (memberError) throw new DatabaseError(memberError.message);
 
   const members: User[] = (memberRows || [])
-    .filter((row: any) => row.user !== null) // user情報が一時的に欠けている場合を除外
-    .map((row: any) => row.user as User);
+    .filter((row: GroupMemberRow) => row.user !== null)
+    .map((row: GroupMemberRow) => row.user as User);
 
   return { ...group, members };
+}
+
+interface GroupRow {
+  group: unknown | null;
 }
 
 export async function getGroupsByUserId(userId: string): Promise<Group[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("group_members")
-    .select("group:groups(*)")
+    .select("group:groups(*, members:group_members(user_id))")
     .eq("user_id", userId);
 
-  if (error) throw new Error(error.message);
+  if (error) throw new DatabaseError(error.message);
 
   return (data || [])
-    .filter((row: { group: unknown | null }) => row.group !== null)
-    .map((row: { group: unknown | null }) => row.group as Group);
+    .filter((row: GroupRow) => row.group !== null)
+    .map((row: GroupRow) => row.group as Group);
 }
 
 export async function addMemberToGroup(
@@ -79,7 +89,7 @@ export async function addMemberToGroup(
     .from("group_members")
     .insert({ group_id: groupId, user_id: userId });
 
-  if (error) throw new Error(error.message);
+  if (error) throw new DatabaseError(error.message);
 }
 
 export async function removeMemberFromGroup(
@@ -93,7 +103,7 @@ export async function removeMemberFromGroup(
     .eq("group_id", groupId)
     .eq("user_id", userId);
 
-  if (error) throw new Error(error.message);
+  if (error) throw new DatabaseError(error.message);
 }
 
 export async function deleteGroup(groupId: string): Promise<void> {
@@ -103,7 +113,7 @@ export async function deleteGroup(groupId: string): Promise<void> {
     .delete({ count: "exact" })
     .eq("id", groupId);
 
-  if (error) throw new Error(error.message);
+  if (error) throw new DatabaseError(error.message);
   if (count === 0)
-    throw new Error("グループを削除する権限がないか、グループが見つかりません");
+    throw new NotFoundError(MESSAGES.ERROR.GROUP_DELETE_FORBIDDEN);
 }

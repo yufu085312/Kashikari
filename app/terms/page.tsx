@@ -1,5 +1,7 @@
+export const runtime = "edge";
+
 import Link from "next/link";
-import { MESSAGES, ROUTES } from "@/lib/constants";
+import { MESSAGES } from "@/lib/constants";
 
 export default function TermsPage() {
   return (
@@ -33,57 +35,55 @@ export default function TermsPage() {
 
         <div className="space-y-8 text-gray-300 leading-relaxed text-sm sm:text-base">
           <section>
-            <h2 className="text-xl font-bold text-white mb-4">1. はじめに</h2>
-            <p>
-              この利用規約（以下「本規約」）は、Kashikari（以下「本サービス」）の利用条件を定めるものです。本サービスを利用するすべてのユーザーは、本規約に同意したものとみなされます。
-            </p>
+            <h2 className="text-xl font-bold text-white mb-4">
+              {MESSAGES.POLICY.TERMS_1_TITLE}
+            </h2>
+            <p>{MESSAGES.POLICY.TERMS_1_DESC}</p>
           </section>
 
           <section>
             <h2 className="text-xl font-bold text-white mb-4">
-              2. サービスの提供
+              {MESSAGES.POLICY.TERMS_2_TITLE}
             </h2>
-            <p>
-              本サービスは、ユーザー間の割り勘や貸し借りの記録を管理するためのツールを提供します。本サービスは、ユーザー間の金銭のやり取りを直接仲介するものではなく、あくまで記録の補助を目的としています。
-            </p>
+            <p>{MESSAGES.POLICY.TERMS_2_DESC}</p>
           </section>
 
           <section>
             <h2 className="text-xl font-bold text-white mb-4">
-              3. アカウント管理
+              {MESSAGES.POLICY.TERMS_3_TITLE}
             </h2>
-            <p>
-              ユーザーは、自身の責任においてアカウント情報（メールアドレス、パスワード）を適切に管理するものとします。アカウント情報の漏洩や第三者による不正使用等によって生じた損害について、当方は一切の責任を負いません。
-            </p>
+            <p>{MESSAGES.POLICY.TERMS_3_DESC}</p>
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-white mb-4">4. 禁止事項</h2>
+            <h2 className="text-xl font-bold text-white mb-4">
+              {MESSAGES.POLICY.TERMS_4_TITLE}
+            </h2>
             <ul className="list-disc list-inside space-y-2 ml-2">
-              <li>法令または公序良俗に反する行為</li>
-              <li>虚偽の情報を登録する行為</li>
-              <li>他のユーザーに対する嫌がらせや誹謗中傷</li>
-              <li>本サービスの運営を妨害する行為</li>
-              <li>その他、当方が不適切と判断する行為</li>
+              <li>{MESSAGES.POLICY.TERMS_4_ITEM_1}</li>
+              <li>{MESSAGES.POLICY.TERMS_4_ITEM_2}</li>
+              <li>{MESSAGES.POLICY.TERMS_4_ITEM_3}</li>
+              <li>{MESSAGES.POLICY.TERMS_4_ITEM_4}</li>
+              <li>{MESSAGES.POLICY.TERMS_4_ITEM_5}</li>
             </ul>
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-white mb-4">5. 免責事項</h2>
-            <p>
-              本サービスの利用に起因してユーザー間に生じた紛争や損害について、当方は何ら責任を負わないものとします。金銭の精算や返済に関しては、当事者間で誠実に対応してください。また、システム障害等によるデータ損失についても保証いたしません。
-            </p>
+            <h2 className="text-xl font-bold text-white mb-4">
+              {MESSAGES.POLICY.TERMS_5_TITLE}
+            </h2>
+            <p>{MESSAGES.POLICY.TERMS_5_DESC}</p>
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-white mb-4">6. 規約の変更</h2>
-            <p>
-              当方は、必要に応じて本規約を変更することがあります。変更後の規約は本ページに掲載した時点から効力を生じるものとし、ユーザーは変更後も継続して利用することで、変更に同意したものとみなされます。
-            </p>
+            <h2 className="text-xl font-bold text-white mb-4">
+              {MESSAGES.POLICY.TERMS_6_TITLE}
+            </h2>
+            <p>{MESSAGES.POLICY.TERMS_6_DESC}</p>
           </section>
 
           <div className="pt-8 border-t border-white/10 text-gray-500 text-xs text-right">
-            制定日：2024年3月21日
+            {MESSAGES.POLICY.TERMS_UPDATED}
           </div>
         </div>
       </div>

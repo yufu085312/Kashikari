@@ -46,7 +46,11 @@ export default function LoginPage({
 
     setErrors({});
     startTransition(() => {
-      login(formData);
+      login({
+        email,
+        password,
+        next: params.next,
+      });
     });
   };
 

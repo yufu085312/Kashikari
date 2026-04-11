@@ -2,9 +2,9 @@ import { getPaymentsByGroupId } from "@/lib/repositories/paymentRepository";
 import { getSettlementsByGroupId } from "@/lib/repositories/settlementRepository";
 import { getGroupById } from "@/lib/repositories/groupRepository";
 import { calcBalance } from "@/utils/calcBalance";
-import { Balance } from "@/types/balance";
+import { Balance } from "@/lib/domain/models/balance";
 
-export async function getBalances(groupId: string): Promise<Balance[]> {
+export async function fetchGroupBalances(groupId: string): Promise<Balance[]> {
   const [groupWithMembers, payments, settlements] = await Promise.all([
     getGroupById(groupId),
     getPaymentsByGroupId(groupId),

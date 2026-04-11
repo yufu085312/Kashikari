@@ -1,10 +1,10 @@
 "use client";
 
+export const runtime = "edge";
+
 import { useState } from "react";
-import Link from "next/link";
 import { submitInquiry } from "./actions";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
 import { MESSAGES, ROUTES } from "@/lib/constants";
 
@@ -47,7 +47,7 @@ export default function ContactPage() {
       } else if (res?.success) {
         setSuccess(true);
       }
-    } catch (e) {
+    } catch {
       setError(MESSAGES.ERROR.INQUIRY_NETWORK_ERROR);
     } finally {
       setIsSubmitting(false);

@@ -1,21 +1,28 @@
 "use client";
 
-import { useState } from "react";
-import { Settlement } from "@/types/balance";
-import { formatCurrency, formatDate } from "@/utils/format";
-import { api } from "@/lib/api/client";
+import { useOptimistic, useTransition, useState } from "react";
+import { Settlement } from "@/lib/domain/models/settlement";
+import { formatDate } from "@/utils/format";
+import { deleteSettlementAction } from "@/app/actions/settlement";
 import { GlassCard } from "@/components/ui/glass-card";
 import { useAlert } from "@/components/providers/alert-provider";
 import { MESSAGES } from "@/lib/constants";
 
 interface SettlementListProps {
+  groupId: string;
   settlements: Settlement[];
-  onDelete?: () => void;
 }
 
-export function SettlementList({ settlements, onDelete }: SettlementListProps) {
+export function SettlementList({ groupId, settlements }: SettlementListProps) {
   const { alert, confirm } = useAlert();
+  const [isPending, startTransition] = useTransition();
   const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  // Optimistic UI (楽観的更新)
+  const [optimisticSettlements, removeOptimisticSettlement] = useOptimistic(
+    settlements,
+    (state, idToRemove: string) => state.filter((s) => s.id !== idToRemove),
+  );
 
   const handleDelete = async (id: string) => {
     const isConfirmed = await confirm({
@@ -29,21 +36,26 @@ export function SettlementList({ settlements, onDelete }: SettlementListProps) {
     if (!isConfirmed) return;
 
     setDeletingId(id);
-    try {
-      await api.deleteSettlement(id);
-      onDelete?.();
-    } catch (e) {
-      await alert({
-        title: "エラー",
-        message: MESSAGES.ERROR.CANCEL_FAILED,
-        type: "error",
+    startTransition(async () => {
+      // 一瞬でUIから消去
+      removeOptimisticSettlement(id);
+
+      const { error } = await deleteSettlementAction({
+        settlementId: id,
+        groupId,
       });
-    } finally {
+      if (error) {
+        await alert({
+          title: MESSAGES.UI.ERROR_TITLE,
+          message: error,
+          type: "error",
+        });
+      }
       setDeletingId(null);
-    }
+    });
   };
 
-  if (settlements.length === 0) {
+  if (optimisticSettlements.length === 0) {
     return (
       <GlassCard className="py-12 flex flex-col items-center justify-center text-gray-500 border-dashed">
         <svg
@@ -59,14 +71,16 @@ export function SettlementList({ settlements, onDelete }: SettlementListProps) {
             d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
           />
         </svg>
-        <p className="text-sm font-medium">精算履歴はまだありません</p>
+        <p className="text-sm font-medium">
+          {MESSAGES.UI.SETTLEMENT_EMPTY_HISTORY}
+        </p>
       </GlassCard>
     );
   }
 
   return (
     <div className="flex flex-col gap-3">
-      {settlements.map((s) => (
+      {optimisticSettlements.map((s) => (
         <GlassCard key={s.id} className="p-4">
           <div className="flex items-center justify-between gap-3">
             <div className="flex-1 min-w-0">
@@ -94,7 +108,7 @@ export function SettlementList({ settlements, onDelete }: SettlementListProps) {
               <p className="text-xl font-black text-brand-500 leading-none mt-1">
                 {s.amount.toLocaleString()}
                 <span className="text-xs ml-1 text-gray-400 font-normal">
-                  円
+                  {MESSAGES.UI.CURRENCY_JPY}
                 </span>
               </p>
               <p className="text-[10px] text-gray-500 mt-3 font-medium opacity-50">
@@ -104,8 +118,8 @@ export function SettlementList({ settlements, onDelete }: SettlementListProps) {
 
             <button
               onClick={() => handleDelete(s.id)}
-              disabled={deletingId === s.id}
-              className="transition-all p-2 rounded-xl flex-shrink-0 text-gray-500 hover:text-blue-400 hover:bg-blue-500/10 active:scale-95"
+              disabled={deletingId === s.id || isPending}
+              className="transition-all p-2 rounded-xl flex-shrink-0 text-gray-500 hover:text-blue-400 hover:bg-blue-500/10 active:scale-95 disabled:opacity-50"
               title={MESSAGES.UI.SETTLEMENT_CANCEL}
             >
               <svg

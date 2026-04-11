@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
 import { calcBalance } from "@/utils/calcBalance";
-import type { Payment } from "@/types/payment";
-import type { Settlement } from "@/types/balance";
-import type { User } from "@/types/user";
+import type { Payment } from "@/lib/domain/models/payment";
+import type { Settlement } from "@/lib/domain/models/settlement";
+import type { User } from "@/lib/domain/models/user";
 
 // テスト用のユーザー定義
 const userA: User = { id: "userA", name: "Aさん" };

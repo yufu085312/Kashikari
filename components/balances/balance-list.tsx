@@ -1,10 +1,9 @@
 "use client";
 
-import { useState } from "react";
-import { Balance } from "@/types/balance";
-import { formatCurrency } from "@/utils/format";
+import { useOptimistic, useTransition, useState } from "react";
+import { Balance } from "@/lib/domain/models/balance";
 import { Button } from "@/components/ui/button";
-import { api } from "@/lib/api/client";
+import { createSettlementAction } from "@/app/actions/settlement";
 import { GlassCard } from "@/components/ui/glass-card";
 import { useAlert } from "@/components/providers/alert-provider";
 import { MESSAGES } from "@/lib/constants";
@@ -12,18 +11,26 @@ import { MESSAGES } from "@/lib/constants";
 interface BalanceListProps {
   balances: Balance[];
   groupId: string;
-  onSettle?: () => void;
 }
 
-export function BalanceList({ balances, groupId, onSettle }: BalanceListProps) {
+export function BalanceList({ balances, groupId }: BalanceListProps) {
   const { alert, confirm } = useAlert();
   const [loading, setLoading] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
+
+  // Optimistic UI (楽観的更新)
+  // 精算を実行した直後にローカルのBalancesリストから対象を消して完了したように見せる
+  const [optimisticBalances, removeOptimisticBalance] = useOptimistic(
+    balances,
+    (state, keyToRemove: string) =>
+      state.filter((b) => `${b.fromUserId}-${b.toUserId}` !== keyToRemove),
+  );
 
   const handleSettle = async (balance: Balance) => {
     const key = `${balance.fromUserId}-${balance.toUserId}`;
     const isConfirmed = await confirm({
       title: MESSAGES.UI.SETTLEMENT_EXECUTE,
-      message: `${balance.fromUserName} から ${balance.toUserName} へ ${balance.amount.toLocaleString()}円の支払いを記録し、貸し借りを解消しますか？`,
+      message: `${balance.fromUserName}${MESSAGES.UI.BALANCE_SETTLE_CONFIRM_1}${balance.toUserName}${MESSAGES.UI.BALANCE_SETTLE_CONFIRM_2}${balance.amount.toLocaleString()}${MESSAGES.UI.BALANCE_SETTLE_CONFIRM_3}`,
       type: "info",
       confirmText: MESSAGES.UI.SETTLE,
       cancelText: MESSAGES.UI.BACK,
@@ -32,26 +39,29 @@ export function BalanceList({ balances, groupId, onSettle }: BalanceListProps) {
     if (!isConfirmed) return;
 
     setLoading(key);
-    try {
-      await api.createSettlement({
+    startTransition(async () => {
+      // 一瞬でUI上から精算済みにする
+      removeOptimisticBalance(key);
+
+      const { error } = await createSettlementAction({
         groupId,
         fromUserId: balance.fromUserId,
         toUserId: balance.toUserId,
         amount: balance.amount,
       });
-      onSettle?.();
-    } catch (e) {
-      await alert({
-        title: "エラー",
-        message: MESSAGES.ERROR.SETTLEMENT_FAILED,
-        type: "error",
-      });
-    } finally {
+
+      if (error) {
+        await alert({
+          title: MESSAGES.UI.ERROR_TITLE,
+          message: error,
+          type: "error",
+        });
+      }
       setLoading(null);
-    }
+    });
   };
 
-  if (balances.length === 0) {
+  if (optimisticBalances.length === 0) {
     return (
       <GlassCard className="py-12 flex flex-col items-center justify-center text-gray-500 border-dashed">
         <div className="w-16 h-16 bg-emerald-500/10 rounded-full flex items-center justify-center mb-4">
@@ -69,15 +79,19 @@ export function BalanceList({ balances, groupId, onSettle }: BalanceListProps) {
             />
           </svg>
         </div>
-        <p className="text-white font-bold">全員精算済み！</p>
-        <p className="text-xs text-gray-500 mt-1">貸し借りはありません 🎉</p>
+        <p className="text-white font-bold">
+          {MESSAGES.UI.BALANCE_ALL_SETTLED}
+        </p>
+        <p className="text-xs text-gray-500 mt-1">
+          {MESSAGES.UI.BALANCE_NO_DEBT}
+        </p>
       </GlassCard>
     );
   }
 
   return (
     <div className="flex flex-col gap-3">
-      {balances.map((balance) => {
+      {optimisticBalances.map((balance) => {
         const key = `${balance.fromUserId}-${balance.toUserId}`;
         return (
           <GlassCard
@@ -110,12 +124,10 @@ export function BalanceList({ balances, groupId, onSettle }: BalanceListProps) {
                 </div>
                 <p className="text-2xl font-black text-orange-400 leading-tight">
                   <span className="text-xs mr-1 font-medium opacity-60 text-white">
-                    残高
+                    {MESSAGES.UI.BALANCE_LABEL}
                   </span>
                   {balance.amount.toLocaleString()}
-                  <span className="text-xs ml-1 font-normal opacity-50 text-white">
-                    円
-                  </span>
+                  {MESSAGES.UI.CURRENCY_JPY}
                 </p>
               </div>
 
@@ -123,7 +135,7 @@ export function BalanceList({ balances, groupId, onSettle }: BalanceListProps) {
                 variant="primary"
                 size="sm"
                 className="flex-shrink-0 from-orange-500 to-red-500 shadow-orange-500/20"
-                loading={loading === key}
+                loading={loading === key || isPending}
                 onClick={() => handleSettle(balance)}
               >
                 {MESSAGES.UI.SETTLE}

@@ -197,6 +197,7 @@
 
 * payment_id
 * user_id
+* share_amount
 
 ---
 

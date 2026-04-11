@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MESSAGES, LIMITS } from "@/lib/constants";
-import { updatePassword } from "@/app/login/actions";
+import { updatePassword } from "@/app/settings/actions";
 
 interface PasswordFormProps {
   onSuccess: () => void;
@@ -43,12 +43,12 @@ export function PasswordForm({ onSuccess }: PasswordFormProps) {
       return;
     }
 
-    const formData = new FormData();
-    formData.append("password", password);
-    formData.append("confirm_password", confirmPassword);
-
+    setErrors({});
     startTransition(async () => {
-      const result = await updatePassword(formData);
+      const result = await updatePassword({
+        password,
+        confirm_password: confirmPassword,
+      });
       if (result.error) {
         setMessage({ type: "error", text: result.error });
       } else {
