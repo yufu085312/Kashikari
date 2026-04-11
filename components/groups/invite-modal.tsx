@@ -37,8 +37,11 @@ export function InviteModal({
     setIsAddingMember(true);
     setAddMemberError(null);
     try {
-      const { error } = await addMemberAction(groupId, {
-        searchId: searchIdInput.trim(),
+      const { error } = await addMemberAction({
+        groupId,
+        input: {
+          searchId: searchIdInput.trim(),
+        },
       });
       if (error) {
         setAddMemberError(error);

@@ -1,71 +1,46 @@
 "use server";
 
-import { createClient } from "@/utils/supabase/server";
+import { createSafeAction } from "@/lib/actions/action-utils";
 import { createGroup } from "@/lib/usecases/createGroup";
 import {
   addMemberToGroup,
   removeMemberFromGroup,
   deleteGroup,
+  getGroupById,
 } from "@/lib/repositories/groupRepository";
 import { MESSAGES } from "@/lib/constants";
-import {
-  createGroupSchema,
-  CreateGroupSchemaInput,
-  addMemberSchema,
-  AddMemberSchemaInput,
-} from "@/lib/schemas/group";
+import { createGroupSchema, addMemberSchema } from "@/lib/schemas/group";
 import { revalidatePath } from "next/cache";
-
-import { NotFoundError, ConflictError } from "@/lib/errors";
+import { z } from "zod";
+import { NotFoundError, ConflictError, ForbiddenError } from "@/lib/errors";
+import { createClient } from "@/utils/supabase/server";
 
 /** グループ作成アクション */
-export async function createGroupAction(input: CreateGroupSchemaInput) {
-  try {
-    const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) throw new Error(MESSAGES.ERROR.UNAUTHORIZED);
-
-    const parsed = createGroupSchema.parse(input);
-
+export const createGroupAction = createSafeAction(
+  createGroupSchema,
+  async (input, userId) => {
     const group = await createGroup({
-      name: parsed.name,
-      creatorId: user.id,
-      memberSearchIds: parsed.memberSearchIds,
+      name: input.name,
+      creatorId: userId,
+      memberSearchIds: input.memberSearchIds,
     });
-
     revalidatePath("/");
-
-    return { data: group, error: null };
-  } catch (error) {
-    console.error("createGroupAction error:", error);
-    return {
-      data: null,
-      error:
-        error instanceof Error ? error.message : "グループの作成に失敗しました",
-    };
-  }
-}
+    return group;
+  },
+);
 
 /** メンバー追加アクション */
-export async function addMemberAction(
-  groupId: string,
-  input: AddMemberSchemaInput,
-) {
-  try {
+export const addMemberAction = createSafeAction(
+  z.object({
+    groupId: z.string().uuid(),
+    input: addMemberSchema,
+  }),
+  async ({ groupId, input }) => {
     const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) throw new Error(MESSAGES.ERROR.UNAUTHORIZED);
-
-    const parsed = addMemberSchema.parse(input);
-
     const { data: targetUser, error: queryError } = await supabase
       .from("users")
       .select("id")
-      .eq("search_id", parsed.searchId)
+      .eq("search_id", input.searchId)
       .single();
 
     if (queryError || !targetUser) {
@@ -82,62 +57,43 @@ export async function addMemberAction(
     }
 
     revalidatePath(`/groups/${groupId}`);
-    return { data: { success: true }, error: null };
-  } catch (error) {
-    console.error("addMemberAction error:", error);
-    return {
-      data: null,
-      error:
-        error instanceof Error ? error.message : "メンバーの追加に失敗しました",
-    };
-  }
-}
+    return { success: true };
+  },
+);
 
 /** メンバー削除アクション */
-export async function removeMemberAction(
-  groupId: string,
-  targetUserId: string,
-) {
-  try {
-    const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) throw new Error(MESSAGES.ERROR.UNAUTHORIZED);
+export const removeMemberAction = createSafeAction(
+  z.object({
+    groupId: z.string().uuid(),
+    targetUserId: z.string().uuid(),
+  }),
+  async ({ groupId, targetUserId }, userId) => {
+    const group = await getGroupById(groupId);
+
+    // 作成者のみが削除可能
+    if (group.created_by !== userId && targetUserId !== userId) {
+      throw new ForbiddenError(MESSAGES.ERROR.FORBIDDEN);
+    }
 
     await removeMemberFromGroup(groupId, targetUserId);
-
     revalidatePath(`/groups/${groupId}`);
-    return { data: { success: true }, error: null };
-  } catch (error) {
-    console.error("removeMemberAction error:", error);
-    return {
-      data: null,
-      error:
-        error instanceof Error ? error.message : "メンバーの削除に失敗しました",
-    };
-  }
-}
+    return { success: true };
+  },
+);
 
 /** グループ削除アクション */
-export async function deleteGroupAction(groupId: string) {
-  try {
-    const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) throw new Error(MESSAGES.ERROR.UNAUTHORIZED);
+export const deleteGroupAction = createSafeAction(
+  z.string().uuid(),
+  async (groupId, userId) => {
+    const group = await getGroupById(groupId);
+
+    // 作成者のみがグループ削除可能
+    if (group.created_by !== userId) {
+      throw new ForbiddenError(MESSAGES.ERROR.FORBIDDEN);
+    }
 
     await deleteGroup(groupId);
     revalidatePath("/");
-
-    return { data: { success: true }, error: null };
-  } catch (error) {
-    console.error("deleteGroupAction error:", error);
-    return {
-      data: null,
-      error:
-        error instanceof Error ? error.message : "グループの削除に失敗しました",
-    };
-  }
-}
+    return { success: true };
+  },
+);

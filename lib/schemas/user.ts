@@ -14,5 +14,20 @@ export const updateProfileSchema = z.object({
     .regex(LIMITS.SEARCH_ID_PATTERN, MESSAGES.ERROR.SEARCH_ID_INVALID),
 });
 
+/** パスワード更新スキーマ */
+export const updatePasswordSchema = z
+  .object({
+    password: z
+      .string()
+      .min(LIMITS.MIN_PASSWORD_LENGTH, MESSAGES.ERROR.PASSWORD_TOO_SHORT),
+    confirm_password: z.string(),
+  })
+  .refine((data) => data.password === data.confirm_password, {
+    message: MESSAGES.ERROR.PASSWORD_MISMATCH,
+    path: ["confirm_password"],
+  });
+
 /** プロフィール更新入力型（スキーマから推論） */
 export type UpdateProfileSchemaInput = z.infer<typeof updateProfileSchema>;
+/** パスワード更新入力型（スキーマから推論） */
+export type UpdatePasswordSchemaInput = z.infer<typeof updatePasswordSchema>;

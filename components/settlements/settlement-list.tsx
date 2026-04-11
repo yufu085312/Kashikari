@@ -40,7 +40,10 @@ export function SettlementList({ groupId, settlements }: SettlementListProps) {
       // 一瞬でUIから消去
       removeOptimisticSettlement(id);
 
-      const { error } = await deleteSettlementAction(id, groupId);
+      const { error } = await deleteSettlementAction({
+        settlementId: id,
+        groupId,
+      });
       if (error) {
         await alert({
           title: MESSAGES.UI.ERROR_TITLE,

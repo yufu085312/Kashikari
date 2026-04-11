@@ -1,102 +1,66 @@
 "use server";
 
+import { createSafeAction } from "@/lib/actions/action-utils";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/utils/supabase/server";
-import { ROUTES, LIMITS, MESSAGES } from "@/lib/constants";
+import { ROUTES, MESSAGES } from "@/lib/constants";
+import { updateProfileSchema, updatePasswordSchema } from "@/lib/schemas/user";
 
-import {
+/** プロフィール更新アクション */
+export const updateProfile = createSafeAction(
   updateProfileSchema,
-  UpdateProfileSchemaInput,
-} from "@/lib/schemas/user";
+  async (input, userId) => {
+    const supabase = await createClient();
 
-export async function updateProfile(input: UpdateProfileSchemaInput) {
-  const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return { error: MESSAGES.ERROR.UNAUTHORIZED };
-  }
-
-  // Zodによる検証
-  const parsed = updateProfileSchema.safeParse(input);
-  if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message || "Invalid input" };
-  }
-  const { name, search_id } = parsed.data;
-
-  // 現在のデータを取得して比較
-  const { data: currentUser } = await supabase
-    .from("users")
-    .select("search_id")
-    .eq("id", user.id)
-    .single();
-
-  // 検索IDが変更される場合のみ重複チェック
-  if (currentUser && currentUser.search_id !== search_id) {
-    const { data: existingUser } = await supabase
+    // 検索IDが変更される場合のみ重複チェック
+    const { data: currentUser } = await supabase
       .from("users")
-      .select("id")
-      .eq("search_id", search_id)
-      .maybeSingle();
+      .select("search_id")
+      .eq("id", userId)
+      .single();
 
-    if (existingUser) {
-      return { error: MESSAGES.ERROR.SEARCH_ID_DUPLICATE };
+    if (currentUser && currentUser.search_id !== input.search_id) {
+      const { data: existingUser } = await supabase
+        .from("users")
+        .select("id")
+        .eq("search_id", input.search_id)
+        .maybeSingle();
+
+      if (existingUser) {
+        throw new Error(MESSAGES.ERROR.SEARCH_ID_DUPLICATE);
+      }
     }
-  }
 
-  // public.users の更新
-  const { error: dbError } = await supabase
-    .from("users")
-    .update({ name, search_id })
-    .eq("id", user.id);
+    // public.users の更新
+    const { error: dbError } = await supabase
+      .from("users")
+      .update({ name: input.name, search_id: input.search_id })
+      .eq("id", userId);
 
-  if (dbError) {
-    return { error: MESSAGES.ERROR.PROFILE_UPDATE_FAILED };
-  }
+    if (dbError) throw new Error(MESSAGES.ERROR.PROFILE_UPDATE_FAILED);
 
-  // auth.users メタデータの更新
-  await supabase.auth.updateUser({
-    data: { name, search_id },
-  });
+    // auth.users メタデータの更新
+    await supabase.auth.updateUser({
+      data: { name: input.name, search_id: input.search_id },
+    });
 
-  revalidatePath(ROUTES.HOME, "layout");
-  return { success: true };
-}
+    revalidatePath(ROUTES.HOME, "layout");
+    return { success: true };
+  },
+);
 
-export async function updatePassword(formData: FormData) {
-  const supabase = await createClient();
+/** パスワード更新アクション */
+export const updatePassword = createSafeAction(
+  updatePasswordSchema,
+  async ({ password }) => {
+    const supabase = await createClient();
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+    const { error } = await supabase.auth.updateUser({
+      password: password,
+    });
 
-  if (!user) {
-    return { error: MESSAGES.ERROR.UNAUTHORIZED };
-  }
+    if (error) throw new Error(MESSAGES.ERROR.PASSWORD_UPDATE_FAILED);
 
-  const password = formData.get("password") as string;
-  const confirmPassword = formData.get("confirm_password") as string;
-
-  // バリデーション
-  if (!password) return { error: MESSAGES.ERROR.PASSWORD_REQUIRED };
-  if (password.length < LIMITS.MIN_PASSWORD_LENGTH)
-    return { error: MESSAGES.ERROR.PASSWORD_TOO_SHORT };
-
-  if (password !== confirmPassword) {
-    return { error: MESSAGES.ERROR.PASSWORD_MISMATCH };
-  }
-
-  // パスワードの更新
-  const { error } = await supabase.auth.updateUser({
-    password: password,
-  });
-
-  if (error) {
-    return { error: MESSAGES.ERROR.PASSWORD_UPDATE_FAILED };
-  }
-
-  return { success: true };
-}
+    return { success: true };
+  },
+);

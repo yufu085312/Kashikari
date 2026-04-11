@@ -46,17 +46,14 @@ export default function VerifyOtpPage({
     formData.append("next", next);
 
     startTransition(() => {
-      verifySignupOtp(formData);
+      verifySignupOtp({ email, token, next });
     });
   };
 
   const handleResend = () => {
-    const formData = new FormData();
-    formData.append("email", email);
-    formData.append("next", next);
     setCountdown(45); // 再送信後にカウントダウンリセット
     startResend(() => {
-      resendSignupOtp(formData);
+      resendSignupOtp({ email, next });
     });
   };
 

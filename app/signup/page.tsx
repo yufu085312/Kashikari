@@ -70,7 +70,13 @@ export default function SignupPage({
 
     setErrors({});
     startTransition(() => {
-      signup(formData);
+      signup({
+        name,
+        search_id,
+        email,
+        password,
+        next: params.next,
+      });
     });
   };
 

@@ -49,8 +49,8 @@ export function PaymentList({
       title: MESSAGES.UI.GROUP_DELETE,
       message: MESSAGES.UI.CONFIRM_DELETE_PAYMENT,
       type: "danger",
-      confirmText: MESSAGES.UI.DELETE_LABEL,
-      cancelText: MESSAGES.UI.CANCEL_LABEL,
+      confirmText: MESSAGES.UI.DELETE_EXECUTE,
+      cancelText: MESSAGES.UI.BACK,
     });
 
     if (!isConfirmed) return;
@@ -60,7 +60,7 @@ export function PaymentList({
       // 一瞬でUIから消す
       removeOptimisticPayment(paymentId);
 
-      const { error } = await deletePaymentAction(paymentId, groupId);
+      const { error } = await deletePaymentAction({ paymentId, groupId });
       if (error) {
         await alert({
           title: MESSAGES.UI.ERROR_TITLE,

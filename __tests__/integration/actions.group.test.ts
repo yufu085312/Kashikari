@@ -1,25 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-// Supabase クライアントと revalidatePath をモック化
-vi.mock("@/utils/supabase/server", () => ({
-  createClient: vi.fn(),
-}));
-
-vi.mock("next/cache", () => ({
-  revalidatePath: vi.fn(),
-}));
-
-// リポジトリとユースケースをモック化
-vi.mock("@/lib/repositories/groupRepository", () => ({
-  addMemberToGroup: vi.fn(),
-  removeMemberFromGroup: vi.fn(),
-  deleteGroup: vi.fn(),
-}));
-
-vi.mock("@/lib/usecases/createGroup", () => ({
-  createGroup: vi.fn(),
-}));
-
+// モック対象のインポート
 import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
 import { createGroup } from "@/lib/usecases/createGroup";
@@ -27,6 +8,7 @@ import {
   addMemberToGroup,
   removeMemberFromGroup,
   deleteGroup,
+  getGroupById,
 } from "@/lib/repositories/groupRepository";
 import {
   createGroupAction,
@@ -36,13 +18,36 @@ import {
 } from "@/app/actions/group";
 import { MESSAGES } from "@/lib/constants";
 
+// モックの定義
+vi.mock("@/utils/supabase/server", () => ({
+  createClient: vi.fn(),
+}));
+
+vi.mock("next/cache", () => ({
+  revalidatePath: vi.fn(),
+}));
+
+vi.mock("@/lib/repositories/groupRepository", () => ({
+  addMemberToGroup: vi.fn(),
+  removeMemberFromGroup: vi.fn(),
+  deleteGroup: vi.fn(),
+  getGroupById: vi.fn(),
+}));
+
+vi.mock("@/lib/usecases/createGroup", () => ({
+  createGroup: vi.fn(),
+}));
+
+// モック関数の取得
 const mockCreateClient = vi.mocked(createClient);
 const mockCreateGroup = vi.mocked(createGroup);
 const mockAddMemberToGroup = vi.mocked(addMemberToGroup);
 const mockRemoveMemberFromGroup = vi.mocked(removeMemberFromGroup);
 const mockDeleteGroup = vi.mocked(deleteGroup);
+const mockGetGroupById = vi.mocked(getGroupById);
 const mockRevalidatePath = vi.mocked(revalidatePath);
 
+// ヘルパー関数
 function makeAuthenticatedSupabase(userId = "user-1") {
   const mockSingle = vi
     .fn()
@@ -80,6 +85,10 @@ describe("actions/group", () => {
     vi.resetAllMocks();
   });
 
+  const VALID_GROUP_ID = "00000000-0000-4000-8000-000000000001";
+  const VALID_USER_ID = "00000000-0000-4000-8000-000000000002";
+  const TARGET_USER_ID = "00000000-0000-4000-8000-000000000003";
+
   describe("createGroupAction", () => {
     it("未認証の場合、エラーを返す", async () => {
       mockCreateClient.mockResolvedValue(
@@ -93,8 +102,10 @@ describe("actions/group", () => {
     });
 
     it("正常なリクエストの場合、グループを返し revalidatePath を呼ぶ", async () => {
-      mockCreateClient.mockResolvedValue(makeAuthenticatedSupabase() as never);
-      const mockResultGroup = { id: "g-1", name: "テストグループ" };
+      mockCreateClient.mockResolvedValue(
+        makeAuthenticatedSupabase(VALID_USER_ID) as never,
+      );
+      const mockResultGroup = { id: VALID_GROUP_ID, name: "テストグループ" };
       mockCreateGroup.mockResolvedValue(mockResultGroup as never);
 
       const result = await createGroupAction({
@@ -109,7 +120,7 @@ describe("actions/group", () => {
 
   describe("addMemberAction", () => {
     it("ユーザーが見つからない場合、エラーを返す", async () => {
-      const supabase = makeAuthenticatedSupabase();
+      const supabase = makeAuthenticatedSupabase(VALID_USER_ID);
       // @ts-ignore
       supabase.from().single.mockResolvedValue({
         data: null,
@@ -117,46 +128,74 @@ describe("actions/group", () => {
       });
       mockCreateClient.mockResolvedValue(supabase as never);
 
-      const result = await addMemberAction("g-1", { searchId: "unknown-id" });
+      const result = await addMemberAction({
+        groupId: VALID_GROUP_ID,
+        input: { searchId: "unknown-id" },
+      });
       expect(result.error).toBe(MESSAGES.ERROR.USER_NOT_FOUND);
     });
 
     it("正常な場合、メンバーを追加し revalidatePath を呼ぶ", async () => {
-      mockCreateClient.mockResolvedValue(makeAuthenticatedSupabase() as never);
+      mockCreateClient.mockResolvedValue(
+        makeAuthenticatedSupabase(VALID_USER_ID) as never,
+      );
       mockAddMemberToGroup.mockResolvedValue(undefined);
 
-      const result = await addMemberAction("g-1", {
-        searchId: "user-id-to-add",
+      const result = await addMemberAction({
+        groupId: VALID_GROUP_ID,
+        input: { searchId: "user-id-to-add" },
       });
 
       expect(result.data?.success).toBe(true);
       expect(mockAddMemberToGroup).toHaveBeenCalled();
-      expect(mockRevalidatePath).toHaveBeenCalledWith("/groups/g-1");
+      expect(mockRevalidatePath).toHaveBeenCalledWith(
+        `/groups/${VALID_GROUP_ID}`,
+      );
     });
   });
 
   describe("removeMemberAction", () => {
     it("正常にメンバーを削除し revalidatePath を呼ぶ", async () => {
-      mockCreateClient.mockResolvedValue(makeAuthenticatedSupabase() as never);
+      mockCreateClient.mockResolvedValue(
+        makeAuthenticatedSupabase(VALID_USER_ID) as never,
+      );
+      mockGetGroupById.mockResolvedValue({
+        id: VALID_GROUP_ID,
+        created_by: VALID_USER_ID,
+      } as any);
       mockRemoveMemberFromGroup.mockResolvedValue(undefined);
 
-      const result = await removeMemberAction("g-1", "user-2");
+      const result = await removeMemberAction({
+        groupId: VALID_GROUP_ID,
+        targetUserId: TARGET_USER_ID,
+      });
 
       expect(result.data?.success).toBe(true);
-      expect(mockRemoveMemberFromGroup).toHaveBeenCalledWith("g-1", "user-2");
-      expect(mockRevalidatePath).toHaveBeenCalledWith("/groups/g-1");
+      expect(mockRemoveMemberFromGroup).toHaveBeenCalledWith(
+        VALID_GROUP_ID,
+        TARGET_USER_ID,
+      );
+      expect(mockRevalidatePath).toHaveBeenCalledWith(
+        `/groups/${VALID_GROUP_ID}`,
+      );
     });
   });
 
   describe("deleteGroupAction", () => {
     it("正常にグループを削除し revalidatePath を呼ぶ", async () => {
-      mockCreateClient.mockResolvedValue(makeAuthenticatedSupabase() as never);
+      mockCreateClient.mockResolvedValue(
+        makeAuthenticatedSupabase(VALID_USER_ID) as never,
+      );
+      mockGetGroupById.mockResolvedValue({
+        id: VALID_GROUP_ID,
+        created_by: VALID_USER_ID,
+      } as any);
       mockDeleteGroup.mockResolvedValue(undefined);
 
-      const result = await deleteGroupAction("g-1");
+      const result = await deleteGroupAction(VALID_GROUP_ID);
 
       expect(result.data?.success).toBe(true);
-      expect(mockDeleteGroup).toHaveBeenCalledWith("g-1");
+      expect(mockDeleteGroup).toHaveBeenCalledWith(VALID_GROUP_ID);
       expect(mockRevalidatePath).toHaveBeenCalledWith("/");
     });
   });

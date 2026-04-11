@@ -78,11 +78,17 @@ describe("actions/payment", () => {
       mockCreateClient.mockResolvedValue(makeAuthenticatedSupabase() as never);
       mockDeletePayment.mockResolvedValue(undefined);
 
-      const result = await deletePaymentAction("p-1", "g-1");
+      const input = {
+        paymentId: "00000000-0000-4000-8000-000000000001",
+        groupId: "00000000-0000-4000-8000-000000000002",
+      };
+      const result = await deletePaymentAction(input);
 
       expect(result.data?.success).toBe(true);
-      expect(mockDeletePayment).toHaveBeenCalledWith("p-1");
-      expect(mockRevalidatePath).toHaveBeenCalledWith("/groups/g-1");
+      expect(mockDeletePayment).toHaveBeenCalledWith(input.paymentId);
+      expect(mockRevalidatePath).toHaveBeenCalledWith(
+        `/groups/${input.groupId}`,
+      );
     });
   });
 });

@@ -74,7 +74,10 @@ export function MembersModal({
 
     setIsRemovingMemberId(member.id);
     startTransition(async () => {
-      const { error } = await removeMemberAction(groupId, member.id);
+      const { error } = await removeMemberAction({
+        groupId,
+        targetUserId: member.id,
+      });
       if (error) {
         await alert({
           title: MESSAGES.UI.ERROR_TITLE,

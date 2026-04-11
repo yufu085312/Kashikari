@@ -30,11 +30,9 @@ export default function ForgotPasswordPage() {
       return;
     }
 
-    const formData = new FormData();
-    formData.append("email", email);
-
+    setError(null);
     startTransition(async () => {
-      const result = await sendResetPasswordEmail(formData);
+      const result = await sendResetPasswordEmail({ email });
       if (result.error) {
         setError(result.error);
       } else {

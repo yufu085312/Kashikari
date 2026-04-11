@@ -74,11 +74,17 @@ describe("actions/settlement", () => {
       mockCreateClient.mockResolvedValue(makeAuthenticatedSupabase() as never);
       mockDeleteSettlement.mockResolvedValue(undefined);
 
-      const result = await deleteSettlementAction("s-1", "g-1");
+      const input = {
+        settlementId: "00000000-0000-4000-8000-000000000001",
+        groupId: "00000000-0000-4000-8000-000000000002",
+      };
+      const result = await deleteSettlementAction(input);
 
       expect(result.data?.success).toBe(true);
-      expect(mockDeleteSettlement).toHaveBeenCalledWith("s-1");
-      expect(mockRevalidatePath).toHaveBeenCalledWith("/groups/g-1");
+      expect(mockDeleteSettlement).toHaveBeenCalledWith(input.settlementId);
+      expect(mockRevalidatePath).toHaveBeenCalledWith(
+        `/groups/${input.groupId}`,
+      );
     });
   });
 });
