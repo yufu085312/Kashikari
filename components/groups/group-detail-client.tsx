@@ -481,7 +481,11 @@ export function GroupDetailClient({
                 <button
                   onClick={() => handleRemoveMember(m)}
                   disabled={isRemovingMemberId !== null}
-                  className="ml-2 p-1.5 text-gray-500 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-all active:scale-95"
+                  className={`ml-2 p-1.5 rounded-lg transition-all active:scale-95 ${
+                    m.id === userId
+                      ? "text-red-500 bg-red-500/10"
+                      : "text-gray-500 hover:text-red-500 hover:bg-red-500/10"
+                  }`}
                   title={
                     m.id === userId ? MESSAGES.UI.LEAVE : MESSAGES.UI.REMOVE
                   }
