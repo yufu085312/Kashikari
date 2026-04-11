@@ -1,5 +1,5 @@
 import { Inter } from "next/font/google";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "@/styles/globals.css";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { AlertProvider } from "@/components/providers/alert-provider";
@@ -8,11 +8,14 @@ import { METADATA } from "@/lib/constants";
 const inter = Inter({ subsets: ["latin"] });
 const gaId = process.env.NEXT_PUBLIC_GA_ID;
 
+export const viewport: Viewport = {
+  themeColor: "#10b981",
+};
+
 export const metadata: Metadata = {
   title: METADATA.TITLE,
   description: METADATA.DESCRIPTION,
   keywords: [...METADATA.KEYWORDS],
-  themeColor: "#10b981",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",

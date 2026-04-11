@@ -1,5 +1,7 @@
 "use client";
 
+export const runtime = "edge";
+
 import { use, useState, useTransition, useEffect } from "react";
 import { verifySignupOtp, resendSignupOtp } from "@/app/signup/actions";
 import { Button } from "@/components/ui/button";

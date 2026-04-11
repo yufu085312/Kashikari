@@ -1,5 +1,7 @@
 "use client";
 
+export const runtime = "edge";
+
 import { useState } from "react";
 import { submitInquiry } from "./actions";
 import { Button } from "@/components/ui/button";
