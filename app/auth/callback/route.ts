@@ -2,6 +2,7 @@ export const runtime = "edge";
 
 import { NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
+import { MESSAGES, ROUTES } from "@/lib/constants";
 
 /**
  * リダイレクト先パスを安全に検証する。
@@ -9,7 +10,7 @@ import { createClient } from "@/utils/supabase/server";
  */
 function sanitizeRedirectPath(path: string | null): string {
   if (!path || !path.startsWith("/") || path.startsWith("//")) {
-    return "/";
+    return ROUTES.HOME;
   }
   return path;
 }
@@ -21,19 +22,44 @@ export async function GET(request: Request) {
 
   if (code) {
     const supabase = await createClient();
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
-    if (!error) {
+    const {
+      data: { session },
+      error: exchangeError,
+    } = await supabase.auth.exchangeCodeForSession(code);
+
+    if (!exchangeError && session) {
+      const user = session.user;
+      let targetNext = next;
+
+      // プロフィール確認
+      const { data: profile } = await supabase
+        .from("users")
+        .select("name")
+        .eq("id", user.id)
+        .single();
+
+      // プロフィール確認: 未作成(null)または名前が「未設定」の場合はプロフィール設定画面へ
+      if (!profile || profile?.name === MESSAGES.UI.NOT_SET) {
+        targetNext = `${ROUTES.SETUP_PROFILE}?next=${encodeURIComponent(next)}`;
+      }
+
       const forwardedHost = request.headers.get("x-forwarded-host");
       const isLocalEnv = process.env.NODE_ENV === "development";
+
+      let finalRedirectUrl: string;
       if (isLocalEnv) {
-        return NextResponse.redirect(`${origin}${next}`);
+        finalRedirectUrl = `${origin}${targetNext}`;
       } else if (forwardedHost) {
-        return NextResponse.redirect(`https://${forwardedHost}${next}`);
+        finalRedirectUrl = `https://${forwardedHost}${targetNext}`;
       } else {
-        return NextResponse.redirect(`${origin}${next}`);
+        finalRedirectUrl = `${origin}${targetNext}`;
       }
+
+      return NextResponse.redirect(finalRedirectUrl);
     }
   }
 
-  return NextResponse.redirect(`${origin}/login?error=Authentication failed`);
+  return NextResponse.redirect(
+    `${origin}${ROUTES.LOGIN}?error=${encodeURIComponent(MESSAGES.ERROR.AUTH_FAILED)}`,
+  );
 }

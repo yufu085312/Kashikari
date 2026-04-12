@@ -48,6 +48,7 @@ export async function updateSession(request: NextRequest) {
     pathname === "/signup/verify" ||
     pathname === "/login/forgot-password" ||
     pathname === "/login/reset-password" ||
+    pathname === "/setup-profile" ||
     pathname.startsWith("/auth/confirm") ||
     pathname.startsWith("/auth/callback");
 

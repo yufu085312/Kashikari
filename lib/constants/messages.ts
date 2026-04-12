@@ -83,6 +83,7 @@ export const MESSAGES = {
     VALIDATION_ERROR: "入力内容に誤りがあります",
     TOTAL_SHARE_LABEL: "負担合計",
     PAYMENT_AMOUNT_LABEL: "支払い金額",
+    AUTH_FAILED: "認証に失敗しました",
   },
   UI: {
     APP_TAGLINE: "割り勘・貸し借り管理アプリ",
@@ -270,6 +271,15 @@ export const MESSAGES = {
     PAYMENT_MEMO_PLACEHOLDER: "例：焼肉ランチ",
     SHARE_ICON_LABEL: "共有ボタン",
     MEMBER_COUNT_UNIT: "名",
+    NOT_SET: "未設定",
+    PROFILE_SETUP_TITLE: "プロフィール設定",
+    PROFILE_SETUP_DESCRIPTION:
+      "アプリを利用するための基本情報を入力してください",
+    COMPLETE_SETUP: "設定を完了する",
+    OR_SIGN_IN_WITH: "または次の方法で",
+    REGISTER: "登録",
+    SIGN_IN_WITH_GOOGLE: "Googleで",
+    SIGN_IN_WITH_APPLE: "Appleで",
   },
   LANDING: {
     HERO_SUBTITLE: "もう精算で揉めない。\nスマートな割り勘管理",

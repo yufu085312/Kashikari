@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ROUTES, LIMITS, MESSAGES, METADATA } from "@/lib/constants";
 
+import { SocialLoginButtons } from "@/components/ui/social-login-buttons";
+
 export default function SignupPage({
   searchParams,
 }: {
@@ -162,6 +164,10 @@ export default function SignupPage({
             {isPending ? MESSAGES.UI.SIGNING_UP : MESSAGES.UI.SIGNUP}
           </Button>
         </form>
+
+        <div className="mt-8">
+          <SocialLoginButtons next={params.next} isSignUp={true} />
+        </div>
 
         <div className="mt-6 flex flex-col items-center gap-4 text-sm text-slate-500">
           <Link
