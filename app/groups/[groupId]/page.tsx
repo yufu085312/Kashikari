@@ -53,12 +53,15 @@ export default async function GroupDetailPage(props: {
 function GroupDetailSkeleton({ name }: { name: string }) {
   return (
     <div className="animate-pulse space-y-6">
-      <div className="h-8 w-48 bg-white/5 rounded-lg" />
-      <h1 className="text-2xl font-black text-white">{name}</h1>
-      <div className="h-12 w-full bg-white/5 rounded-2xl" />
+      <div className="h-8 w-48 bg-slate-200 rounded-lg" />
+      <h1 className="text-2xl font-black text-slate-900">{name}</h1>
+      <div className="h-12 w-full bg-slate-100 shadow-sm border border-slate-200 rounded-2xl" />
       <div className="space-y-4">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="h-24 w-full bg-white/5 rounded-2xl" />
+          <div
+            key={i}
+            className="h-24 w-full bg-slate-100 shadow-sm border border-slate-200 rounded-2xl"
+          />
         ))}
       </div>
     </div>

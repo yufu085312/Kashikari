@@ -44,7 +44,7 @@ export default function ForgotPasswordPage() {
   return (
     <div className="flex flex-col items-center justify-center py-8 sm:py-12">
       <div className="flex flex-col items-center mb-8 text-center animate-fade-in">
-        <div className="w-16 h-16 bg-white/5 rounded-[2rem] flex items-center justify-center shadow-2xl border border-white/10 overflow-hidden mb-6 shadow-emerald-500/10">
+        <div className="w-16 h-16 bg-white rounded-[2rem] flex items-center justify-center shadow-xl border border-slate-200 overflow-hidden mb-6 shadow-emerald-100">
           <Image
             src="/icon.png"
             alt={METADATA.SHORT_NAME}
@@ -53,21 +53,21 @@ export default function ForgotPasswordPage() {
             className="w-full h-full object-cover p-2.5"
           />
         </div>
-        <h1 className="text-3xl font-black text-white tracking-tighter mb-3">
+        <h1 className="text-3xl font-black text-slate-900 tracking-tighter mb-3">
           {MESSAGES.UI.RESET_PASSWORD_TITLE}
         </h1>
-        <p className="text-gray-400 font-medium tracking-wide">
+        <p className="text-slate-500 font-medium tracking-wide">
           {MESSAGES.UI.APP_TAGLINE}
         </p>
       </div>
 
-      <div className="w-full max-w-md p-8 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl animate-slide-up">
+      <div className="w-full max-w-md p-8 rounded-3xl bg-white backdrop-blur-xl border border-slate-200 shadow-xl animate-slide-up">
         {message ? (
           <div className="text-center space-y-6">
-            <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-6">
-              <div className="w-12 h-12 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-6">
+              <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <svg
-                  className="w-6 h-6 text-emerald-400"
+                  className="w-6 h-6 text-emerald-500"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -80,18 +80,18 @@ export default function ForgotPasswordPage() {
                   />
                 </svg>
               </div>
-              <p className="text-emerald-400 font-medium">{message}</p>
+              <p className="text-emerald-600 font-medium">{message}</p>
             </div>
             <Link
               href={ROUTES.LOGIN}
-              className="inline-block text-gray-400 hover:text-white transition-colors"
+              className="inline-block text-slate-500 hover:text-slate-800 transition-colors"
             >
               {MESSAGES.UI.BACK_TO_LOGIN}
             </Link>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-6">
-            <p className="text-sm text-gray-400 text-center mb-2">
+            <p className="text-sm text-slate-500 text-center mb-2">
               {MESSAGES.UI.FORGOT_PASSWORD_DESC_1}
               <br />
               {MESSAGES.UI.FORGOT_PASSWORD_DESC_2}
@@ -121,7 +121,7 @@ export default function ForgotPasswordPage() {
             <div className="text-center pt-2">
               <Link
                 href={ROUTES.LOGIN}
-                className="text-sm text-gray-400 hover:text-white transition-colors"
+                className="text-sm text-slate-500 hover:text-slate-800 transition-colors"
               >
                 {MESSAGES.UI.BACK_TO_LOGIN}
               </Link>

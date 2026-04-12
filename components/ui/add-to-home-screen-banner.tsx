@@ -62,7 +62,7 @@ export function AddToHomeScreenBanner() {
 
   return (
     <div className="animate-slide-up mb-4">
-      <div className="relative flex items-start gap-3 p-4 rounded-2xl bg-gradient-to-r from-brand-500/10 to-emerald-500/10 border border-brand-500/20 backdrop-blur-sm shadow-lg shadow-brand-500/5">
+      <div className="relative flex items-start gap-3 p-4 rounded-2xl bg-white border border-slate-200 backdrop-blur-sm shadow-[0_4px_24px_rgba(0,0,0,0.06)]">
         {/* アイコン */}
         <div className="shrink-0 w-10 h-10 rounded-xl bg-brand-500/20 flex items-center justify-center border border-brand-500/30">
           <svg
@@ -82,11 +82,11 @@ export function AddToHomeScreenBanner() {
 
         {/* テキスト */}
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-bold text-white leading-tight">
+          <p className="text-sm font-bold text-slate-800 leading-tight">
             {MESSAGES.UI.ADD_TO_HOME_SCREEN}
           </p>
           {isIos ? (
-            <p className="text-xs text-gray-400 mt-1 leading-relaxed">
+            <p className="text-xs text-slate-500 mt-1 leading-relaxed">
               {MESSAGES.UI.SHARE_ICON_LABEL}
               <svg
                 className="inline w-3.5 h-3.5 mx-0.5 -mt-0.5 text-gray-400"
@@ -123,11 +123,12 @@ export function AddToHomeScreenBanner() {
         {/* 閉じるボタン */}
         <button
           onClick={handleDismiss}
-          className="shrink-0 w-6 h-6 flex items-center justify-center rounded-lg text-gray-500 hover:text-gray-300 hover:bg-white/10 transition-all"
+          className="p-1 -mr-1 -mt-1 text-slate-400 hover:text-slate-600 transition-colors rounded-lg hover:bg-slate-100"
           aria-label={MESSAGES.UI.CLOSE}
         >
+          <span className="sr-only">閉じる</span>
           <svg
-            className="w-4 h-4"
+            className="w-5 h-5"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"

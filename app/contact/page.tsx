@@ -78,17 +78,17 @@ export default function ContactPage() {
         </button>
       </div>
 
-      <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 sm:p-10 shadow-2xl mx-4 sm:mx-0">
-        <h1 className="text-2xl font-black text-white mb-2 tracking-tight">
+      <div className="bg-white backdrop-blur-xl border border-slate-200 rounded-3xl p-6 sm:p-10 shadow-xl mx-4 sm:mx-0">
+        <h1 className="text-2xl font-black text-slate-900 mb-2 tracking-tight">
           {MESSAGES.UI.INQUIRY_TITLE}
         </h1>
-        <p className="text-gray-400 text-sm mb-8">
+        <p className="text-slate-500 text-sm mb-8">
           {MESSAGES.UI.INQUIRY_DESCRIPTION}
         </p>
 
         {success ? (
-          <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-2xl p-6 text-center animate-scale-in">
-            <div className="w-12 h-12 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-4 text-emerald-400">
+          <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-6 text-center animate-scale-in">
+            <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4 text-emerald-600">
               <svg
                 className="w-6 h-6"
                 fill="none"
@@ -103,10 +103,10 @@ export default function ContactPage() {
                 />
               </svg>
             </div>
-            <h3 className="text-white font-bold mb-2">
+            <h3 className="text-slate-800 font-bold mb-2">
               {MESSAGES.UI.INQUIRY_SUBMITTED_TITLE}
             </h3>
-            <p className="text-gray-400 text-sm mb-6">
+            <p className="text-slate-500 text-sm mb-6">
               {MESSAGES.UI.INQUIRY_SUBMITTED_MSG}
             </p>
             <Button onClick={() => router.push(ROUTES.HOME)} className="w-full">
@@ -116,7 +116,7 @@ export default function ContactPage() {
         ) : (
           <form onSubmit={handleSubmit} className="space-y-6" noValidate>
             <div className="space-y-1.5">
-              <label className="block text-sm font-medium text-gray-300 ml-1">
+              <label className="block text-sm font-medium text-slate-700 ml-1">
                 {MESSAGES.UI.INQUIRY_TYPE_LABEL}
               </label>
               <div className="relative">
@@ -124,28 +124,31 @@ export default function ContactPage() {
                   name="type"
                   required
                   defaultValue=""
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white appearance-none focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all duration-200"
+                  className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-slate-800 appearance-none focus:outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-400 transition-all duration-200"
                 >
-                  <option value="" disabled className="text-gray-500">
+                  <option value="" disabled className="text-slate-400">
                     {MESSAGES.UI.INQUIRY_TYPE_PLACEHOLDER}
                   </option>
-                  <option value="機能要望" className="bg-gray-900 text-white">
+                  <option value="機能要望" className="bg-white text-slate-800">
                     {MESSAGES.UI.INQUIRY_TYPE_REQUEST}
                   </option>
-                  <option value="不具合報告" className="bg-gray-900 text-white">
+                  <option
+                    value="不具合報告"
+                    className="bg-white text-slate-800"
+                  >
                     {MESSAGES.UI.INQUIRY_TYPE_BUG}
                   </option>
                   <option
                     value="アカウントに関するお問い合わせ"
-                    className="bg-gray-900 text-white"
+                    className="bg-white text-slate-800"
                   >
                     {MESSAGES.UI.INQUIRY_TYPE_ACCOUNT}
                   </option>
-                  <option value="その他" className="bg-gray-900 text-white">
+                  <option value="その他" className="bg-white text-slate-800">
                     {MESSAGES.UI.INQUIRY_TYPE_OTHER}
                   </option>
                 </select>
-                <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-gray-400">
+                <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-slate-400">
                   <svg
                     className="w-5 h-5"
                     fill="none"
@@ -162,7 +165,7 @@ export default function ContactPage() {
                 </div>
               </div>
               {validationErrors.type && (
-                <p className="text-red-400 text-xs mt-1 ml-1 animate-fade-in">
+                <p className="text-red-500 text-xs mt-1 ml-1 animate-fade-in">
                   {validationErrors.type}
                 </p>
               )}
@@ -170,10 +173,10 @@ export default function ContactPage() {
 
             <div className="space-y-1.5">
               <div className="flex justify-between items-baseline mx-1">
-                <label className="block text-sm font-medium text-gray-300">
+                <label className="block text-sm font-medium text-slate-700">
                   {MESSAGES.UI.INQUIRY_CONTENT_LABEL}
                 </label>
-                <span className="text-xs text-gray-500">
+                <span className="text-xs text-slate-400">
                   {MESSAGES.UI.INQUIRY_CONTENT_CHAR_LIMIT}
                 </span>
               </div>
@@ -182,11 +185,11 @@ export default function ContactPage() {
                 required
                 maxLength={1000}
                 rows={5}
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all duration-200 resize-none"
+                className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-400 transition-all duration-200 resize-none"
                 placeholder={MESSAGES.UI.INQUIRY_CONTENT_PLACEHOLDER}
               />
               {validationErrors.content && (
-                <p className="text-red-400 text-xs mt-1 ml-1 animate-fade-in">
+                <p className="text-red-500 text-xs mt-1 ml-1 animate-fade-in">
                   {validationErrors.content}
                 </p>
               )}

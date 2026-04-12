@@ -17,11 +17,11 @@ export function LandingPage() {
           Kashikari
         </h1>
 
-        <p className="text-2xl md:text-4xl font-bold text-white leading-snug drop-shadow-md mt-4 whitespace-pre-wrap">
+        <p className="text-2xl md:text-4xl font-bold text-slate-700 leading-snug drop-shadow-sm mt-4 whitespace-pre-wrap">
           {MESSAGES.LANDING.HERO_SUBTITLE}
         </p>
 
-        <p className="max-w-2xl mx-auto text-base md:text-xl text-gray-300 font-medium leading-relaxed mt-6 whitespace-pre-wrap">
+        <p className="max-w-2xl mx-auto text-base md:text-xl text-slate-500 font-medium leading-relaxed mt-6 whitespace-pre-wrap">
           {MESSAGES.LANDING.HERO_DESC}
         </p>
 
@@ -55,14 +55,14 @@ export function LandingPage() {
       <section className="w-full py-16 md:py-24 border-t border-white/5 relative">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-px bg-gradient-to-r from-transparent via-emerald-500/30 to-transparent"></div>
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
+          <h2 className="text-3xl md:text-5xl font-bold text-slate-800 mb-4">
             {MESSAGES.LANDING.FEATURES_TITLE}
           </h2>
-          <p className="text-gray-400">{MESSAGES.LANDING.FEATURES_SUBTITLE}</p>
+          <p className="text-slate-500">{MESSAGES.LANDING.FEATURES_SUBTITLE}</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-          <div className="relative group rounded-3xl p-8 bg-white/[0.02] border border-white/10 hover:bg-white/[0.04] transition-all duration-300 hover:border-emerald-500/40 flex flex-col items-center text-center">
+          <div className="relative group rounded-3xl p-8 bg-white border border-slate-200 hover:border-emerald-400/50 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col items-center text-center">
             <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-500/20 to-teal-500/20 flex items-center justify-center mb-6 border border-emerald-500/30 group-hover:scale-110 transition-transform duration-300 shadow-[0_0_20px_rgba(16,185,129,0.2)]">
               <svg
                 className="w-8 h-8 text-emerald-400"
@@ -78,15 +78,15 @@ export function LandingPage() {
                 />
               </svg>
             </div>
-            <h3 className="text-xl font-bold text-white mb-3">
+            <h3 className="text-xl font-bold text-slate-800 mb-3">
               {MESSAGES.LANDING.FEATURE_1_TITLE}
             </h3>
-            <p className="text-gray-400 text-sm leading-relaxed">
+            <p className="text-slate-500 text-sm leading-relaxed">
               {MESSAGES.LANDING.FEATURE_1_DESC}
             </p>
           </div>
 
-          <div className="relative group rounded-3xl p-8 bg-white/[0.02] border border-white/10 hover:bg-white/[0.04] transition-all duration-300 hover:border-teal-500/40 flex flex-col items-center text-center">
+          <div className="relative group rounded-3xl p-8 bg-white border border-slate-200 hover:border-teal-400/50 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col items-center text-center">
             <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-teal-500/20 to-cyan-500/20 flex items-center justify-center mb-6 border border-teal-500/30 group-hover:scale-110 transition-transform duration-300 shadow-[0_0_20px_rgba(20,184,166,0.2)]">
               <svg
                 className="w-8 h-8 text-teal-400"
@@ -102,15 +102,15 @@ export function LandingPage() {
                 />
               </svg>
             </div>
-            <h3 className="text-xl font-bold text-white mb-3">
+            <h3 className="text-xl font-bold text-slate-800 mb-3">
               {MESSAGES.LANDING.FEATURE_2_TITLE}
             </h3>
-            <p className="text-gray-400 text-sm leading-relaxed">
+            <p className="text-slate-500 text-sm leading-relaxed">
               {MESSAGES.LANDING.FEATURE_2_DESC}
             </p>
           </div>
 
-          <div className="relative group rounded-3xl p-8 bg-white/[0.02] border border-white/10 hover:bg-white/[0.04] transition-all duration-300 hover:border-green-500/40 flex flex-col items-center text-center">
+          <div className="relative group rounded-3xl p-8 bg-white border border-slate-200 hover:border-emerald-400/50 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col items-center text-center">
             <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-green-500/20 to-emerald-500/20 flex items-center justify-center mb-6 border border-green-500/30 group-hover:scale-110 transition-transform duration-300 shadow-[0_0_20px_rgba(34,197,94,0.2)]">
               <svg
                 className="w-8 h-8 text-green-400"
@@ -126,10 +126,10 @@ export function LandingPage() {
                 />
               </svg>
             </div>
-            <h3 className="text-xl font-bold text-white mb-3">
+            <h3 className="text-xl font-bold text-slate-800 mb-3">
               {MESSAGES.LANDING.FEATURE_3_TITLE}
             </h3>
-            <p className="text-gray-400 text-sm leading-relaxed">
+            <p className="text-slate-500 text-sm leading-relaxed">
               {MESSAGES.LANDING.FEATURE_3_DESC}
             </p>
           </div>
@@ -139,45 +139,45 @@ export function LandingPage() {
       {/* 3. ユースケースセクション (Use Cases) */}
       <section className="w-full py-16 md:py-24 border-t border-white/5 relative">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-5xl font-bold text-white mb-5">
+          <h2 className="text-3xl md:text-5xl font-bold text-slate-800 mb-5">
             {MESSAGES.LANDING.USECASES_TITLE}
           </h2>
-          <p className="text-gray-400">{MESSAGES.LANDING.USECASES_SUBTITLE}</p>
+          <p className="text-slate-500">{MESSAGES.LANDING.USECASES_SUBTITLE}</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Use Case 1 */}
-          <div className="p-6 rounded-3xl bg-emerald-950/20 border border-emerald-900/30 flex items-start space-x-4">
+          <div className="p-6 rounded-3xl bg-emerald-50 border border-emerald-100 flex items-start space-x-4">
             <div className="text-4xl">✈️</div>
             <div>
-              <h3 className="text-lg font-bold text-white mb-2">
+              <h3 className="text-lg font-bold text-slate-800 mb-2">
                 {MESSAGES.LANDING.USECASE_1_TITLE}
               </h3>
-              <p className="text-sm text-emerald-100/60 leading-relaxed">
+              <p className="text-sm text-slate-600 leading-relaxed">
                 {MESSAGES.LANDING.USECASE_1_DESC}
               </p>
             </div>
           </div>
           {/* Use Case 2 */}
-          <div className="p-6 rounded-3xl bg-teal-950/20 border border-teal-900/30 flex items-start space-x-4">
+          <div className="p-6 rounded-3xl bg-teal-50 border border-teal-100 flex items-start space-x-4">
             <div className="text-4xl">🍻</div>
             <div>
-              <h3 className="text-lg font-bold text-white mb-2">
+              <h3 className="text-lg font-bold text-slate-800 mb-2">
                 {MESSAGES.LANDING.USECASE_2_TITLE}
               </h3>
-              <p className="text-sm text-teal-100/60 leading-relaxed">
+              <p className="text-sm text-slate-600 leading-relaxed">
                 {MESSAGES.LANDING.USECASE_2_DESC}
               </p>
             </div>
           </div>
           {/* Use Case 3 */}
-          <div className="p-6 rounded-3xl bg-cyan-950/20 border border-cyan-900/30 flex items-start space-x-4">
+          <div className="p-6 rounded-3xl bg-cyan-50 border border-cyan-100 flex items-start space-x-4">
             <div className="text-4xl">🏠</div>
             <div>
-              <h3 className="text-lg font-bold text-white mb-2">
+              <h3 className="text-lg font-bold text-slate-800 mb-2">
                 {MESSAGES.LANDING.USECASE_3_TITLE}
               </h3>
-              <p className="text-sm text-cyan-100/60 leading-relaxed">
+              <p className="text-sm text-slate-600 leading-relaxed">
                 {MESSAGES.LANDING.USECASE_3_DESC}
               </p>
             </div>
@@ -188,7 +188,7 @@ export function LandingPage() {
       {/* 4. 使い方ステップ (How it Works) */}
       <section className="w-full py-16 md:py-24 border-t border-white/5 relative">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
+          <h2 className="text-3xl md:text-5xl font-bold text-slate-800 mb-4">
             {MESSAGES.LANDING.STEPS_TITLE}
           </h2>
         </div>
@@ -196,39 +196,39 @@ export function LandingPage() {
         <div className="flex flex-col md:flex-row justify-center items-center gap-8 md:gap-4 lg:gap-8 max-w-4xl mx-auto">
           {/* Step 1 */}
           <div className="flex-1 text-center space-y-4">
-            <div className="w-20 h-20 mx-auto rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-3xl font-black text-emerald-400">
+            <div className="w-20 h-20 mx-auto rounded-full bg-emerald-50 border border-emerald-100 flex items-center justify-center text-3xl font-black text-emerald-500 shadow-sm">
               1
             </div>
-            <h3 className="text-xl font-bold text-white">
+            <h3 className="text-xl font-bold text-slate-800">
               {MESSAGES.LANDING.STEP_1_TITLE}
             </h3>
-            <p className="text-sm text-gray-400">
+            <p className="text-sm text-slate-500">
               {MESSAGES.LANDING.STEP_1_DESC}
             </p>
           </div>
-          <div className="hidden md:block text-white/30 text-4xl">➡</div>
+          <div className="hidden md:block text-slate-200 text-4xl">➡</div>
           {/* Step 2 */}
           <div className="flex-1 text-center space-y-4">
-            <div className="w-20 h-20 mx-auto rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-3xl font-black text-teal-400">
+            <div className="w-20 h-20 mx-auto rounded-full bg-teal-50 border border-teal-100 flex items-center justify-center text-3xl font-black text-teal-500 shadow-sm">
               2
             </div>
-            <h3 className="text-xl font-bold text-white">
+            <h3 className="text-xl font-bold text-slate-800">
               {MESSAGES.LANDING.STEP_2_TITLE}
             </h3>
-            <p className="text-sm text-gray-400">
+            <p className="text-sm text-slate-500">
               {MESSAGES.LANDING.STEP_2_DESC}
             </p>
           </div>
-          <div className="hidden md:block text-white/30 text-4xl">➡</div>
+          <div className="hidden md:block text-slate-200 text-4xl">➡</div>
           {/* Step 3 */}
           <div className="flex-1 text-center space-y-4">
-            <div className="w-20 h-20 mx-auto rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-3xl font-black text-cyan-400">
+            <div className="w-20 h-20 mx-auto rounded-full bg-cyan-50 border border-cyan-100 flex items-center justify-center text-3xl font-black text-cyan-500 shadow-sm">
               3
             </div>
-            <h3 className="text-xl font-bold text-white">
+            <h3 className="text-xl font-bold text-slate-800">
               {MESSAGES.LANDING.STEP_3_TITLE}
             </h3>
-            <p className="text-sm text-gray-400">
+            <p className="text-sm text-slate-500">
               {MESSAGES.LANDING.STEP_3_DESC}
             </p>
           </div>
@@ -238,35 +238,35 @@ export function LandingPage() {
       {/* 5. FAQセクション */}
       <section className="w-full py-16 md:py-24 border-t border-white/5 relative max-w-3xl mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-slate-800 mb-4">
             {MESSAGES.LANDING.FAQ_TITLE}
           </h2>
         </div>
 
         <div className="space-y-4">
-          <div className="p-6 rounded-2xl bg-white/[0.03] border border-white/10">
-            <h3 className="text-lg font-bold text-emerald-400 mb-2 flex items-center gap-2">
+          <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm">
+            <h3 className="text-lg font-bold text-emerald-600 mb-2 flex items-center gap-2">
               <span className="text-xl">Q.</span> {MESSAGES.LANDING.FAQ_1_Q}
             </h3>
-            <p className="text-gray-300 text-sm ml-7">
+            <p className="text-slate-600 text-sm ml-7">
               {MESSAGES.LANDING.FAQ_1_A}
             </p>
           </div>
 
-          <div className="p-6 rounded-2xl bg-white/[0.03] border border-white/10">
-            <h3 className="text-lg font-bold text-emerald-400 mb-2 flex items-center gap-2">
+          <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm">
+            <h3 className="text-lg font-bold text-emerald-600 mb-2 flex items-center gap-2">
               <span className="text-xl">Q.</span> {MESSAGES.LANDING.FAQ_2_Q}
             </h3>
-            <p className="text-gray-300 text-sm ml-7">
+            <p className="text-slate-600 text-sm ml-7">
               {MESSAGES.LANDING.FAQ_2_A}
             </p>
           </div>
 
-          <div className="p-6 rounded-2xl bg-white/[0.03] border border-white/10">
-            <h3 className="text-lg font-bold text-emerald-400 mb-2 flex items-center gap-2">
+          <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm">
+            <h3 className="text-lg font-bold text-emerald-600 mb-2 flex items-center gap-2">
               <span className="text-xl">Q.</span> {MESSAGES.LANDING.FAQ_3_Q}
             </h3>
-            <p className="text-gray-300 text-sm ml-7">
+            <p className="text-slate-600 text-sm ml-7">
               {MESSAGES.LANDING.FAQ_3_A}
             </p>
           </div>
@@ -275,17 +275,17 @@ export function LandingPage() {
 
       {/* 6. ボトムCTAセクション */}
       <section className="w-full py-20 relative text-center">
-        <div className="absolute inset-0 bg-gradient-to-t from-emerald-900/20 to-transparent -z-10 rounded-3xl blur-2xl"></div>
-        <h2 className="text-4xl md:text-6xl font-black text-white mb-6 tracking-tight whitespace-pre-wrap">
+        <div className="absolute inset-0 bg-gradient-to-t from-emerald-100 to-transparent -z-10 rounded-3xl blur-2xl"></div>
+        <h2 className="text-4xl md:text-6xl font-black text-slate-800 mb-6 tracking-tight whitespace-pre-wrap">
           {MESSAGES.LANDING.BOTTOM_CTA_TITLE}
         </h2>
-        <p className="text-gray-400 mb-10 text-lg">
+        <p className="text-slate-500 mb-10 text-lg">
           {MESSAGES.LANDING.BOTTOM_CTA_DESC}
         </p>
         <div className="flex justify-center">
           <Link
             href={ROUTES.LOGIN}
-            className="group relative inline-flex items-center justify-center px-10 py-5 font-bold transition-all duration-300 bg-white text-emerald-950 rounded-full hover:scale-105 active:scale-95 text-lg shadow-[0_0_30px_rgba(255,255,255,0.2)]"
+            className="group relative inline-flex items-center justify-center px-10 py-5 font-bold transition-all duration-300 bg-slate-900 text-white rounded-full hover:scale-105 active:scale-95 text-lg shadow-lg hover:bg-slate-800"
           >
             {MESSAGES.LANDING.BOTTOM_CTA_BTN}
             <svg
@@ -306,8 +306,8 @@ export function LandingPage() {
       </section>
 
       {/* フッター */}
-      <footer className="w-full py-8 text-center border-t border-white/10 mt-8">
-        <p className="text-gray-500 text-sm">
+      <footer className="w-full py-8 text-center border-t border-slate-200 mt-8">
+        <p className="text-slate-400 text-sm">
           © {new Date().getFullYear()} {MESSAGES.LANDING.FOOTER_RIGHTS}
         </p>
       </footer>
