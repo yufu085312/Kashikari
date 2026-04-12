@@ -23,7 +23,9 @@ export function HomeHeader({
 }: HomeHeaderProps) {
   const [copied, setCopied] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
-  const [showProfileForm, setShowProfileForm] = useState(false);
+  const [profileModalMode, setProfileModalMode] = useState<
+    "closed" | "view" | "edit"
+  >("closed");
   const [showPasswordForm, setShowPasswordForm] = useState(false);
 
   const handleCopyId = () => {
@@ -50,60 +52,9 @@ export function HomeHeader({
               {MESSAGES.UI.APP_TAGLINE}
             </h1>
           </div>
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-2 mt-6 sm:mt-8">
-            <button
-              onClick={handleCopyId}
-              className="group flex items-center justify-center min-w-[120px] gap-1.5 text-[10px] text-slate-500 hover:text-emerald-500 transition-colors bg-white px-2 py-0.5 rounded-full border border-slate-200 shadow-sm active:scale-95"
-              title={MESSAGES.UI.COPY_ID}
-            >
-              {copied ? (
-                <>
-                  <span className="font-bold text-emerald-400">
-                    {MESSAGES.UI.ID_COPY_SUCCESS}
-                  </span>
-                  <svg
-                    className="w-3 h-3 text-emerald-400 animate-fade-in"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={3}
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
-                </>
-              ) : (
-                <>
-                  <span className="font-mono">
-                    {MESSAGES.UI.ID_LABEL}: {searchId}
-                  </span>
-                  <svg
-                    className="w-3 h-3 text-slate-400 group-hover:text-emerald-500 transition-colors"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2.5}
-                      d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"
-                    />
-                  </svg>
-                </>
-              )}
-            </button>
-            <p className="text-sm text-slate-500 font-medium">
-              {MESSAGES.UI.HELLO}、
-              <span className="text-emerald-500">{userName}</span>
-            </p>
-          </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row items-end sm:items-center gap-4">
+        <div className="flex flex-col sm:flex-row items-end sm:items-center gap-4 mt-4 sm:mt-0">
           <Button
             onClick={onNewGroup}
             size="sm"
@@ -161,7 +112,7 @@ export function HomeHeader({
                 <div className="absolute right-0 top-full mt-2 w-56 bg-white/95 backdrop-blur-xl border border-slate-200 rounded-xl shadow-xl overflow-hidden z-50 py-1 animate-fade-in origin-top-right">
                   <button
                     onClick={() => {
-                      setShowProfileForm(true);
+                      setProfileModalMode("view");
                       setShowSettings(false);
                     }}
                     className="w-full flex items-center gap-2 px-4 py-3 text-sm text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors border-l-2 border-transparent hover:border-emerald-400 text-left"
@@ -179,7 +130,7 @@ export function HomeHeader({
                         d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
                       />
                     </svg>
-                    {MESSAGES.UI.PROFILE_EDIT_TITLE}
+                    {MESSAGES.UI.PROFILE_VIEW_TITLE}
                   </button>
                   <button
                     onClick={() => {
@@ -290,15 +241,116 @@ export function HomeHeader({
       </section>
 
       <Modal
-        isOpen={showProfileForm}
-        onClose={() => setShowProfileForm(false)}
-        title={MESSAGES.UI.PROFILE_EDIT_TITLE}
+        isOpen={profileModalMode !== "closed"}
+        onClose={() => {
+          setProfileModalMode("closed");
+          setCopied(false);
+        }}
+        title={
+          profileModalMode === "edit"
+            ? MESSAGES.UI.PROFILE_EDIT_TITLE
+            : MESSAGES.UI.PROFILE_VIEW_TITLE
+        }
       >
-        <ProfileForm
-          initialName={userName}
-          initialSearchId={searchId}
-          onSuccess={() => setShowProfileForm(false)}
-        />
+        {profileModalMode === "view" ? (
+          <div className="space-y-6 animate-fade-in">
+            <div className="flex flex-col gap-4">
+              <div className="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                <p className="text-[10px] font-bold text-slate-500 mb-1 uppercase tracking-widest text-left">
+                  {MESSAGES.UI.NAME_LABEL}
+                </p>
+                <div className="flex items-center mt-1">
+                  <p className="font-bold text-slate-800 bg-white px-3 py-1.5 rounded-md border border-slate-200 shadow-sm text-left">
+                    {userName}
+                  </p>
+                </div>
+              </div>
+
+              <div className="p-4 bg-slate-50 rounded-xl border border-slate-100 flex items-center justify-between">
+                <div>
+                  <p className="text-[10px] font-bold text-slate-500 mb-1 uppercase tracking-widest text-left">
+                    {MESSAGES.UI.ID_LABEL}
+                  </p>
+                  <p className="font-mono font-bold text-slate-800 tracking-wider bg-white px-2 py-1 rounded-md border border-slate-200 shadow-sm mt-1 text-left">
+                    {searchId}
+                  </p>
+                </div>
+                <button
+                  onClick={handleCopyId}
+                  className={`flex items-center justify-center p-2 gap-1.5 rounded-xl transition-all active:scale-95 ${
+                    copied
+                      ? "text-emerald-500 bg-emerald-50"
+                      : "text-slate-400 hover:text-emerald-500 hover:bg-emerald-50"
+                  }`}
+                  title={MESSAGES.UI.COPY_ID}
+                >
+                  {copied ? (
+                    <>
+                      <span className="text-xs font-bold animate-fade-in px-1">
+                        {MESSAGES.UI.ID_COPY_SUCCESS}
+                      </span>
+                      <svg
+                        className="w-5 h-5 animate-fade-in"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2.5}
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                    </>
+                  ) : (
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"
+                      />
+                    </svg>
+                  )}
+                </button>
+              </div>
+            </div>
+
+            <Button
+              onClick={() => setProfileModalMode("edit")}
+              className="w-full font-bold py-3 box-border group border-2 bg-white text-slate-700 hover:bg-slate-50 hover:border-emerald-200 shadow-sm transition-all"
+              variant="secondary"
+              size="lg"
+            >
+              <svg
+                className="w-4 h-4 mr-2 text-slate-400 group-hover:text-emerald-600 transition-colors"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+                />
+              </svg>
+              {MESSAGES.UI.PROFILE_EDIT_TITLE}
+            </Button>
+          </div>
+        ) : (
+          <ProfileForm
+            initialName={userName}
+            initialSearchId={searchId}
+            onSuccess={() => setProfileModalMode("view")}
+          />
+        )}
       </Modal>
 
       <Modal

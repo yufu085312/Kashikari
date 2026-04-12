@@ -10,8 +10,11 @@ test.describe('Profile Management', () => {
   test('プロフィール編集モーダルが開くこと', async ({ page }) => {
     // 設定ボタンをクリック (歯車アイコン)
     await page.click('button[title="' + MESSAGES.UI.SETTINGS_LABEL + '"]');
-    // プロフィール編集をクリック
-    await page.click('text=' + MESSAGES.UI.PROFILE_EDIT_TITLE);
+    // プロフィール表示をクリック
+    await page.click('text=' + MESSAGES.UI.PROFILE_VIEW_TITLE);
+
+    // 編集ボタンをクリック
+    await page.click('button:has-text("' + MESSAGES.UI.PROFILE_EDIT_TITLE + '")');
 
     // モーダルのタイトルを確認
     const modalTitle = page.getByRole('heading', { name: MESSAGES.UI.PROFILE_EDIT_TITLE });
@@ -26,7 +29,8 @@ test.describe('Profile Management', () => {
     const newName = '新テスト名_' + Date.now();
 
     await page.click('button[title="' + MESSAGES.UI.SETTINGS_LABEL + '"]');
-    await page.click('text=' + MESSAGES.UI.PROFILE_EDIT_TITLE);
+    await page.click('text=' + MESSAGES.UI.PROFILE_VIEW_TITLE);
+    await page.click('button:has-text("' + MESSAGES.UI.PROFILE_EDIT_TITLE + '")');
 
     // 表示名を変更
     const nameInput = page.locator('input').first();
@@ -38,18 +42,20 @@ test.describe('Profile Management', () => {
     // 成功メッセージの確認
     await expect(page.getByText(MESSAGES.UI.PROFILE_UPDATE_SUCCESS)).toBeVisible();
     
-    // モーダルが閉じるのを待つ (setTimeout で 1.5s 設定されているため)
-    await page.waitForSelector('text=' + MESSAGES.UI.PROFILE_EDIT_TITLE, { state: 'hidden', timeout: 5000 });
+    // 表示モードのモーダルに切り替わっているか確認
+    const viewModalTitle = page.getByRole('heading', { name: MESSAGES.UI.PROFILE_VIEW_TITLE });
+    await expect(viewModalTitle).toBeVisible();
 
-    // TOPページの挨拶が更新されているか
-    await expect(page.getByText(MESSAGES.UI.HELLO + '、')).toContainText(newName);
+    // 挨拶が更新されているか（モーダル内に表示）
+    await expect(page.getByText(newName)).toBeVisible();
   });
 
   test('検索IDを変更できること', async ({ page }) => {
     const newSearchId = 'new_id_' + Date.now();
 
     await page.click('button[title="' + MESSAGES.UI.SETTINGS_LABEL + '"]');
-    await page.click('text=' + MESSAGES.UI.PROFILE_EDIT_TITLE);
+    await page.click('text=' + MESSAGES.UI.PROFILE_VIEW_TITLE);
+    await page.click('button:has-text("' + MESSAGES.UI.PROFILE_EDIT_TITLE + '")');
 
     // 検索IDを変更
     const idInput = page.locator('input').nth(1);
@@ -58,15 +64,18 @@ test.describe('Profile Management', () => {
     await page.click('button:has-text("' + MESSAGES.UI.SAVE + '")');
 
     await expect(page.getByText(MESSAGES.UI.PROFILE_UPDATE_SUCCESS)).toBeVisible();
-    await page.waitForSelector('text=' + MESSAGES.UI.PROFILE_EDIT_TITLE, { state: 'hidden', timeout: 5000 });
+    
+    const viewModalTitle = page.getByRole('heading', { name: MESSAGES.UI.PROFILE_VIEW_TITLE });
+    await expect(viewModalTitle).toBeVisible();
 
-    // TOPページのID表示が更新されているか
-    await expect(page.getByText(MESSAGES.UI.ID_LABEL + ':')).toContainText(newSearchId);
+    // ID表示が更新されているか（モーダル内）
+    await expect(page.getByText(newSearchId)).toBeVisible();
   });
 
   test('バリデーションエラーが表示されること', async ({ page }) => {
     await page.click('button[title="' + MESSAGES.UI.SETTINGS_LABEL + '"]');
-    await page.click('text=' + MESSAGES.UI.PROFILE_EDIT_TITLE);
+    await page.click('text=' + MESSAGES.UI.PROFILE_VIEW_TITLE);
+    await page.click('button:has-text("' + MESSAGES.UI.PROFILE_EDIT_TITLE + '")');
 
     // 表示名を空にする
     const nameInput = page.locator('input').first();
