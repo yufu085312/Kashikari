@@ -280,6 +280,12 @@ export const MESSAGES = {
     REGISTER: "登録",
     SIGN_IN_WITH_GOOGLE: "Googleで",
     SIGN_IN_WITH_APPLE: "Appleで",
+    UNSETTLED_TITLE: "未精算の貸し借り",
+    UNSETTLED_YOU_PAY: "あなた",
+    UNSETTLED_ARROW: "→",
+    UNSETTLED_TOTAL_PAY: "支払い",
+    UNSETTLED_TOTAL_RECEIVE: "受取り",
+    UNSETTLED_TOTAL_LABEL: "合計",
   },
   LANDING: {
     HERO_SUBTITLE: "もう精算で揉めない。\nスマートな割り勘管理",
