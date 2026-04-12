@@ -273,6 +273,7 @@ export const MESSAGES = {
     MEMBER_COUNT_UNIT: "名",
     NOT_SET: "未設定",
     PROFILE_SETUP_TITLE: "プロフィール設定",
+    PROFILE_VIEW_TITLE: "プロフィール表示",
     PROFILE_SETUP_DESCRIPTION:
       "アプリを利用するための基本情報を入力してください",
     COMPLETE_SETUP: "設定を完了する",
