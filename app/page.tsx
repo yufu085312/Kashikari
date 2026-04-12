@@ -7,6 +7,10 @@ import { cookies } from "next/headers";
 import { GlassCard } from "@/components/ui/glass-card";
 import Link from "next/link";
 import { getUserProfile } from "@/lib/repositories/userRepository";
+import {
+  fetchUnsettledBalances,
+  type UnsettledBalance,
+} from "@/lib/usecases/getUnsettledBalances";
 import { ROUTES, MESSAGES } from "@/lib/constants";
 
 const isRedirectError = (error: unknown): boolean => {
@@ -87,6 +91,17 @@ export default async function HomePage(props: {
     const userName = profile?.name || MESSAGES.UI.GUEST;
     const searchId = profile?.search_id || "";
 
+    // 未精算バランス取得
+    let unsettledBalances: UnsettledBalance[] = [];
+    try {
+      unsettledBalances = await fetchUnsettledBalances(user.id);
+    } catch (ue: unknown) {
+      console.error(
+        "Unsettled Balance Fetch Error:",
+        ue instanceof Error ? ue.message : ue,
+      );
+    }
+
     return (
       <div className="space-y-6">
         {queryError && <ErrorBanner message={queryError} />}
@@ -94,6 +109,8 @@ export default async function HomePage(props: {
           initialGroups={groups}
           userName={userName}
           searchId={searchId}
+          unsettledBalances={unsettledBalances}
+          currentUserId={user.id}
         />
       </div>
     );
