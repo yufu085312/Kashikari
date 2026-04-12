@@ -115,19 +115,31 @@ export function MembersModal({
               <button
                 onClick={() => handleRemoveMember(m)}
                 disabled={isRemovingMemberId !== null || isPending}
-                className={`ml-2 p-1.5 rounded-lg transition-all active:scale-95 ${
+                className={`shrink-0 ml-2 rounded-lg transition-all active:scale-95 focus:outline-none focus:ring-2 focus:ring-red-500/50 ${
                   m.id === userId
-                    ? "text-red-500 bg-red-50"
-                    : "text-slate-400 hover:text-red-500 hover:bg-red-50"
+                    ? "px-3 py-1.5 text-xs font-bold text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 shadow-sm"
+                    : "p-2 text-slate-400 hover:text-red-500 hover:bg-red-50"
                 }`}
                 title={m.id === userId ? MESSAGES.UI.LEAVE : MESSAGES.UI.REMOVE}
               >
                 {isRemovingMemberId === m.id ? (
-                  <div className="w-4 h-4 border-2 border-red-500/30 border-t-red-500 rounded-full animate-spin" />
+                  <div className="w-4 h-4 border-2 border-red-500/30 border-t-red-500 rounded-full animate-spin mx-auto" />
                 ) : m.id === userId ? (
-                  <span className="text-[10px] font-bold px-1.5">
-                    {MESSAGES.UI.LEAVE}
-                  </span>
+                  <div className="flex items-center gap-1.5">
+                    <svg
+                      className="w-3.5 h-3.5 stroke-[2.5]"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                      />
+                    </svg>
+                    <span>{MESSAGES.UI.LEAVE}</span>
+                  </div>
                 ) : (
                   <svg
                     className="w-4 h-4"
