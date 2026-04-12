@@ -6,6 +6,7 @@ export const ROUTES = {
   COMPLETE: "/signup/complete",
   FORGOT_PASSWORD: "/login/forgot-password",
   RESET_PASSWORD: "/login/reset-password",
+  SETUP_PROFILE: "/setup-profile",
   GROUPS: "/groups",
   TERMS: "/terms",
   PRIVACY: "/privacy",

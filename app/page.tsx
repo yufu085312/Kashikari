@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { GlassCard } from "@/components/ui/glass-card";
 import Link from "next/link";
+import { getUserProfile } from "@/lib/repositories/userRepository";
 import { ROUTES, MESSAGES } from "@/lib/constants";
 
 const isRedirectError = (error: unknown): boolean => {
@@ -60,6 +61,9 @@ export default async function HomePage(props: {
       );
     }
 
+    // 最新のプロフィール情報を取得
+    const profile = await getUserProfile(user.id);
+
     // メール確認後のトップページ遷移時に、Cookieに残っている遷移先があればそこへ飛ばす
     const cookieStore = await cookies();
     const pendingRedirect = cookieStore.get("pending_redirect")?.value;
@@ -80,8 +84,8 @@ export default async function HomePage(props: {
       throw ge;
     }
 
-    const userName = user.user_metadata?.name || MESSAGES.UI.GUEST;
-    const searchId = user.user_metadata?.search_id || "";
+    const userName = profile?.name || MESSAGES.UI.GUEST;
+    const searchId = profile?.search_id || "";
 
     return (
       <div className="space-y-6">

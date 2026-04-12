@@ -11,3 +11,18 @@ export async function findUsersBySearchIds(searchIds: string[]) {
   if (error) throw new DatabaseError(error.message);
   return data || [];
 }
+
+export async function getUserProfile(userId: string) {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("users")
+    .select("*")
+    .eq("id", userId)
+    .single();
+
+  if (error) {
+    if (error.code === "PGRST116") return null;
+    throw new DatabaseError(error.message);
+  }
+  return data;
+}

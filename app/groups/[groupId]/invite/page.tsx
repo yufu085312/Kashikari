@@ -88,15 +88,19 @@ export default async function InvitePage(props: {
 
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
-        <div className="w-full max-w-md p-8 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl text-center">
-          <div className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-500 shadow-xl flex items-center justify-center text-3xl">
+        <div className="w-full max-w-md p-8 rounded-3xl bg-white border border-slate-200 shadow-xl text-center animate-slide-up">
+          <div className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-500 shadow-xl shadow-emerald-100 flex items-center justify-center text-3xl">
             👋
           </div>
-          <h1 className="text-2xl font-bold text-white mb-2">{group.name}</h1>
-          <p className="text-gray-400 mb-8">{MESSAGES.UI.INVITE_PAGE_PROMPT}</p>
+          <h1 className="text-2xl font-black text-slate-900 mb-2">
+            {group.name}
+          </h1>
+          <p className="text-slate-500 font-medium">
+            {MESSAGES.UI.INVITE_PAGE_PROMPT}
+          </p>
 
           {serverError && (
-            <div className="bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3 text-sm text-red-400 mb-6 animate-fade-in">
+            <div className="mt-6 bg-red-50 border border-red-100 rounded-xl px-4 py-3 text-sm text-red-500 animate-fade-in">
               {serverError}
             </div>
           )}
