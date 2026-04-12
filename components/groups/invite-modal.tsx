@@ -60,7 +60,7 @@ export function InviteModal({
     <Modal isOpen={isOpen} onClose={onClose} title={MESSAGES.UI.MEMBER_INVITE}>
       <div className="space-y-6">
         <div className="space-y-3">
-          <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+          <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
             {MESSAGES.UI.INVITE_METHOD_SEARCH_ID}
           </label>
           <div className="flex gap-2">
@@ -69,7 +69,7 @@ export function InviteModal({
               placeholder="tanaka_123"
               value={searchIdInput}
               onChange={(e) => setSearchIdInput(e.target.value)}
-              className="flex-1 bg-white/5 border border-glass-border rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500/50 transition-all"
+              className="flex-1 bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-emerald-400 transition-all shadow-sm"
             />
             <Button
               onClick={handleAddMemberBySearchId}
@@ -87,10 +87,10 @@ export function InviteModal({
           )}
         </div>
 
-        <div className="h-px bg-white/5"></div>
+        <div className="h-px bg-slate-200"></div>
 
         <div className="space-y-3">
-          <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+          <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
             {MESSAGES.UI.INVITE_METHOD_LINK}
           </label>
           <div className="flex gap-2">
@@ -98,7 +98,7 @@ export function InviteModal({
               type="text"
               readOnly
               value={inviteUrl}
-              className="flex-1 bg-white/5 border border-glass-border rounded-xl px-4 py-2.5 text-[10px] font-mono text-gray-400"
+              className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-[10px] font-mono text-slate-500 shadow-inner"
             />
             <Button
               variant="secondary"
@@ -109,7 +109,7 @@ export function InviteModal({
               {copied ? MESSAGES.UI.COPIED : MESSAGES.UI.COPY}
             </Button>
           </div>
-          <p className="text-[10px] text-gray-500">
+          <p className="text-[10px] text-slate-400">
             {MESSAGES.UI.INVITE_LINK_DESCRIPTION}
           </p>
         </div>

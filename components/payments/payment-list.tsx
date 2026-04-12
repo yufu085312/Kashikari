@@ -74,9 +74,9 @@ export function PaymentList({
 
   if (optimisticPayments.length === 0) {
     return (
-      <GlassCard className="py-12 flex flex-col items-center justify-center text-gray-500 border-dashed">
+      <GlassCard className="py-12 flex flex-col items-center justify-center text-slate-400 border-dashed border-slate-200 shadow-none">
         <svg
-          className="w-12 h-12 mb-3 opacity-20"
+          className="w-12 h-12 mb-3 opacity-30 text-emerald-500"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -100,16 +100,16 @@ export function PaymentList({
           <div className="flex items-start justify-between gap-3">
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1 flex-wrap">
-                <span className="text-sm font-bold text-white px-2 py-0.5 bg-white/5 rounded-md border border-glass-border">
+                <span className="text-sm font-bold text-slate-800 px-2 py-0.5 bg-slate-50 rounded-md border border-slate-200">
                   {payment.payer?.name}
                 </span>
-                <span className="text-[10px] text-gray-500 font-medium tracking-tight">
+                <span className="text-[10px] text-slate-500 font-medium tracking-tight">
                   {MESSAGES.UI.PAYMENT_PAID_BY_SUFFIX}
                 </span>
               </div>
-              <p className="text-xl font-black text-white leading-none mt-1">
+              <p className="text-xl font-black text-slate-900 leading-none mt-1">
                 {payment.amount.toLocaleString()}
-                <span className="text-xs ml-1 text-gray-400 font-normal">
+                <span className="text-xs ml-1 text-slate-500 font-normal">
                   {MESSAGES.UI.CURRENCY_JPY}
                 </span>
               </p>
@@ -119,12 +119,12 @@ export function PaymentList({
                 {payment.participants?.map((p) => (
                   <div
                     key={p.user_id}
-                    className="flex items-center gap-1 text-[10px] px-2 py-1 bg-white/[0.03] border border-glass-border rounded-lg text-gray-400"
+                    className="flex items-center gap-1 text-[10px] px-2 py-1 bg-white border border-slate-200 rounded-lg text-slate-500 shadow-sm"
                   >
-                    <span className="font-bold text-gray-300">
+                    <span className="font-bold text-slate-700">
                       {p.user?.name}
                     </span>
-                    <span className="opacity-40">
+                    <span className="opacity-60">
                       ¥{p.share_amount.toLocaleString()}
                     </span>
                   </div>
@@ -132,11 +132,11 @@ export function PaymentList({
               </div>
 
               {payment.memo && (
-                <p className="text-xs text-gray-400 mt-2 bg-white/5 px-2 py-1 rounded-lg border border-glass-border inline-block">
+                <p className="text-xs text-slate-600 mt-2 bg-slate-50 px-2 py-1 rounded-lg border border-slate-100 inline-block">
                   {payment.memo}
                 </p>
               )}
-              <p className="text-[10px] text-gray-500 mt-3 font-medium opacity-50">
+              <p className="text-[10px] text-slate-400 mt-3 font-medium">
                 {payment.created_at ? formatDate(payment.created_at) : ""}
               </p>
             </div>
@@ -150,8 +150,8 @@ export function PaymentList({
               }
               className={`transition-all p-2 rounded-xl flex-shrink-0 ${
                 isLocked(payment.created_at)
-                  ? "text-gray-800 cursor-not-allowed opacity-20"
-                  : "text-gray-500 hover:text-red-400 hover:bg-red-500/10 active:scale-95"
+                  ? "text-slate-300 cursor-not-allowed"
+                  : "text-slate-400 hover:text-red-500 hover:bg-red-50 active:scale-95"
               }`}
               title={
                 isLocked(payment.created_at)

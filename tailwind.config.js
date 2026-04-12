@@ -10,11 +10,11 @@ module.exports = {
         sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
       },
       colors: {
-        background: '#0a0f1e',
-        surface: 'rgba(255, 255, 255, 0.05)',
-        'surface-hover': 'rgba(255, 255, 255, 0.08)',
-        'glass-border': 'rgba(255, 255, 255, 0.1)',
-        'glass-border-hover': 'rgba(255, 255, 255, 0.2)',
+        background: '#f8fafc', // slate-50
+        surface: '#ffffff', // pure white for cards/modals
+        'surface-hover': '#f1f5f9', // slate-100
+        'glass-border': 'rgba(0, 0, 0, 0.06)',
+        'glass-border-hover': 'rgba(0, 0, 0, 0.12)',
         brand: {
           50: '#f0fdf4',
           100: '#dcfce7',

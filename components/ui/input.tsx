@@ -26,13 +26,13 @@ export function Input({
   return (
     <div className="flex flex-col gap-1.5 w-full">
       {label && (
-        <label htmlFor={inputId} className="text-sm font-medium text-gray-300">
+        <label htmlFor={inputId} className="text-sm font-medium text-slate-600">
           {label}
         </label>
       )}
       <div className="relative">
         {icon && (
-          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
             {icon}
           </div>
         )}
@@ -40,13 +40,13 @@ export function Input({
           id={inputId}
           type={inputType}
           className={`
-            w-full bg-white/5 border border-white/10 rounded-xl
-            px-4 py-2.5 text-white placeholder-gray-500
+            w-full bg-white border border-slate-200 rounded-xl shadow-sm
+            px-4 py-2.5 text-slate-900 placeholder-slate-400
             focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50
             transition-all duration-200
             ${icon ? "pl-10" : ""}
             ${isPassword ? "pr-11" : ""}
-            ${error ? "border-red-500/50 focus:ring-red-500/50" : ""}
+            ${error ? "border-red-500 focus:ring-red-500/50" : ""}
             ${className}
           `}
           {...props}
@@ -55,7 +55,7 @@ export function Input({
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 text-gray-400 hover:text-white transition-colors"
+            className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 text-slate-400 hover:text-slate-600 transition-colors"
           >
             {showPassword ? (
               <svg

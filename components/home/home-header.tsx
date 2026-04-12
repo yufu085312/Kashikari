@@ -37,7 +37,7 @@ export function HomeHeader({
       <section className="relative flex flex-col sm:flex-row sm:items-start justify-between sm:gap-6">
         <div className="flex-1 min-w-0 pr-10 sm:pr-0">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center shadow-lg shadow-black/10 flex-shrink-0 border border-white/10 overflow-hidden">
+            <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-sm flex-shrink-0 border border-slate-200 overflow-hidden">
               <Image
                 src="/icon.png"
                 alt={METADATA.SHORT_NAME}
@@ -46,14 +46,14 @@ export function HomeHeader({
                 className="w-full h-full object-cover"
               />
             </div>
-            <h1 className="text-lg sm:text-2xl font-black text-white tracking-tight">
+            <h1 className="text-lg sm:text-2xl font-black text-slate-800 tracking-tight">
               {MESSAGES.UI.APP_TAGLINE}
             </h1>
           </div>
           <div className="flex flex-wrap items-center gap-x-3 gap-y-2 mt-6 sm:mt-8">
             <button
               onClick={handleCopyId}
-              className="group flex items-center justify-center min-w-[120px] gap-1.5 text-[10px] text-gray-600 hover:text-emerald-400 transition-colors bg-white/5 px-2 py-0.5 rounded-full border border-white/5 active:scale-95"
+              className="group flex items-center justify-center min-w-[120px] gap-1.5 text-[10px] text-slate-500 hover:text-emerald-500 transition-colors bg-white px-2 py-0.5 rounded-full border border-slate-200 shadow-sm active:scale-95"
               title={MESSAGES.UI.COPY_ID}
             >
               {copied ? (
@@ -81,7 +81,7 @@ export function HomeHeader({
                     {MESSAGES.UI.ID_LABEL}: {searchId}
                   </span>
                   <svg
-                    className="w-3 h-3 text-gray-500 group-hover:text-emerald-400 transition-colors"
+                    className="w-3 h-3 text-slate-400 group-hover:text-emerald-500 transition-colors"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -96,9 +96,9 @@ export function HomeHeader({
                 </>
               )}
             </button>
-            <p className="text-sm text-gray-500 font-medium">
+            <p className="text-sm text-slate-500 font-medium">
               {MESSAGES.UI.HELLO}、
-              <span className="text-emerald-400">{userName}</span>
+              <span className="text-emerald-500">{userName}</span>
             </p>
           </div>
         </div>
@@ -128,7 +128,7 @@ export function HomeHeader({
           <div className="absolute right-0 top-0 sm:relative sm:top-auto sm:right-auto">
             <button
               onClick={() => setShowSettings(!showSettings)}
-              className="p-2 text-gray-500 hover:text-white transition-colors rounded-full hover:bg-white/5 active:scale-95"
+              className="p-2 text-slate-500 hover:text-slate-800 transition-colors rounded-full hover:bg-slate-100 active:scale-95"
               title={MESSAGES.UI.SETTINGS_LABEL}
             >
               <svg
@@ -158,13 +158,13 @@ export function HomeHeader({
                   className="fixed inset-0 z-40"
                   onClick={() => setShowSettings(false)}
                 />
-                <div className="absolute right-0 top-full mt-2 w-56 bg-[#0a0f1e]/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl overflow-hidden z-50 py-1 animate-fade-in origin-top-right">
+                <div className="absolute right-0 top-full mt-2 w-56 bg-white/95 backdrop-blur-xl border border-slate-200 rounded-xl shadow-xl overflow-hidden z-50 py-1 animate-fade-in origin-top-right">
                   <button
                     onClick={() => {
                       setShowProfileForm(true);
                       setShowSettings(false);
                     }}
-                    className="w-full flex items-center gap-2 px-4 py-3 text-sm text-gray-300 hover:bg-white/5 hover:text-white transition-colors border-l-2 border-transparent hover:border-emerald-400 text-left"
+                    className="w-full flex items-center gap-2 px-4 py-3 text-sm text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors border-l-2 border-transparent hover:border-emerald-400 text-left"
                   >
                     <svg
                       className="w-4 h-4"
@@ -186,7 +186,7 @@ export function HomeHeader({
                       setShowPasswordForm(true);
                       setShowSettings(false);
                     }}
-                    className="w-full flex items-center gap-2 px-4 py-3 text-sm text-gray-300 hover:bg-white/5 hover:text-white transition-colors border-l-2 border-transparent hover:border-emerald-400 text-left"
+                    className="w-full flex items-center gap-2 px-4 py-3 text-sm text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors border-l-2 border-transparent hover:border-emerald-400 text-left"
                   >
                     <svg
                       className="w-4 h-4"
@@ -205,7 +205,7 @@ export function HomeHeader({
                   </button>
                   <Link
                     href={ROUTES.TERMS}
-                    className="flex items-center gap-2 px-4 py-3 text-sm text-gray-300 hover:bg-white/5 hover:text-white transition-colors border-l-2 border-transparent hover:border-emerald-400"
+                    className="flex items-center gap-2 px-4 py-3 text-sm text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors border-l-2 border-transparent hover:border-emerald-400"
                   >
                     <svg
                       className="w-4 h-4"
@@ -224,7 +224,7 @@ export function HomeHeader({
                   </Link>
                   <Link
                     href={ROUTES.PRIVACY}
-                    className="flex items-center gap-2 px-4 py-3 text-sm text-gray-300 hover:bg-white/5 hover:text-white transition-colors border-l-2 border-transparent hover:border-emerald-400"
+                    className="flex items-center gap-2 px-4 py-3 text-sm text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors border-l-2 border-transparent hover:border-emerald-400"
                   >
                     <svg
                       className="w-4 h-4"
@@ -243,7 +243,7 @@ export function HomeHeader({
                   </Link>
                   <Link
                     href={ROUTES.CONTACT}
-                    className="flex items-center gap-2 px-4 py-3 text-sm text-gray-300 hover:bg-white/5 hover:text-white transition-colors border-l-2 border-transparent hover:border-emerald-400"
+                    className="flex items-center gap-2 px-4 py-3 text-sm text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors border-l-2 border-transparent hover:border-emerald-400"
                   >
                     <svg
                       className="w-4 h-4"
@@ -260,11 +260,11 @@ export function HomeHeader({
                     </svg>
                     {MESSAGES.UI.CONTACT_LABEL}
                   </Link>
-                  <div className="h-px bg-white/10 my-1 mx-2"></div>
+                  <div className="h-px bg-slate-100 my-1 mx-2"></div>
                   <form action={logout}>
                     <button
                       type="submit"
-                      className="w-full flex items-center gap-2 px-4 py-3 text-sm text-red-400 hover:bg-red-500/10 transition-colors border-l-2 border-transparent hover:border-red-400"
+                      className="w-full flex items-center gap-2 px-4 py-3 text-sm text-red-500 hover:bg-red-50 hover:text-red-700 transition-colors border-l-2 border-transparent hover:border-red-500"
                     >
                       <svg
                         className="w-4 h-4 flex-shrink-0"

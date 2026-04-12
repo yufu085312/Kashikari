@@ -49,17 +49,17 @@ export function HomePageClient({
       {/* グループ一覧 */}
       <section>
         <div className="flex items-center gap-2 mb-4 px-1">
-          <h2 className="text-xs font-black text-gray-500 uppercase tracking-widest">
+          <h2 className="text-xs font-black text-slate-500 uppercase tracking-widest">
             {MESSAGES.UI.GROUP_LIST_LABEL}
           </h2>
-          <div className="h-px flex-1 bg-white/5"></div>
+          <div className="h-px flex-1 bg-slate-200"></div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {groups.length === 0 ? (
             <div className="col-span-full">
-              <GlassCard className="py-12 flex flex-col items-center justify-center text-gray-500 border-dashed">
-                <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center mb-3">
+              <GlassCard className="py-12 flex flex-col items-center justify-center text-slate-400 border-dashed border-slate-200 shadow-none">
+                <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center mb-3">
                   <svg
                     className="w-6 h-6 opacity-20"
                     fill="none"
@@ -90,15 +90,15 @@ export function HomePageClient({
                   className="p-4 flex items-center justify-between group h-full"
                 >
                   <div className="flex-1 min-w-0 pr-2">
-                    <h3 className="text-lg font-bold text-white group-hover:text-emerald-400 transition-colors leading-tight break-words">
+                    <h3 className="text-lg font-bold text-slate-800 group-hover:text-emerald-600 transition-colors leading-tight break-words">
                       {group.name}
                     </h3>
-                    <p className="text-[10px] text-gray-600 font-medium mt-1">
+                    <p className="text-[10px] text-slate-500 font-medium mt-1">
                       {group.members?.length || 0}
                       {MESSAGES.UI.MEMBER_COUNT_SUFFIX}
                     </p>
                   </div>
-                  <div className="w-8 h-8 rounded-full bg-white/5 border border-white/5 flex items-center justify-center text-gray-700 group-hover:text-emerald-400 group-hover:border-emerald-500/30 group-hover:bg-emerald-500/10 transition-all">
+                  <div className="w-8 h-8 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 group-hover:text-emerald-600 group-hover:border-emerald-200 group-hover:bg-emerald-50 transition-all">
                     <svg
                       className="w-4 h-4"
                       fill="none"

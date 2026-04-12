@@ -60,11 +60,11 @@ export default function VerifyOtpPage({
   };
 
   return (
-    <div className="flex flex-col items-center justify-center py-12 sm:py-20 animate-fade-in text-white">
-      <div className="w-full max-w-md p-10 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl text-center shadow-emerald-500/10 border-emerald-500/20">
-        <div className="w-20 h-20 bg-emerald-500/10 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-emerald-500/20 shadow-lg shadow-emerald-500/10">
+    <div className="flex flex-col items-center justify-center py-12 sm:py-20 animate-fade-in text-slate-900">
+      <div className="w-full max-w-md p-10 rounded-3xl bg-white backdrop-blur-xl border border-slate-200 shadow-xl text-center shadow-emerald-100 border-emerald-200">
+        <div className="w-20 h-20 bg-emerald-50 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-emerald-200 shadow-lg shadow-emerald-100">
           <svg
-            className="w-10 h-10 text-emerald-400"
+            className="w-10 h-10 text-emerald-500"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -78,11 +78,11 @@ export default function VerifyOtpPage({
           </svg>
         </div>
 
-        <h1 className="text-3xl font-black tracking-tight mb-4 text-white">
+        <h1 className="text-3xl font-black tracking-tight mb-4 text-slate-900">
           {MESSAGES.UI.VERIFY_OTP_TITLE}
         </h1>
-        <p className="text-gray-400 font-medium mb-8 leading-relaxed">
-          <span className="text-emerald-400 font-bold">{email}</span>{" "}
+        <p className="text-slate-500 font-medium mb-8 leading-relaxed">
+          <span className="text-emerald-600 font-bold">{email}</span>{" "}
           {MESSAGES.UI.VERIFY_OTP_DESC_1}
           <br />
           {MESSAGES.UI.VERIFY_OTP_DESC_2}
@@ -98,7 +98,7 @@ export default function VerifyOtpPage({
                 setToken(e.target.value.replace(/\D/g, "").slice(0, 8))
               }
               placeholder="00000000"
-              className="w-full h-20 text-center text-4xl font-mono tracking-[0.2em] bg-white/5 border border-white/10 rounded-2xl focus:border-emerald-500/50 focus:ring-4 focus:ring-emerald-500/10 transition-all outline-none placeholder:text-white/10 text-white"
+              className="w-full h-20 text-center text-4xl font-mono tracking-[0.2em] bg-white border border-slate-200 rounded-2xl focus:border-emerald-400 focus:ring-4 focus:ring-emerald-50 transition-all outline-none placeholder-slate-300 text-slate-800"
               autoFocus
               required
               autoComplete="one-time-code"
@@ -106,13 +106,13 @@ export default function VerifyOtpPage({
           </div>
 
           {serverMessage && (
-            <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl px-4 py-3 text-sm text-emerald-400 animate-fade-in">
+            <div className="bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 text-sm text-emerald-600 animate-fade-in">
               {serverMessage}
             </div>
           )}
 
           {(error || serverError) && (
-            <div className="bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3 text-sm text-red-400 animate-fade-in">
+            <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-600 animate-fade-in">
               {error || serverError}
             </div>
           )}
@@ -126,15 +126,15 @@ export default function VerifyOtpPage({
           </Button>
         </form>
 
-        <div className="mt-8 pt-6 border-t border-white/10 space-y-3">
-          <p className="text-sm text-gray-500">
+        <div className="mt-8 pt-6 border-t border-slate-200 space-y-3">
+          <p className="text-sm text-slate-400">
             {MESSAGES.UI.VERIFY_OTP_SPAM_CHECK}
           </p>
           <Button
             type="button"
             onClick={handleResend}
             disabled={isResending || countdown > 0}
-            className="text-emerald-400 hover:text-emerald-300 text-sm font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="text-emerald-600 hover:text-emerald-700 text-sm font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isResending
               ? MESSAGES.UI.SENDING

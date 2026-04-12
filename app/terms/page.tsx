@@ -9,7 +9,7 @@ export default function TermsPage() {
       <div className="mb-8">
         <Link
           href="/login"
-          className="text-emerald-400 hover:text-emerald-300 transition-colors flex items-center gap-2 text-sm font-medium"
+          className="text-emerald-600 hover:text-emerald-700 transition-colors flex items-center gap-2 text-sm font-medium"
         >
           <svg
             className="w-4 h-4"
@@ -28,35 +28,35 @@ export default function TermsPage() {
         </Link>
       </div>
 
-      <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 sm:p-12 shadow-2xl">
-        <h1 className="text-3xl font-black text-white mb-8 tracking-tight">
+      <div className="bg-white backdrop-blur-xl border border-slate-200 rounded-3xl p-8 sm:p-12 shadow-xl">
+        <h1 className="text-3xl font-black text-slate-900 mb-8 tracking-tight">
           {MESSAGES.UI.TERMS_LABEL}
         </h1>
 
-        <div className="space-y-8 text-gray-300 leading-relaxed text-sm sm:text-base">
+        <div className="space-y-8 text-slate-600 leading-relaxed text-sm sm:text-base">
           <section>
-            <h2 className="text-xl font-bold text-white mb-4">
+            <h2 className="text-xl font-bold text-slate-800 mb-4">
               {MESSAGES.POLICY.TERMS_1_TITLE}
             </h2>
             <p>{MESSAGES.POLICY.TERMS_1_DESC}</p>
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-white mb-4">
+            <h2 className="text-xl font-bold text-slate-800 mb-4">
               {MESSAGES.POLICY.TERMS_2_TITLE}
             </h2>
             <p>{MESSAGES.POLICY.TERMS_2_DESC}</p>
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-white mb-4">
+            <h2 className="text-xl font-bold text-slate-800 mb-4">
               {MESSAGES.POLICY.TERMS_3_TITLE}
             </h2>
             <p>{MESSAGES.POLICY.TERMS_3_DESC}</p>
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-white mb-4">
+            <h2 className="text-xl font-bold text-slate-800 mb-4">
               {MESSAGES.POLICY.TERMS_4_TITLE}
             </h2>
             <ul className="list-disc list-inside space-y-2 ml-2">
@@ -69,20 +69,20 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-white mb-4">
+            <h2 className="text-xl font-bold text-slate-800 mb-4">
               {MESSAGES.POLICY.TERMS_5_TITLE}
             </h2>
             <p>{MESSAGES.POLICY.TERMS_5_DESC}</p>
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-white mb-4">
+            <h2 className="text-xl font-bold text-slate-800 mb-4">
               {MESSAGES.POLICY.TERMS_6_TITLE}
             </h2>
             <p>{MESSAGES.POLICY.TERMS_6_DESC}</p>
           </section>
 
-          <div className="pt-8 border-t border-white/10 text-gray-500 text-xs text-right">
+          <div className="pt-8 border-t border-slate-200 text-slate-500 text-xs text-right">
             {MESSAGES.POLICY.TERMS_UPDATED}
           </div>
         </div>

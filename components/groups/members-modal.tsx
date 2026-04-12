@@ -93,14 +93,16 @@ export function MembersModal({
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={MESSAGES.UI.MEMBER_LIST}>
-      <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+      <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent">
         {members.map((m) => (
           <div
             key={m.id}
-            className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors"
+            className="flex items-center justify-between p-3 rounded-xl bg-white border border-slate-200 shadow-sm hover:bg-slate-50 transition-colors"
           >
             <div className="flex items-center min-w-0">
-              <p className="text-sm font-bold text-white truncate">{m.name}</p>
+              <p className="text-sm font-bold text-slate-800 truncate">
+                {m.name}
+              </p>
             </div>
             {m.id === createdBy && (
               <span className="shrink-0 ml-2 text-[10px] font-bold text-brand-400 bg-brand-500/10 px-2.5 py-1 rounded-full border border-brand-500/20">
@@ -115,8 +117,8 @@ export function MembersModal({
                 disabled={isRemovingMemberId !== null || isPending}
                 className={`ml-2 p-1.5 rounded-lg transition-all active:scale-95 ${
                   m.id === userId
-                    ? "text-red-500 bg-red-500/10"
-                    : "text-gray-500 hover:text-red-500 hover:bg-red-500/10"
+                    ? "text-red-500 bg-red-50"
+                    : "text-slate-400 hover:text-red-500 hover:bg-red-50"
                 }`}
                 title={m.id === userId ? MESSAGES.UI.LEAVE : MESSAGES.UI.REMOVE}
               >

@@ -83,7 +83,7 @@ export default function SignupPage({
   return (
     <div className="flex flex-col items-center justify-center py-4 sm:py-6">
       <div className="flex flex-col items-center mb-4 text-center animate-fade-in">
-        <div className="w-16 h-16 bg-white/5 rounded-[2rem] flex items-center justify-center shadow-2xl border border-white/10 overflow-hidden mb-3 shadow-emerald-500/10">
+        <div className="w-16 h-16 bg-white rounded-[2rem] flex items-center justify-center shadow-xl border border-slate-200 overflow-hidden mb-3 shadow-emerald-100">
           <Image
             src="/icon.png"
             alt={METADATA.SHORT_NAME}
@@ -92,16 +92,16 @@ export default function SignupPage({
             className="w-full h-full object-cover p-2.5"
           />
         </div>
-        <h1 className="text-3xl font-black text-white tracking-tighter mb-1">
+        <h1 className="text-3xl font-black text-slate-900 tracking-tighter mb-1">
           {METADATA.SHORT_NAME}
         </h1>
-        <p className="text-gray-400 text-xs font-medium tracking-wide">
+        <p className="text-slate-500 text-xs font-medium tracking-wide">
           {MESSAGES.UI.APP_TAGLINE}
         </p>
       </div>
 
-      <div className="w-full max-w-sm p-6 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl animate-slide-up">
-        <h2 className="text-lg font-bold text-white mb-6 text-center">
+      <div className="w-full max-w-sm p-6 rounded-3xl bg-white backdrop-blur-xl border border-slate-200 shadow-xl animate-slide-up">
+        <h2 className="text-lg font-bold text-slate-800 mb-6 text-center">
           {MESSAGES.UI.CREATE_ACCOUNT}
         </h2>
 
@@ -150,7 +150,7 @@ export default function SignupPage({
           />
 
           {serverError && (
-            <p className="text-red-400 text-sm mt-2">{serverError}</p>
+            <p className="text-red-500 text-sm mt-2">{serverError}</p>
           )}
 
           <Button
@@ -163,23 +163,23 @@ export default function SignupPage({
           </Button>
         </form>
 
-        <div className="mt-6 flex flex-col items-center gap-4 text-sm text-gray-400">
+        <div className="mt-6 flex flex-col items-center gap-4 text-sm text-slate-500">
           <Link
             href={`${ROUTES.LOGIN}${params.next ? `?next=${encodeURIComponent(params.next)}` : ""}`}
-            className="hover:text-brand-300 transition-colors"
+            className="hover:text-emerald-600 transition-colors"
           >
             {MESSAGES.UI.ALREADY_HAVE_ACCOUNT_PROMPT}
           </Link>
-          <div className="flex items-center gap-4 text-xs text-gray-500 mt-2">
+          <div className="flex items-center gap-4 text-xs text-slate-400 mt-2">
             <Link
               href={ROUTES.TERMS}
-              className="hover:text-gray-300 transition-colors"
+              className="hover:text-slate-600 transition-colors"
             >
               {MESSAGES.UI.TERMS_LABEL}
             </Link>
             <Link
               href={ROUTES.PRIVACY}
-              className="hover:text-gray-300 transition-colors"
+              className="hover:text-slate-600 transition-colors"
             >
               {MESSAGES.UI.PRIVACY_POLICY_LABEL}
             </Link>

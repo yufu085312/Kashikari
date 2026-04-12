@@ -166,7 +166,7 @@ export function PaymentForm({
     >
       {/* 金額 */}
       <div className="flex flex-col gap-1.5 animate-slide-up">
-        <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
           {MESSAGES.UI.PAYMENT_LABEL_AMOUNT}
         </label>
         <div className="relative group">
@@ -178,10 +178,10 @@ export function PaymentForm({
             inputMode="numeric"
             placeholder="0"
             {...register("amount", { valueAsNumber: true })}
-            className={`w-full bg-white/5 border-2 rounded-2xl pl-10 pr-4 py-4 text-white text-3xl font-black placeholder-gray-800 focus:outline-none transition-all shadow-inner ${
+            className={`w-full bg-white border-2 rounded-2xl pl-10 pr-4 py-4 text-slate-800 text-3xl font-black placeholder-slate-300 focus:outline-none transition-all shadow-inner ${
               errors.amount
-                ? "border-red-500/50 focus:border-red-500/50 focus:bg-red-500/5"
-                : "border-white/5 focus:border-emerald-500/50 focus:bg-emerald-500/5"
+                ? "border-red-500/50 focus:border-red-500/50 focus:bg-red-50"
+                : "border-slate-200 focus:border-emerald-400 focus:bg-emerald-50"
             }`}
           />
         </div>
@@ -197,7 +197,7 @@ export function PaymentForm({
         className="flex flex-col gap-3 animate-slide-up"
         style={{ animationDelay: "0.1s" }}
       >
-        <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
           {MESSAGES.UI.PAYMENT_WHO_PAID}
         </label>
         <div className="flex flex-wrap gap-2">
@@ -206,10 +206,10 @@ export function PaymentForm({
               key={member.id}
               type="button"
               onClick={() => setValue("payerId", member.id)}
-              className={`px-4 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 ${
+              className={`px-4 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 border ${
                 payerId === member.id
-                  ? "bg-emerald-500 text-black shadow-[0_0_20px_rgba(16,185,129,0.3)]"
-                  : "bg-white/5 text-gray-500 hover:bg-white/10 border border-white/5"
+                  ? "bg-emerald-500 text-white shadow-md shadow-emerald-500/20 border-emerald-500"
+                  : "bg-white text-slate-500 hover:bg-slate-50 border-slate-200 shadow-sm"
               }`}
             >
               {member.name}
@@ -224,15 +224,17 @@ export function PaymentForm({
         style={{ animationDelay: "0.2s" }}
       >
         <div className="flex items-center justify-between">
-          <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+          <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
             {MESSAGES.UI.PAYMENT_WHO_BORROWS}
           </label>
-          <div className="flex bg-white/5 p-1 rounded-lg border border-white/5">
+          <div className="flex bg-slate-100 p-1 rounded-lg border border-slate-200">
             <button
               type="button"
               onClick={() => setIsManual(false)}
               className={`px-3 py-1 text-[10px] font-black rounded-md transition-all ${
-                !isManual ? "bg-white/10 text-white shadow-sm" : "text-gray-600"
+                !isManual
+                  ? "bg-white text-slate-800 shadow-sm"
+                  : "text-slate-500"
               }`}
             >
               {MESSAGES.UI.PAYMENT_SPLIT_AUTO}
@@ -241,7 +243,9 @@ export function PaymentForm({
               type="button"
               onClick={() => setIsManual(true)}
               className={`px-3 py-1 text-[10px] font-black rounded-md transition-all ${
-                isManual ? "bg-white/10 text-white shadow-sm" : "text-gray-600"
+                isManual
+                  ? "bg-white text-slate-800 shadow-sm"
+                  : "text-slate-500"
               }`}
             >
               {MESSAGES.UI.PAYMENT_SPLIT_MANUAL}
@@ -260,8 +264,8 @@ export function PaymentForm({
                 key={member.id}
                 className={`flex flex-col gap-3 p-3 rounded-2xl border-2 transition-all duration-300 ${
                   isSelected
-                    ? "bg-white/5 border-emerald-500/20"
-                    : "bg-transparent border-white/5 opacity-50"
+                    ? "bg-emerald-50 border-emerald-200"
+                    : "bg-white border-slate-200 opacity-50"
                 }`}
               >
                 <div className="flex items-center justify-between">
@@ -274,12 +278,12 @@ export function PaymentForm({
                       className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${
                         isSelected
                           ? "bg-emerald-500 border-emerald-500"
-                          : "border-gray-700 group-hover:border-gray-500"
+                          : "border-slate-300 group-hover:border-slate-400"
                       }`}
                     >
                       {isSelected && (
                         <svg
-                          className="w-4 h-4 text-black"
+                          className="w-4 h-4 text-white"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -294,14 +298,14 @@ export function PaymentForm({
                       )}
                     </div>
                     <span
-                      className={`font-bold transition-colors ${isSelected ? "text-white" : "text-gray-600"}`}
+                      className={`font-bold transition-colors ${isSelected ? "text-slate-800" : "text-slate-500"}`}
                     >
                       {member.name}
                     </span>
                   </button>
 
                   {!isManual && isSelected && amount > 0 && (
-                    <span className="text-emerald-400 font-black tabular-nums">
+                    <span className="text-emerald-600 font-black tabular-nums">
                       ¥{autoShare.toLocaleString()}
                     </span>
                   )}
@@ -309,7 +313,7 @@ export function PaymentForm({
 
                 {isManual && isSelected && (
                   <div className="relative animate-scale-in">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-bold">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold">
                       ¥
                     </span>
                     <input
@@ -319,7 +323,7 @@ export function PaymentForm({
                       onChange={(e) =>
                         handleManualAmountChange(member.id, e.target.value)
                       }
-                      className="w-full bg-black/40 border border-white/10 rounded-xl pl-8 pr-4 py-2.5 text-white font-bold focus:outline-none focus:border-emerald-500/50 transition-all text-sm"
+                      className="w-full bg-white border border-slate-200 rounded-xl pl-8 pr-4 py-2.5 text-slate-800 font-bold focus:outline-none focus:border-emerald-400 transition-all text-sm"
                     />
                   </div>
                 )}
@@ -337,11 +341,11 @@ export function PaymentForm({
           <div
             className={`flex items-center justify-between p-3 rounded-xl border-dashed border-2 ${
               isTotalMatching
-                ? "bg-emerald-500/5 border-emerald-500/20"
-                : "bg-red-500/5 border-red-500/20"
+                ? "bg-emerald-50 border-emerald-200"
+                : "bg-red-50 border-red-200"
             }`}
           >
-            <span className="text-[10px] font-bold text-gray-500 uppercase">
+            <span className="text-[10px] font-bold text-slate-500 uppercase">
               {MESSAGES.UI.PAYMENT_MANUAL_TOTAL}
               {manualTotal.toLocaleString()}
             </span>
@@ -361,18 +365,18 @@ export function PaymentForm({
         className="flex flex-col gap-1.5 animate-slide-up"
         style={{ animationDelay: "0.3s" }}
       >
-        <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
           {MESSAGES.UI.PAYMENT_MEMO_LABEL}
         </label>
         <input
           placeholder={MESSAGES.UI.PAYMENT_MEMO_PLACEHOLDER}
           {...register("memo")}
-          className="w-full bg-white/5 border border-white/5 rounded-xl px-4 py-3 text-white font-medium placeholder-gray-700 focus:outline-none focus:border-white/20 transition-all outline-none"
+          className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-slate-800 font-medium placeholder-slate-400 focus:outline-none focus:border-emerald-400 transition-all outline-none"
         />
       </div>
 
       {serverError && (
-        <div className="bg-red-500/10 border border-red-500/20 rounded-2xl px-4 py-3 text-xs font-bold text-red-400 animate-shake">
+        <div className="bg-red-50 border border-red-200 rounded-2xl px-4 py-3 text-xs font-bold text-red-600 animate-shake">
           {serverError}
         </div>
       )}

@@ -57,7 +57,7 @@ export default function LoginPage({
   return (
     <div className="flex flex-col items-center justify-center py-8 sm:py-12">
       <div className="flex flex-col items-center mb-8 text-center animate-fade-in">
-        <div className="w-20 h-20 bg-white/5 rounded-[2.5rem] flex items-center justify-center shadow-2xl border border-white/10 overflow-hidden mb-6 shadow-emerald-500/10">
+        <div className="w-20 h-20 bg-white rounded-[2.5rem] flex items-center justify-center shadow-xl border border-slate-200 overflow-hidden mb-6 shadow-emerald-100">
           <Image
             src="/icon.png"
             alt={METADATA.SHORT_NAME}
@@ -66,16 +66,16 @@ export default function LoginPage({
             className="w-full h-full object-cover p-3"
           />
         </div>
-        <h1 className="text-4xl font-black text-white tracking-tighter mb-3">
+        <h1 className="text-4xl font-black text-slate-900 tracking-tighter mb-3">
           {METADATA.SHORT_NAME}
         </h1>
-        <p className="text-gray-400 font-medium tracking-wide">
+        <p className="text-slate-500 font-medium tracking-wide">
           {MESSAGES.UI.APP_TAGLINE}
         </p>
       </div>
 
-      <div className="w-full max-w-md p-8 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl animate-slide-up">
-        <h2 className="text-xl font-bold text-white mb-8 text-center">
+      <div className="w-full max-w-md p-8 rounded-3xl bg-white backdrop-blur-xl border border-slate-200 shadow-xl animate-slide-up">
+        <h2 className="text-xl font-bold text-slate-800 mb-8 text-center">
           {MESSAGES.UI.LOGIN}
         </h2>
 
@@ -105,20 +105,20 @@ export default function LoginPage({
           <div className="flex justify-end -mt-3">
             <Link
               href={ROUTES.FORGOT_PASSWORD}
-              className="text-xs text-gray-400 hover:text-emerald-400 transition-colors"
+              className="text-xs text-slate-500 hover:text-emerald-600 transition-colors"
             >
               {MESSAGES.UI.FORGOT_PASSWORD_PROMPT}
             </Link>
           </div>
 
           {serverMessage && (
-            <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl px-4 py-3 text-sm text-emerald-400 mb-6 animate-fade-in">
+            <div className="bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 text-sm text-emerald-600 mb-6 animate-fade-in">
               {serverMessage}
             </div>
           )}
 
           {serverError && (
-            <p className="text-red-400 text-sm mt-2">{serverError}</p>
+            <p className="text-red-500 text-sm mt-2">{serverError}</p>
           )}
 
           <Button
@@ -131,14 +131,14 @@ export default function LoginPage({
           </Button>
         </form>
 
-        <div className="mt-6 flex flex-col items-center gap-4 text-sm text-gray-400">
+        <div className="mt-6 flex flex-col items-center gap-4 text-sm text-slate-500">
           <Link
             href={`${ROUTES.SIGNUP}${params.next ? `?next=${encodeURIComponent(params.next)}` : ""}`}
-            className="hover:text-brand-300 transition-colors"
+            className="hover:text-emerald-600 transition-colors"
           >
             {MESSAGES.UI.NO_ACCOUNT_PROMPT}
           </Link>
-          <div className="flex items-center gap-4 text-xs text-gray-500 mt-2">
+          <div className="flex items-center gap-4 text-xs text-slate-400 mt-2">
             <Link
               href={ROUTES.TERMS}
               className="hover:text-gray-300 transition-colors"

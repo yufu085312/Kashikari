@@ -11,7 +11,7 @@ interface GroupCardProps {
 export function GroupCard({ group }: GroupCardProps) {
   return (
     <Link href={`/groups/${group.id}`}>
-      <div className="group relative bg-white/5 hover:bg-white/10 border border-white/10 hover:border-emerald-500/30 rounded-2xl p-5 transition-all duration-200 cursor-pointer active:scale-95">
+      <div className="group relative bg-white hover:bg-slate-50 border border-slate-200 shadow-sm hover:shadow-md hover:border-emerald-400/50 rounded-2xl p-5 transition-all duration-200 cursor-pointer active:scale-95">
         {/* Glow effect on hover */}
         <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-emerald-500/5 to-teal-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
 
@@ -23,11 +23,11 @@ export function GroupCard({ group }: GroupCardProps) {
 
           {/* Info */}
           <div className="flex-1 min-w-0">
-            <h3 className="font-bold text-white text-lg truncate">
+            <h3 className="font-bold text-slate-800 text-lg truncate">
               {group.name}
             </h3>
             {group.members && (
-              <p className="text-sm text-gray-400 mt-0.5">
+              <p className="text-sm text-slate-500 mt-0.5">
                 {group.members.length}
                 {MESSAGES.UI.MEMBER_COUNT_SUFFIX}
               </p>
@@ -36,7 +36,7 @@ export function GroupCard({ group }: GroupCardProps) {
 
           {/* Arrow */}
           <svg
-            className="w-5 h-5 text-gray-500 group-hover:text-emerald-400 transition-colors flex-shrink-0"
+            className="w-5 h-5 text-slate-400 group-hover:text-emerald-500 transition-colors flex-shrink-0"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"

@@ -111,7 +111,7 @@ export function GroupDetailClient({
           <div className="min-w-0 flex-1">
             <Link
               href={ROUTES.HOME}
-              className="inline-flex items-center text-[10px] font-bold text-gray-500 hover:text-white transition-colors mb-4 group"
+              className="inline-flex items-center text-[10px] font-bold text-slate-500 hover:text-slate-800 transition-colors mb-4 group"
             >
               <svg
                 className="w-3 h-3 mr-1 group-hover:-translate-x-0.5 transition-transform"
@@ -129,7 +129,7 @@ export function GroupDetailClient({
               {MESSAGES.UI.BACK}
             </Link>
             <div className="flex items-center gap-3">
-              <h1 className="text-xl sm:text-2xl font-black text-white break-all tracking-tight leading-tight">
+              <h1 className="text-xl sm:text-2xl font-black text-slate-800 break-all tracking-tight leading-tight">
                 {initialGroupName}
               </h1>
             </div>
@@ -172,7 +172,7 @@ export function GroupDetailClient({
         <div className="px-2 pb-1 animate-slide-up">
           <button
             onClick={() => setShowMembersModal(true)}
-            className="inline-flex items-center text-xs font-bold text-gray-400 bg-white/5 py-1.5 px-3 rounded-full border border-glass-border hover:text-white hover:bg-white/10 transition-all group shadow-sm"
+            className="inline-flex items-center text-xs font-bold text-slate-500 bg-white py-1.5 px-3 rounded-full border border-slate-200 hover:text-slate-800 hover:bg-slate-50 transition-all group shadow-sm"
           >
             <svg
               className="w-4 h-4 mr-1.5 text-brand-400 group-hover:scale-110 transition-transform"
@@ -194,15 +194,15 @@ export function GroupDetailClient({
       </section>
 
       {/* タブナビゲーション */}
-      <div className="flex p-1 bg-white/5 rounded-2xl border border-glass-border">
+      <div className="flex p-1 bg-slate-100 rounded-2xl border border-slate-200">
         {(["balance", "payment", "settlement"] as const).map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
             className={`flex-1 py-3 text-xs font-bold rounded-xl transition-all ${
               activeTab === tab
-                ? "bg-brand-500 text-white shadow-lg shadow-brand-500/20 scale-[1.02]"
-                : "text-gray-500 hover:text-gray-300"
+                ? "bg-emerald-500 text-white shadow-md shadow-emerald-500/20 scale-[1.02]"
+                : "text-slate-500 hover:text-slate-700"
             }`}
           >
             {tab === "balance"
@@ -226,10 +226,10 @@ export function GroupDetailClient({
           <div className="space-y-6 animate-slide-up">
             <section>
               <div className="flex items-center justify-between mb-4 px-1">
-                <h2 className="text-xs font-black text-gray-500 uppercase tracking-widest">
+                <h2 className="text-xs font-black text-slate-500 uppercase tracking-widest">
                   {MESSAGES.UI.HISTORY_PAYMENTS}
                 </h2>
-                <div className="h-px flex-1 bg-white/5 ml-4"></div>
+                <div className="h-px flex-1 bg-slate-200 ml-4"></div>
               </div>
               <PaymentList
                 groupId={groupId}
@@ -244,10 +244,10 @@ export function GroupDetailClient({
           <div className="space-y-6 animate-slide-up">
             <section>
               <div className="flex items-center justify-between mb-4 px-1">
-                <h2 className="text-xs font-black text-gray-500 uppercase tracking-widest">
+                <h2 className="text-xs font-black text-slate-500 uppercase tracking-widest">
                   {MESSAGES.UI.HISTORY_SETTLEMENTS}
                 </h2>
-                <div className="h-px flex-1 bg-white/5 ml-4"></div>
+                <div className="h-px flex-1 bg-slate-200 ml-4"></div>
               </div>
               <SettlementList
                 groupId={groupId}

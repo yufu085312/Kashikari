@@ -98,10 +98,10 @@ export default async function HomePage(props: {
     console.error("HomePage Error:", e);
     return (
       <div className="flex flex-col items-center justify-center min-h-[50vh] animate-fade-in">
-        <GlassCard className="p-8 text-center max-w-sm border-red-500/20 bg-red-500/5">
-          <div className="w-16 h-16 bg-red-500/10 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-red-500/20 shadow-lg shadow-red-500/10">
+        <GlassCard className="p-8 text-center max-w-sm border-red-200 bg-red-50 shadow-xl">
+          <div className="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-red-200 shadow-lg shadow-red-100">
             <svg
-              className="w-8 h-8 text-red-400"
+              className="w-8 h-8 text-red-500"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -114,17 +114,17 @@ export default async function HomePage(props: {
               />
             </svg>
           </div>
-          <h2 className="text-xl font-bold text-white mb-3">
+          <h2 className="text-xl font-bold text-slate-900 mb-3">
             {MESSAGES.UI.ERROR_OCCURRED}
           </h2>
-          <p className="text-sm text-gray-400 mb-8 leading-relaxed">
+          <p className="text-sm text-slate-500 mb-8 leading-relaxed">
             {MESSAGES.ERROR.FETCH_FAILED}
             <br />
             {MESSAGES.ERROR.RETRY_LATER}
           </p>
           <Link
             href={ROUTES.HOME}
-            className="inline-flex items-center justify-center w-full px-6 py-3 text-sm font-bold text-white transition-all bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 active:scale-95"
+            className="inline-flex items-center justify-center w-full px-6 py-3 text-sm font-bold text-slate-800 transition-all bg-white border border-slate-200 rounded-xl hover:bg-slate-50 shadow-sm active:scale-95"
           >
             {MESSAGES.UI.RELOAD}
           </Link>

@@ -23,11 +23,11 @@ export function Button({
     primary:
       "bg-gradient-to-r from-brand-500 to-emerald-600 hover:from-brand-400 hover:to-emerald-500 text-white shadow-lg shadow-brand-500/25 focus:ring-brand-500",
     secondary:
-      "bg-white/5 hover:bg-white/10 text-white border border-glass-border hover:border-glass-border-hover focus:ring-white/30",
+      "bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 hover:border-slate-300 focus:ring-slate-200 shadow-sm",
     danger:
-      "bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-400 hover:to-rose-500 text-white shadow-lg shadow-red-500/25 focus:ring-red-500",
+      "bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-400 hover:to-rose-500 text-white shadow-md shadow-red-500/20 focus:ring-red-500",
     ghost:
-      "text-gray-400 hover:text-white hover:bg-white/5 focus:ring-glass-border",
+      "text-slate-500 hover:text-slate-900 hover:bg-slate-100 focus:ring-slate-200",
   };
 
   const sizes = {
