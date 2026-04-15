@@ -10,6 +10,11 @@ const gaId = process.env.NEXT_PUBLIC_GA_ID;
 
 export const viewport: Viewport = {
   themeColor: "#10b981",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false, // 意図しないズームを防ぐ
+  viewportFit: "cover",
 };
 
 export const metadata: Metadata = {

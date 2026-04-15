@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { GlassCard } from "@/components/ui/glass-card";
-import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/ui/modal";
 import { GroupForm } from "@/components/groups/group-form";
 import { Group } from "@/lib/domain/models/group";
@@ -109,12 +108,60 @@ export function HomePageClient({
     router.push(`/groups/${groupId}`);
   };
 
+  const renderTabs = () => (
+    <div className="flex gap-1 bg-slate-100 rounded-xl p-1 w-full shadow-inner">
+      <button
+        onClick={() => setActiveTab("groups")}
+        className={`flex-1 py-2.5 px-3 sm:px-4 rounded-lg text-xs font-bold tracking-wide transition-all ${
+          activeTab === "groups"
+            ? "bg-white text-slate-800 shadow-sm"
+            : "text-slate-400 hover:text-slate-600"
+        }`}
+      >
+        <span className="flex items-center justify-center gap-1.5 flex-wrap sm:flex-nowrap">
+          {MESSAGES.UI.GROUP_LIST_LABEL}
+          <span
+            className={`px-1.5 py-0.5 rounded-full text-[10px] ${
+              activeTab === "groups"
+                ? "bg-emerald-100 text-emerald-600"
+                : "bg-slate-200 text-slate-500"
+            }`}
+          >
+            {groups.length}
+          </span>
+        </span>
+      </button>
+      <button
+        onClick={() => setActiveTab("unsettled")}
+        className={`flex-1 py-2.5 px-3 sm:px-4 rounded-lg text-xs font-bold tracking-wide transition-all ${
+          activeTab === "unsettled"
+            ? "bg-white text-slate-800 shadow-sm"
+            : "text-slate-400 hover:text-slate-600"
+        }`}
+      >
+        <span className="flex items-center justify-center gap-1.5 flex-wrap sm:flex-nowrap">
+          {activeTab === "unsettled" && (
+            <span className="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse hidden sm:inline-block" />
+          )}
+          {MESSAGES.UI.UNSETTLED_TITLE}
+          <span
+            className={`px-1.5 py-0.5 rounded-full text-[10px] ${
+              activeTab === "unsettled"
+                ? "bg-orange-100 text-orange-600"
+                : "bg-slate-200 text-slate-500"
+            }`}
+          >
+            {unsettledBalances.length}
+          </span>
+        </span>
+      </button>
+    </div>
+  );
+
   return (
-    <div className="space-y-6 sm:space-y-8 animate-fade-in pb-24 sm:pb-0">
-      {/* SP版: ホーム画面追加バナー */}
-      <div className="sm:hidden">
-        <AddToHomeScreenBanner />
-      </div>
+    <div className="space-y-4 sm:space-y-8 animate-fade-in pb-28 sm:pb-0">
+      {/* ホーム画面追加バナー */}
+      <AddToHomeScreenBanner />
 
       {/* ユーザープロフィールと設定メニュー群 */}
       <HomeHeader
@@ -123,54 +170,8 @@ export function HomePageClient({
         onNewGroup={() => setShowGroupForm(true)}
       />
 
-      {/* タブ切り替え */}
-      <div className="flex gap-1 bg-slate-100 rounded-xl p-1">
-        <button
-          onClick={() => setActiveTab("groups")}
-          className={`flex-1 py-2.5 px-4 rounded-lg text-xs font-bold tracking-wide transition-all ${
-            activeTab === "groups"
-              ? "bg-white text-slate-800 shadow-sm"
-              : "text-slate-400 hover:text-slate-600"
-          }`}
-        >
-          <span className="flex items-center justify-center gap-1.5">
-            {MESSAGES.UI.GROUP_LIST_LABEL}
-            <span
-              className={`ml-1 px-1.5 py-0.5 rounded-full text-[10px] ${
-                activeTab === "groups"
-                  ? "bg-emerald-100 text-emerald-600"
-                  : "bg-slate-200 text-slate-500"
-              }`}
-            >
-              {groups.length}
-            </span>
-          </span>
-        </button>
-        <button
-          onClick={() => setActiveTab("unsettled")}
-          className={`flex-1 py-2.5 px-4 rounded-lg text-xs font-bold tracking-wide transition-all ${
-            activeTab === "unsettled"
-              ? "bg-white text-slate-800 shadow-sm"
-              : "text-slate-400 hover:text-slate-600"
-          }`}
-        >
-          <span className="flex items-center justify-center gap-1.5">
-            {activeTab === "unsettled" && (
-              <span className="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse" />
-            )}
-            {MESSAGES.UI.UNSETTLED_TITLE}
-            <span
-              className={`ml-1 px-1.5 py-0.5 rounded-full text-[10px] ${
-                activeTab === "unsettled"
-                  ? "bg-orange-100 text-orange-600"
-                  : "bg-slate-200 text-slate-500"
-              }`}
-            >
-              {unsettledBalances.length}
-            </span>
-          </span>
-        </button>
-      </div>
+      {/* タブ切り替え (PC版) */}
+      <div className="hidden sm:block mb-8 mt-6">{renderTabs()}</div>
 
       {/* タブコンテンツ */}
       {activeTab === "unsettled" ? (
@@ -182,16 +183,17 @@ export function HomePageClient({
         <GroupListSection groups={groups} />
       )}
 
-      {/* 画面下部固定アクションボタン（SP専用） */}
-      <div className="sm:hidden fixed bottom-8 left-1/2 -translate-x-1/2 w-full px-6 z-40">
-        <div className="animate-slide-up">
-          <Button
+      {/* タブ切り替え & アクションボタン (SP版下部固定) */}
+      <div className="sm:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 pb-[env(safe-area-inset-bottom)] shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
+        {/* 新規グループ追加用FAB (タブエリアの右上) */}
+        <div className="absolute right-4 -top-[70px] z-50">
+          <button
             onClick={() => setShowGroupForm(true)}
-            size="lg"
-            className="w-full rounded-2xl shadow-2xl shadow-emerald-500/30 overflow-hidden py-4 text-base font-bold bg-gradient-to-r from-emerald-500 to-emerald-400 hover:from-emerald-400 hover:to-emerald-300 border border-white/20 active:scale-95 transition-all text-white"
+            className="w-14 h-14 bg-gradient-to-tr from-emerald-500 to-emerald-400 rounded-full flex items-center justify-center text-white shadow-lg shadow-emerald-500/30 hover:scale-105 active:scale-95 transition-all outline-none focus:ring-4 ring-emerald-500/20"
+            title={MESSAGES.UI.NEW_GROUP_LABEL}
           >
             <svg
-              className="w-5 h-5 mr-2"
+              className="w-6 h-6"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -203,9 +205,10 @@ export function HomePageClient({
                 d="M12 4v16m8-8H4"
               />
             </svg>
-            {MESSAGES.UI.NEW_GROUP_LABEL}
-          </Button>
+          </button>
         </div>
+
+        <div className="px-3 pt-3 pb-3">{renderTabs()}</div>
       </div>
       <Modal
         isOpen={showGroupForm}

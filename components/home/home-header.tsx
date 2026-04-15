@@ -54,7 +54,7 @@ export function HomeHeader({
           </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row items-end sm:items-center gap-4 mt-4 sm:mt-0">
+        <div className="flex flex-col sm:flex-row items-end sm:items-center gap-4">
           <Button
             onClick={onNewGroup}
             size="sm"

@@ -7,7 +7,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { LIMITS, MESSAGES } from "@/lib/constants";
-import { createGroupSchema, CreateGroupSchemaInput } from "@/lib/schemas/group";
+import {
+  createGroupFormSchema,
+  CreateGroupFormInput,
+} from "@/lib/schemas/group";
 import { createGroupAction } from "@/app/actions/group";
 
 interface GroupFormProps {
@@ -25,27 +28,29 @@ export function GroupForm({ onSuccess }: GroupFormProps) {
     control,
     watch,
     formState: { errors },
-  } = useForm<CreateGroupSchemaInput>({
-    resolver: zodResolver(createGroupSchema),
+  } = useForm<CreateGroupFormInput>({
+    resolver: zodResolver(createGroupFormSchema),
     defaultValues: {
       name: "",
-      memberSearchIds: [""],
+      memberSearchIds: [{ value: "" }],
     },
   });
 
   const { fields, append, remove } = useFieldArray({
     control,
-    name: "memberSearchIds" as never, // react-hook-form の string array 判定回避用
+    name: "memberSearchIds",
   });
 
   const groupName = watch("name") || "";
 
-  const onSubmit = (data: CreateGroupSchemaInput) => {
+  const onSubmit = (data: CreateGroupFormInput) => {
     setServerError(null);
     startTransition(async () => {
       // 空欄の searchId は除外
       const validSearchIds =
-        data.memberSearchIds?.filter((id) => id.trim() !== "") || [];
+        data.memberSearchIds
+          ?.map((f) => f.value.trim())
+          .filter((id) => id !== "") || [];
 
       const { data: group, error } = await createGroupAction({
         name: data.name,
@@ -92,7 +97,7 @@ export function GroupForm({ onSuccess }: GroupFormProps) {
             <div className="flex-1">
               <Input
                 placeholder={MESSAGES.UI.SEARCH_ID_EXAMPLE}
-                {...register(`memberSearchIds.${index}` as const)}
+                {...register(`memberSearchIds.${index}.value` as const)}
               />
             </div>
             {fields.length > 1 && (
@@ -121,7 +126,7 @@ export function GroupForm({ onSuccess }: GroupFormProps) {
 
         <button
           type="button"
-          onClick={() => append("")}
+          onClick={() => append({ value: "" })}
           className="flex items-center gap-2 text-sm text-emerald-600 hover:text-emerald-700 transition-colors py-1"
         >
           <svg
