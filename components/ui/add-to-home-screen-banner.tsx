@@ -61,7 +61,7 @@ export function AddToHomeScreenBanner() {
   if (!show) return null;
 
   return (
-    <div className="animate-slide-up mb-4">
+    <div className="animate-slide-up mb-6 sm:hidden">
       <div className="relative flex items-start gap-3 p-4 rounded-2xl bg-white border border-slate-200 backdrop-blur-sm shadow-[0_4px_24px_rgba(0,0,0,0.06)]">
         {/* アイコン */}
         <div className="shrink-0 w-10 h-10 rounded-xl bg-brand-500/20 flex items-center justify-center border border-brand-500/30">
