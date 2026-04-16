@@ -46,7 +46,7 @@ export function PaymentList({
     }
 
     const isConfirmed = await confirm({
-      title: MESSAGES.UI.GROUP_DELETE,
+      title: MESSAGES.UI.PAYMENT_DELETE_ACTION,
       message: MESSAGES.UI.CONFIRM_DELETE_PAYMENT,
       type: "danger",
       confirmText: MESSAGES.UI.DELETE_EXECUTE,

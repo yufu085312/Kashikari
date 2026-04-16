@@ -113,7 +113,7 @@ export function AlertProvider({ children }: { children: React.ReactNode }) {
         );
       default:
         return (
-          <div className="w-12 h-12 bg-blue-500/10 rounded-2xl flex items-center justify-center text-blue-400 mb-2">
+          <div className="w-12 h-12 bg-blue-500/10 rounded-2xl flex items-center justify-center text-blue-500 mb-2">
             <svg
               className="w-6 h-6"
               fill="none"
@@ -143,7 +143,7 @@ export function AlertProvider({ children }: { children: React.ReactNode }) {
         <div className="space-y-6">
           <div className="flex flex-col items-center text-center space-y-4">
             {getIcon()}
-            <p className="text-sm text-gray-300 leading-relaxed font-medium whitespace-pre-wrap">
+            <p className="text-sm text-slate-600 leading-relaxed font-medium whitespace-pre-wrap">
               {options.message}
             </p>
           </div>
