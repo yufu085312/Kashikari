@@ -6,13 +6,16 @@ test.describe('Payment Lifecycle Flow', () => {
     // 1. ホーム画面へ
     await page.goto('/');
     
-    // 2. 既存のグループ（またはテスト用に作成されたもの）へ遷移
-    // ここでは一番上のグループを選択
-    const groupLink = page.locator('a[href^="/groups/"]').first();
-    const groupName = await groupLink.locator('h3').innerText();
-    await groupLink.click();
+    // 2. テスト用グループの作成 (新規ユーザー対策)
+    const timestamp = Date.now().toString().slice(-6);
+    const groupName = `G_PAY_${timestamp}`;
     
-    await expect(page.locator('h1')).toHaveText(groupName);
+    await page.getByRole('button', { name: MESSAGES.UI.NEW_GROUP_LABEL }).first().click();
+    await page.getByPlaceholder(MESSAGES.UI.GROUP_NAME_EXAMPLE).fill(groupName);
+    await page.getByRole('button', { name: MESSAGES.UI.GROUP_CREATE }).last().click();
+    
+    // グループ詳細画面への遷移を確認
+    await expect(page.getByRole('heading', { level: 1, name: groupName })).toBeVisible();
 
     // 3. 支払い登録モーダルを開く
     await page.getByRole('button', { name: MESSAGES.UI.PAYMENT_RECORD }).click();

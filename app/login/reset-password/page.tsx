@@ -18,7 +18,7 @@ export default function ResetPasswordPage() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center py-8 sm:py-12">
+    <div className="flex flex-col items-center justify-center pt-0 pb-8 sm:pt-4 sm:pb-12">
       <div className="flex flex-col items-center mb-8 text-center animate-fade-in">
         <div className="w-16 h-16 bg-white rounded-[2rem] flex items-center justify-center shadow-xl border border-slate-200 overflow-hidden mb-6 shadow-emerald-100">
           <Image
@@ -37,7 +37,7 @@ export default function ResetPasswordPage() {
         </p>
       </div>
 
-      <div className="w-full max-w-md p-8 rounded-3xl bg-white backdrop-blur-xl border border-slate-200 shadow-xl animate-slide-up">
+      <div className="w-full max-w-sm p-8 rounded-3xl bg-white backdrop-blur-xl border border-slate-200 shadow-xl animate-slide-up">
         <PasswordForm onSuccess={handleSuccess} />
       </div>
     </div>

@@ -7,8 +7,10 @@ test.use({ storageState: { cookies: [], origins: [] } });
 test.describe('Authentication Flow', () => {
   test('ログインページが表示されること', async ({ page }) => {
     await page.goto('/login');
-    await expect(page.locator('h1')).toHaveText('Kashikari');
-    await expect(page.locator('h2')).toHaveText('ログイン');
+    // ブランド名が表示されているか
+    await expect(page.getByText('Kashikari', { exact: true }).first()).toBeVisible();
+    // ログインフォームのタイトルが表示されているか
+    await expect(page.getByRole('heading', { name: MESSAGES.UI.LOGIN })).toBeVisible();
     await expect(page.locator('input[name="email"]')).toBeVisible();
     await expect(page.locator('input[name="password"]')).toBeVisible();
   });

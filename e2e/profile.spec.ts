@@ -11,10 +11,10 @@ test.describe('Profile Management', () => {
     // 設定ボタンをクリック (歯車アイコン)
     await page.click('button[title="' + MESSAGES.UI.SETTINGS_LABEL + '"]');
     // プロフィール表示をクリック
-    await page.click('text=' + MESSAGES.UI.PROFILE_VIEW_TITLE);
+    await page.getByRole('button', { name: MESSAGES.UI.PROFILE_VIEW_TITLE }).click();
 
     // 編集ボタンをクリック
-    await page.click('button:has-text("' + MESSAGES.UI.PROFILE_EDIT_TITLE + '")');
+    await page.getByRole('button', { name: MESSAGES.UI.PROFILE_EDIT_TITLE }).click();
 
     // モーダルのタイトルを確認
     const modalTitle = page.getByRole('heading', { name: MESSAGES.UI.PROFILE_EDIT_TITLE });
@@ -29,8 +29,8 @@ test.describe('Profile Management', () => {
     const newName = '新テスト名_' + Date.now();
 
     await page.click('button[title="' + MESSAGES.UI.SETTINGS_LABEL + '"]');
-    await page.click('text=' + MESSAGES.UI.PROFILE_VIEW_TITLE);
-    await page.click('button:has-text("' + MESSAGES.UI.PROFILE_EDIT_TITLE + '")');
+    await page.getByRole('button', { name: MESSAGES.UI.PROFILE_VIEW_TITLE }).click();
+    await page.getByRole('button', { name: MESSAGES.UI.PROFILE_EDIT_TITLE }).click();
 
     // 表示名を変更
     const nameInput = page.locator('input').first();
@@ -97,7 +97,7 @@ test.describe('Profile Management', () => {
     const newPassword = 'newPassword123';
 
     await page.click('button[title="' + MESSAGES.UI.SETTINGS_LABEL + '"]');
-    await page.click('text=' + MESSAGES.UI.CHANGE_PASSWORD_TITLE);
+    await page.getByRole('button', { name: MESSAGES.UI.CHANGE_PASSWORD_TITLE }).click();
 
     // 新しいパスワードを入力
     await page.fill('input[name="password"]', newPassword);
@@ -112,7 +112,7 @@ test.describe('Profile Management', () => {
     // 【重要】テスト環境を壊さないよう、パスワードを元に戻しておく
     const originalPassword = process.env.E2E_USER_PASSWORD || 'password123';
     await page.click('button[title="' + MESSAGES.UI.SETTINGS_LABEL + '"]');
-    await page.click('text=' + MESSAGES.UI.CHANGE_PASSWORD_TITLE);
+    await page.getByRole('button', { name: MESSAGES.UI.CHANGE_PASSWORD_TITLE }).click();
     await page.fill('input[name="password"]', originalPassword);
     await page.fill('input[name="confirm_password"]', originalPassword);
     await page.click('button:has-text("' + MESSAGES.UI.SAVE + '")');

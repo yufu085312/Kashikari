@@ -42,6 +42,6 @@ test.describe('Group Management Flow', () => {
     await page.waitForURL(/\/groups\/[a-zA-Z0-9-]+/);
     
     // ヘッダー（タイトル）に作成したグループ名が表示されていること
-    await expect(page.locator('h1')).toHaveText(groupName);
+    await expect(page.getByRole('heading', { level: 1, name: groupName })).toBeVisible();
   });
 });
