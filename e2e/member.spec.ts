@@ -15,7 +15,7 @@ test.describe('Member Management', () => {
     
     // グループページへ移動を待つ
     await page.waitForURL('**/groups/*');
-    await expect(page.locator('h1')).toContainText(groupName);
+    await expect(page.getByRole('heading', { level: 1, name: groupName })).toBeVisible();
 
     // メンバーリストを表示 (定数をもとに検索: 参加メンバー ◯名)
     await page.getByRole('button', { name: new RegExp(MESSAGES.UI.MEMBER_LIST + '.*' + MESSAGES.UI.MEMBER_COUNT_UNIT) }).click();

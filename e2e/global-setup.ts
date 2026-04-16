@@ -37,13 +37,15 @@ async function globalSetup(config: FullConfig) {
     
     // URLの変更 または エラーメッセージの出現を待つ
     await Promise.race([
-      page.waitForURL('**/', { timeout: 3000 }),
-      errorMsg.waitFor({ state: 'visible', timeout: 3000 })
+      page.waitForURL('**/', { timeout: 5000 }),
+      errorMsg.waitFor({ state: 'visible', timeout: 5000 })
     ]).catch(() => {});
 
     // もしログインに失敗していたらサインアップを試みる
-    if (page.url().includes('error=')) {
-      console.log('Login failed. Attempting to create user...');
+    if (page.url().includes('error=') || !page.url().endsWith('/')) {
+      const currentUrl = page.url();
+      console.log(`Login failed (Current URL: ${currentUrl}). Attempting to create user...`);
+      
       await page.goto('/signup');
       await page.fill('input[name="name"]', 'テストユーザー');
       // search_id はユニークである必要があるのでタイムスタンプを利用
@@ -51,10 +53,39 @@ async function globalSetup(config: FullConfig) {
       await page.fill('input[name="email"]', email);
       await page.fill('input[name="password"]', password);
       await page.click('button[type="submit"]');
-      await page.waitForURL('**/', { timeout: 10000 });
-      console.log('User created successfully.');
+
+      // サインアップ結果を待機
+      try {
+        await page.waitForURL('**/', { timeout: 10000 });
+        console.log('User created successfully.');
+      } catch (e) {
+        // サインアップに失敗した場合、既に登録されているか確認
+        if (page.url().includes('error=')) {
+          const decodedError = decodeURIComponent(page.url().split('error=')[1].split('&')[0]);
+          console.error(`Signup failed with error: ${decodedError}`);
+          
+          if (decodedError.includes('登録されています')) {
+              console.log('User already exists but login failed (possibly password mismatch). Trying fresh user...');
+              // 最終手段として、タイムスタンプ付きの新しいメールアドレスでユーザーを作成して続行する
+              const freshEmail = `e2e-test-${Date.now()}@example.com`;
+              console.log(`Creating fresh user with email: ${freshEmail}`);
+              await page.goto('/signup');
+              await page.fill('input[name="name"]', 'テストユーザー');
+              await page.fill('input[name="search_id"]', `testuser_${Date.now()}`);
+              await page.fill('input[name="email"]', freshEmail);
+              await page.fill('input[name="password"]', password);
+              await page.click('button[type="submit"]');
+              await page.waitForURL('**/', { timeout: 15000 });
+              console.log('Fresh user created successfully.');
+          } else {
+            throw new Error(`Signup failed: ${decodedError}`);
+          }
+        } else {
+          throw e;
+        }
+      }
     } else {
-      await page.waitForURL('**/', { timeout: 5000 }).catch(() => {});
+      console.log('Login successful.');
     }
     
     // Cookie / LocalStorage を保存
