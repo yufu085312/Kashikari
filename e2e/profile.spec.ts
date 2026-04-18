@@ -7,7 +7,7 @@ test.describe('Profile Management', () => {
     await page.goto('/');
   });
 
-  test('プロフィール編集モーダルが開くこと', async ({ page }) => {
+  test('アカウント編集モーダルが開くこと', async ({ page }) => {
     // 設定ボタンをクリック (歯車アイコン)
     await page.click('button[title="' + MESSAGES.UI.SETTINGS_LABEL + '"]');
     // プロフィール表示をクリック

@@ -7,8 +7,8 @@ import { UserDomainSchema } from "./user";
 export const SettlementDomainSchema = z.object({
   id: z.string().uuid(),
   group_id: z.string().uuid(),
-  from_user_id: z.string().uuid(),
-  to_user_id: z.string().uuid(),
+  from_user_id: z.string().uuid().nullable(),
+  to_user_id: z.string().uuid().nullable(),
   amount: z.number().int().min(0),
   created_at: z.string(),
   from_user: UserDomainSchema.optional(),

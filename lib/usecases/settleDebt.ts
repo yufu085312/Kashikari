@@ -11,7 +11,7 @@ export async function settleDebt(
 
   if (amount <= 0)
     throw new ValidationError(MESSAGES.ERROR.SETTLEMENT_AMOUNT_POSITIVE);
-  if (fromUserId === toUserId)
+  if (fromUserId && toUserId && fromUserId === toUserId)
     throw new ValidationError(MESSAGES.ERROR.SETTLEMENT_SELF_FORBIDDEN);
 
   return await insertSettlement(input);

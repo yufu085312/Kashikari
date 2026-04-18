@@ -86,7 +86,7 @@ export function SettlementList({ groupId, settlements }: SettlementListProps) {
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1 flex-wrap">
                 <span className="text-sm font-bold text-slate-800 px-2 py-0.5 bg-slate-50 rounded-md border border-slate-200">
-                  {s.from_user?.name}
+                  {s.from_user?.name || MESSAGES.UI.DELETED_USER}
                 </span>
                 <svg
                   className="w-4 h-4 text-slate-400 flex-shrink-0"
@@ -102,7 +102,7 @@ export function SettlementList({ groupId, settlements }: SettlementListProps) {
                   />
                 </svg>
                 <span className="text-sm font-bold text-slate-800 px-2 py-0.5 bg-slate-50 rounded-md border border-slate-200">
-                  {s.to_user?.name}
+                  {s.to_user?.name || MESSAGES.UI.DELETED_USER}
                 </span>
               </div>
               <p className="text-xl font-black text-emerald-600 leading-none mt-1">
