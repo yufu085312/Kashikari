@@ -7,7 +7,7 @@ import { UserDomainSchema } from "./user";
 export const PaymentParticipantDomainSchema = z.object({
   id: z.string().uuid().optional(),
   payment_id: z.string().uuid(),
-  user_id: z.string().uuid(),
+  user_id: z.string().uuid().nullable(),
   share_amount: z.number().int().min(0),
   user: UserDomainSchema.optional(),
 });
@@ -18,7 +18,7 @@ export const PaymentParticipantDomainSchema = z.object({
 export const PaymentDomainSchema = z.object({
   id: z.string().uuid(),
   group_id: z.string().uuid(),
-  payer_id: z.string().uuid(),
+  payer_id: z.string().uuid().nullable(),
   amount: z.number().int().min(0),
   memo: z.string().optional().nullable(),
   created_at: z.string().optional().nullable(),

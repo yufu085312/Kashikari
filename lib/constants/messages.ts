@@ -57,6 +57,7 @@ export const MESSAGES = {
     FETCH_FAILED: "データの取得中に問題が発生しました。",
     RETRY_LATER: "しばらく時間を置いてから再度お試しください。",
     PROFILE_UPDATE_FAILED: "プロフィールの更新に失敗しました。",
+    ACCOUNT_DELETE_FAILED: "アカウントの削除に失敗しました。",
     PASSWORD_UPDATE_FAILED: "パスワードの更新に失敗しました。",
     PASSWORD_MISMATCH: "新しいパスワードと確認用パスワードが一致しません。",
     RESET_EMAIL_SEND_FAILED: "リセットメールの送信に失敗しました。",
@@ -101,6 +102,8 @@ export const MESSAGES = {
     CONFIRM_DELETE_PAYMENT: "この支払いを削除しますか？",
     CONFIRM_CANCEL_SETTLEMENT:
       "この精算記録を取り消して、貸し借りを未精算の状態に戻しますか？",
+    CONFIRM_DELETE_ACCOUNT:
+      "アカウントを完全に削除してもよろしいですか？\nこの操作を行うと、現在参加しているすべてのグループから退出します。\nまた、この操作は取り消せません。",
     COPIED: "コピー済み",
     COPY: "コピー",
     BACK: "戻る",
@@ -132,6 +135,8 @@ export const MESSAGES = {
     PRIVACY_POLICY_LABEL: "プライバシーポリシー",
     CONTACT_LABEL: "お問い合わせ",
     LOGOUT_LABEL: "ログアウト",
+    DELETE_ACCOUNT: "アカウントの削除",
+    DELETED_USER: "退会済みユーザー",
     SETTINGS_LABEL: "設定",
     ID_COPY_SUCCESS: "コピーしました",
     COPY_ID: "IDをコピー",
@@ -171,7 +176,7 @@ export const MESSAGES = {
       "招待されたグループへ移動して参加を完了しましょう。",
     GO_TO_INVITE_PAGE: "グループ招待ページへ",
     GO_TO_HOME: "ホームへ移動",
-    PROFILE_EDIT_TITLE: "プロフィール編集",
+    PROFILE_EDIT_TITLE: "アカウント編集",
     PROFILE_UPDATE_SUCCESS: "プロフィールを更新しました",
     PASSWORD_UPDATE_SUCCESS: "パスワードを更新しました",
     SAVE: "保存する",
@@ -273,7 +278,7 @@ export const MESSAGES = {
     MEMBER_COUNT_UNIT: "名",
     NOT_SET: "未設定",
     PROFILE_SETUP_TITLE: "プロフィール設定",
-    PROFILE_VIEW_TITLE: "プロフィール表示",
+    PROFILE_VIEW_TITLE: "アカウント設定",
     PROFILE_SETUP_DESCRIPTION:
       "アプリを利用するための基本情報を入力してください",
     COMPLETE_SETUP: "設定を完了する",

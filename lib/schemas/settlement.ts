@@ -4,8 +4,8 @@ import { MESSAGES } from "@/lib/constants";
 /** 精算作成スキーマ */
 export const createSettlementSchema = z.object({
   groupId: z.string().uuid(),
-  fromUserId: z.string().uuid(),
-  toUserId: z.string().uuid(),
+  fromUserId: z.string().uuid().nullable(),
+  toUserId: z.string().uuid().nullable(),
   amount: z
     .number({ error: MESSAGES.ERROR.SETTLEMENT_AMOUNT_REQUIRED })
     .int(MESSAGES.ERROR.SETTLEMENT_AMOUNT_INVALID)

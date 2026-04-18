@@ -1,6 +1,4 @@
-"use client";
-
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -8,6 +6,8 @@ import { Modal } from "@/components/ui/modal";
 import { ProfileForm } from "./profile-form";
 import { PasswordForm } from "./password-form";
 import { logout } from "@/app/login/actions";
+import { deleteAccountAction } from "@/app/actions/user";
+import { useAlert } from "@/components/providers/alert-provider";
 import { ROUTES, TIMEOUTS, MESSAGES, METADATA } from "@/lib/constants";
 
 interface HomeHeaderProps {
@@ -27,11 +27,36 @@ export function HomeHeader({
     "closed" | "view" | "edit"
   >("closed");
   const [showPasswordForm, setShowPasswordForm] = useState(false);
+  const [isPending, startTransition] = useTransition();
+  const { alert, confirm } = useAlert();
 
   const handleCopyId = () => {
     navigator.clipboard.writeText(searchId);
     setCopied(true);
     setTimeout(() => setCopied(false), TIMEOUTS.COPY_FEEDBACK);
+  };
+
+  const handleDeleteAccount = async () => {
+    const isConfirmed = await confirm({
+      title: MESSAGES.UI.DELETE_ACCOUNT,
+      message: MESSAGES.UI.CONFIRM_DELETE_ACCOUNT,
+      type: "danger",
+      confirmText: MESSAGES.UI.DELETE_EXECUTE,
+      cancelText: MESSAGES.UI.BACK,
+    });
+
+    if (!isConfirmed) return;
+
+    startTransition(async () => {
+      const { error } = await deleteAccountAction({});
+      if (error) {
+        await alert({
+          title: MESSAGES.UI.ERROR_TITLE,
+          message: error,
+          type: "error",
+        });
+      }
+    });
   };
 
   return (
@@ -343,6 +368,29 @@ export function HomeHeader({
               </svg>
               {MESSAGES.UI.PROFILE_EDIT_TITLE}
             </Button>
+
+            <div className="pt-2 border-t border-slate-100">
+              <button
+                onClick={handleDeleteAccount}
+                disabled={isPending}
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 text-xs font-bold text-red-400 hover:text-red-600 hover:bg-red-50 transition-all rounded-xl disabled:opacity-50"
+              >
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                  />
+                </svg>
+                {MESSAGES.UI.DELETE_ACCOUNT}
+              </button>
+            </div>
           </div>
         ) : (
           <ProfileForm

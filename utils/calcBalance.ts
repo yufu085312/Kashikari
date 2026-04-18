@@ -2,6 +2,7 @@ import { Payment } from "@/lib/domain/models/payment";
 import { Settlement } from "@/lib/domain/models/settlement";
 import { Balance } from "@/lib/domain/models/balance";
 import { User } from "@/lib/domain/models/user";
+import { MESSAGES } from "@/lib/constants";
 
 /**
  * 残高計算ロジック（コア）
@@ -31,15 +32,19 @@ export function calcBalance(
 
     for (const p of participants) {
       if (p.user_id === payer_id) continue; // 支払者自身はスキップ
-      netMap[payer_id] = (netMap[payer_id] || 0) + p.share_amount;
-      netMap[p.user_id] = (netMap[p.user_id] || 0) - p.share_amount;
+      const pId = payer_id || "null";
+      const uId = p.user_id || "null";
+      netMap[pId] = (netMap[pId] || 0) + p.share_amount;
+      netMap[uId] = (netMap[uId] || 0) - p.share_amount;
     }
   }
 
   // 精算で相殺
   for (const s of settlements) {
-    netMap[s.from_user_id] = (netMap[s.from_user_id] || 0) + s.amount;
-    netMap[s.to_user_id] = (netMap[s.to_user_id] || 0) - s.amount;
+    const fromId = s.from_user_id || "null";
+    const toId = s.to_user_id || "null";
+    netMap[fromId] = (netMap[fromId] || 0) + s.amount;
+    netMap[toId] = (netMap[toId] || 0) - s.amount;
   }
 
   // ユーザー名マップ
@@ -69,11 +74,11 @@ export function calcBalance(
 
     if (transfer > 0) {
       balances.push({
-        fromUserId: debtor.id,
-        toUserId: creditor.id,
+        fromUserId: debtor.id === "null" ? null : debtor.id,
+        toUserId: creditor.id === "null" ? null : creditor.id,
         amount: transfer,
-        fromUserName: nameMap[debtor.id],
-        toUserName: nameMap[creditor.id],
+        fromUserName: nameMap[debtor.id] || MESSAGES.UI.DELETED_USER,
+        toUserName: nameMap[creditor.id] || MESSAGES.UI.DELETED_USER,
       });
     }
 

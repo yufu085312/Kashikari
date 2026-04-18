@@ -3,6 +3,7 @@ import { calcBalance } from "@/utils/calcBalance";
 import type { Payment } from "@/lib/domain/models/payment";
 import type { Settlement } from "@/lib/domain/models/settlement";
 import type { User } from "@/lib/domain/models/user";
+import { MESSAGES } from "@/lib/constants";
 
 // テスト用のユーザー定義
 const userA: User = { id: "userA", name: "Aさん" };
@@ -14,8 +15,8 @@ const users3 = [userA, userB, userC];
 // ヘルパー: 支払いオブジェクト作成
 function makePayment(
   id: string,
-  payerId: string,
-  participants: { userId: string; shareAmount: number }[],
+  payerId: string | null,
+  participants: { userId: string | null; shareAmount: number }[],
 ): Payment {
   return {
     id,
@@ -37,8 +38,8 @@ function makePayment(
 // ヘルパー: 精算オブジェクト作成
 function makeSettlement(
   id: string,
-  fromUserId: string,
-  toUserId: string,
+  fromUserId: string | null,
+  toUserId: string | null,
   amount: number,
 ): Settlement {
   return {
@@ -118,5 +119,22 @@ describe("calcBalance", () => {
     // 残るのはCのAへの支払い300円のみ
     const total = result.reduce((sum, b) => sum + b.amount, 0);
     expect(total).toBe(300);
+  });
+
+  it("退会済みユーザー（null）が含まれる場合、退会済みユーザーとして集計される", () => {
+    // 退会済みユーザー（null）が1000円払い、Aが500円負担
+    const payments = [
+      makePayment("pay1", null, [
+        { userId: null, shareAmount: 500 },
+        { userId: "userA", shareAmount: 500 },
+      ]),
+    ];
+    const result = calcBalance(payments, [], [userA]);
+
+    expect(result).toHaveLength(1);
+    expect(result[0].fromUserId).toBe("userA");
+    expect(result[0].toUserId).toBe(null);
+    expect(result[0].amount).toBe(500);
+    expect(result[0].toUserName).toBe(MESSAGES.UI.DELETED_USER);
   });
 });

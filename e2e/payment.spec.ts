@@ -15,6 +15,7 @@ test.describe('Payment Lifecycle Flow', () => {
     await page.getByRole('button', { name: MESSAGES.UI.GROUP_CREATE }).last().click();
     
     // グループ詳細画面への遷移を確認
+    await page.waitForURL('**/groups/*', { timeout: 15000 });
     await expect(page.getByRole('heading', { level: 1, name: groupName })).toBeVisible();
 
     // 3. 支払い登録モーダルを開く

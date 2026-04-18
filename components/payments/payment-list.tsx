@@ -101,7 +101,7 @@ export function PaymentList({
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1 flex-wrap">
                 <span className="text-sm font-bold text-slate-800 px-2 py-0.5 bg-slate-50 rounded-md border border-slate-200">
-                  {payment.payer?.name}
+                  {payment.payer?.name || MESSAGES.UI.DELETED_USER}
                 </span>
                 <span className="text-[10px] text-slate-500 font-medium tracking-tight">
                   {MESSAGES.UI.PAYMENT_PAID_BY_SUFFIX}
@@ -116,13 +116,13 @@ export function PaymentList({
 
               {/* 参加メンバー内訳 */}
               <div className="flex flex-wrap gap-1.5 mt-3">
-                {payment.participants?.map((p) => (
+                {payment.participants?.map((p, index) => (
                   <div
-                    key={p.user_id}
+                    key={p.id || index}
                     className="flex items-center gap-1 text-[10px] px-2 py-1 bg-white border border-slate-200 rounded-lg text-slate-500 shadow-sm"
                   >
                     <span className="font-bold text-slate-700">
-                      {p.user?.name}
+                      {p.user?.name || MESSAGES.UI.DELETED_USER}
                     </span>
                     <span className="opacity-60">
                       ¥{p.share_amount.toLocaleString()}
