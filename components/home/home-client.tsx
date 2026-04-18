@@ -159,7 +159,7 @@ export function HomePageClient({
   );
 
   return (
-    <div className="space-y-4 sm:space-y-8 animate-fade-in pb-28 sm:pb-0">
+    <div className="space-y-4 sm:space-y-8 animate-fade-in pb-24 sm:pb-0">
       {/* ホーム画面追加バナー */}
       <AddToHomeScreenBanner />
 

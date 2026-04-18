@@ -45,14 +45,14 @@ export default function RootLayout({
   return (
     <html lang="ja" suppressHydrationWarning>
       <body
-        className={`${inter.className} bg-background text-slate-900 min-h-screen selection:bg-emerald-500/30`}
+        className={`${inter.className} bg-background text-slate-900 min-h-[100dvh] flex flex-col selection:bg-emerald-500/30`}
       >
         {/* 背景グラデーション (Light Theme) */}
         <div className="fixed inset-0 bg-slate-50 -z-10" />
         <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-emerald-50 via-slate-50 to-teal-50 -z-10 opacity-70" />
 
         <AlertProvider>
-          <main className="w-full max-w-screen-xl mx-auto p-4 md:p-8 lg:p-10 transition-all duration-300">
+          <main className="w-full max-w-screen-xl mx-auto px-4 pt-4 pb-0 md:p-8 lg:p-10 transition-all duration-300 flex-1 flex flex-col">
             {children}
           </main>
         </AlertProvider>
