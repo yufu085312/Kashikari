@@ -49,6 +49,8 @@ export async function updateSession(request: NextRequest) {
     pathname === "/login/forgot-password" ||
     pathname === "/login/reset-password" ||
     pathname === "/setup-profile" ||
+    pathname === "/manifest.webmanifest" ||
+    pathname === "/manifest.json" ||
     pathname.startsWith("/auth/confirm") ||
     pathname.startsWith("/auth/callback");
 

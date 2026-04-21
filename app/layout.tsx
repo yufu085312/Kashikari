@@ -1,11 +1,12 @@
-import { Inter } from "next/font/google";
+import { Inter, Outfit } from "next/font/google";
 import type { Metadata, Viewport } from "next";
 import "@/styles/globals.css";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { AlertProvider } from "@/components/providers/alert-provider";
 import { METADATA } from "@/lib/constants";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
 const gaId = process.env.NEXT_PUBLIC_GA_ID;
 
 export const viewport: Viewport = {
@@ -45,7 +46,7 @@ export default function RootLayout({
   return (
     <html lang="ja" suppressHydrationWarning>
       <body
-        className={`${inter.className} bg-background text-slate-900 min-h-[100dvh] flex flex-col selection:bg-emerald-500/30`}
+        className={`${inter.variable} ${outfit.variable} font-sans bg-background text-slate-900 min-h-[100dvh] flex flex-col selection:bg-emerald-500/30`}
       >
         {/* 背景グラデーション (Light Theme) */}
         <div className="fixed inset-0 bg-slate-50 -z-10" />
