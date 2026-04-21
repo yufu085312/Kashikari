@@ -73,7 +73,7 @@ export function HomeHeader({
                 className="w-full h-full object-cover"
               />
             </div>
-            <p className="text-lg sm:text-2xl font-black text-slate-800 tracking-tight">
+            <p className="text-2xl font-outfit font-black bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 bg-clip-text text-transparent tracking-tighter drop-shadow-sm sm:text-2xl">
               {MESSAGES.UI.APP_TAGLINE}
             </p>
           </div>

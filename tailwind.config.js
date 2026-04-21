@@ -7,7 +7,8 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+        sans: ['var(--font-inter)', 'Noto Sans JP', 'sans-serif'],
+        outfit: ['var(--font-outfit)', 'sans-serif'],
       },
       colors: {
         background: '#f8fafc', // slate-50

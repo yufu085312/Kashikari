@@ -87,7 +87,7 @@ export const MESSAGES = {
     AUTH_FAILED: "認証に失敗しました",
   },
   UI: {
-    APP_TAGLINE: "割り勘・貸し借り管理アプリ",
+    APP_TAGLINE: "Kashikari",
     GROUP_CREATE: "グループを作成",
     GROUP_DELETE: "グループの削除",
     MEMBER_INVITE: "メンバーを招待",

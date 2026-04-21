@@ -10,6 +10,6 @@ export const config = {
     /*
      * _next/static, _next/image, favicon.ico, sitemap.xml, robots.txt, manifest.json など静的ファイルを除外したすべてのリクエスト
      */
-    '/((?!_next/static|_next/image|favicon.ico|sitemap\\.xml|robots\\.txt|manifest\\.json|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/((?!_next/static|_next/image|favicon.ico|sitemap\\.xml|robots\\.txt|manifest\\.json|manifest\\.webmanifest|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 }
